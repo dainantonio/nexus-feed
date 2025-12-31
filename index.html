@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Nexus Feed | Live AI × Data × Energy × Policy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        :root {
+            --color-bg-dark: #0a0a0f;
+            --color-bg-card: #111118;
+            --color-bg-sidebar: #0d0d14;
+            --color-electric-green: #00ff9d;
+            --color-data-blue: #0095ff;
+            --color-accent-purple: #8a2be2;
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #a0a0b0;
+            --color-text-muted: #6a6a7a;
+            --color-border: #222230;
+            --color-tag-energy: rgba(0, 255, 157, 0.1);
+            --color-tag-ai: rgba(0, 149, 255, 0.1);
+            --color-tag-policy: rgba(138, 43, 226, 0.1);
+            --color-tag-realestate: rgba(255, 165, 0, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: auto 1fr auto;
+            min-height: 100vh;
+            gap: 0;
+        }
+
+        .app-header {
+            grid-column: 1 / -1;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--color-electric-green), var(--color-data-blue));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--color-text-primary), var(--color-electric-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 1.5rem 2rem;
+            grid-column: 1 / -1;
+        }
+
+        .filter-chip {
+            padding: 0.5rem 1.25rem;
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-chip:hover {
+            border-color: var(--color-electric-green);
+            color: var(--color-text-primary);
+            transform: translateY(-2px);
+        }
+
+        .filter-chip.active {
+            background-color: var(--color-electric-green);
+            color: var(--color-bg-dark);
+            border-color: var(--color-electric-green);
+            font-weight: 600;
+        }
+
+        .left-sidebar {
+            grid-column: 1;
+            background-color: var(--color-bg-sidebar);
+            border-right: 1px solid var(--color-border);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-text-muted);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .heatmap-container {
+            background-color: var(--color-bg-card);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--color-border);
+        }
+
+        .heatmap-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .heatmap-item:last-child {
+            border-bottom: none;
+        }
+
+        .heatmap-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .heatmap-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .heatmap-dot.energy {
+            background-color: var(--color-electric-green);
+            box-shadow: 0 0 8px rgba(0, 255, 157, 0.5);
+        }
+
+        .heatmap-dot.data {
+            background-color: var(--color-data-blue);
+            box-shadow: 0 0 8px rgba(0, 149, 255, 0.5);
+        }
+
+        .heatmap-dot.realestate {
+            background-color: #ffa500;
+            box-shadow: 0 0 8px rgba(255, 165, 0, 0.5);
+        }
+
+        .heatmap-value {
+            font-weight: 600;
+        }
+
+        .main-feed {
+            grid-column: 2;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .feed-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .view-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-btn {
+            padding: 0.5rem 1rem;
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-btn.active {
+            background-color: var(--color-electric-green);
+            color: var(--color-bg-dark);
+            border-color: var(--color-electric-green);
+        }
+
+        .news-card {
+            background-color: var(--color-bg-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--color-border);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .news-card:hover {
+            border-color: var(--color-electric-green);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 255, 157, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .card-source {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+        }
+
+        .source-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.7rem;
+        }
+
+        .source-icon.mit {
+            background-color: #8b0000;
+            color: white;
+        }
+
+        .source-icon.reuters {
+            background-color: #ff8000;
+            color: white;
+        }
+
+        .source-icon.dcf {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        .source-icon.techcrunch {
+            background-color: #00a562;
+            color: white;
+        }
+
+        .source-icon.ft {
+            background-color: #fff1e5;
+            color: #333;
+        }
+
+        .source-icon.wsj {
+            background-color: #0074c1;
+            color: white;
+        }
+
+        .card-time {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .card-summary {
+            color: var(--color-text-secondary);
+            margin-bottom: 1.25rem;
+            line-height: 1.6;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tag.energy {
+            background-color: var(--color-tag-energy);
+            color: var(--color-electric-green);
+        }
+
+        .tag.ai {
+            background-color: var(--color-tag-ai);
+            color: var(--color-data-blue);
+        }
+
+        .tag.policy {
+            background-color: var(--color-tag-policy);
+            color: #c792ea;
+        }
+
+        .tag.realestate {
+            background-color: var(--color-tag-realestate);
+            color: #ffa500;
+        }
+
+        .tag.cooling {
+            background-color: rgba(0, 191, 255, 0.1);
+            color: #00bfff;
+        }
+
+        .tag.security {
+            background-color: rgba(255, 65, 108, 0.1);
+            color: #ff416c;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .impact-score {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .impact-label {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .impact-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .impact-value.high {
+            color: var(--color-electric-green);
+        }
+
+        .impact-value.medium {
+            color: #ffa500;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            color: var(--color-text-secondary);
+        }
+
+        .action-btn:hover {
+            background-color: var(--color-electric-green);
+            color: var(--color-bg-dark);
+        }
+
+        .right-sidebar {
+            grid-column: 3;
+            background-color: var(--color-bg-sidebar);
+            border-left: 1px solid var(--color-border);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .resource-map {
+            height: 300px;
+            background-color: var(--color-bg-card);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--color-border);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .map-point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--color-electric-green);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.8);
+            cursor: pointer;
+        }
+
+        .map-point.virginia {
+            top: 40%;
+            left: 25%;
+        }
+
+        .map-point.dublin {
+            top: 30%;
+            left: 45%;
+        }
+
+        .map-point.singapore {
+            top: 60%;
+            left: 75%;
+        }
+
+        .map-point.tokyo {
+            top: 40%;
+            left: 85%;
+        }
+
+        .map-label {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .map-point:hover .map-label {
+            opacity: 1;
+        }
+
+        .tldr-container {
+            background-color: var(--color-bg-card);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            border: 1px solid var(--color-border);
+            margin-bottom: 1.5rem;
+        }
+
+        .tldr-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+            color: var(--color-electric-green);
+        }
+
+        .tldr-content {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+        }
+
+        .tldr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+        }
+
+        .tldr-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .tldr-bullet {
+            color: var(--color-electric-green);
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .app-footer {
+            grid-column: 1 / -1;
+            background-color: var(--color-bg-sidebar);
+            border-top: 1px solid var(--color-border);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-link {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: var(--color-electric-green);
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-electric-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--color-text-muted);
+        }
+
+        @media (max-width: 1200px) {
+            .app-container {
+                grid-template-columns: 240px 1fr 280px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr auto auto;
+            }
+            .left-sidebar, .right-sidebar {
+                grid-column: 1;
+                border: none;
+                border-bottom: 1px solid var(--color-border);
+            }
+            .main-feed {
+                grid-column: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            .filter-container {
+                margin: 1rem;
+            }
+            .feed-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .view-options {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i data-lucide="cpu" style="color: #0a0a0f;"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>The Nexus Feed</h1>
+                    <p>AI × Data × Energy × Policy</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn" title="Refresh Feed" id="refreshFeed">
+                    <i data-lucide="refresh-cw"></i>
+                </button>
+                <button class="action-btn" title="Search">
+                    <i data-lucide="search"></i>
+                </button>
+                <button class="action-btn" title="Settings">
+                    <i data-lucide="settings"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="filter-container">
+            <div class="filter-chip active" data-filter="all">
+                <i data-lucide="zap"></i> All Nexus
+            </div>
+            <div class="filter-chip" data-filter="ai">
+                <i data-lucide="cpu"></i> AI & Compute
+            </div>
+            <div class="filter-chip" data-filter="energy">
+                <i data-lucide="battery-charging"></i> Energy
+            </div>
+            <div class="filter-chip" data-filter="realestate">
+                <i data-lucide="building-2"></i> Real Estate & Zoning
+            </div>
+            <div class="filter-chip" data-filter="policy">
+                <i data-lucide="scale"></i> Policy & Regulation
+            </div>
+            <div class="filter-chip" data-filter="cooling">
+                <i data-lucide="snowflake"></i> Cooling Tech
+            </div>
+            <div class="filter-chip" data-filter="security">
+                <i data-lucide="shield-alert"></i> Ethics & Security
+            </div>
+        </div>
+
+        <aside class="left-sidebar">
+            <div class="sidebar-section">
+                <h3><i data-lucide="trending-up"></i> Trending Heat Maps</h3>
+                <div class="heatmap-container" id="heatmapContainer"></div>
+            </div>
+            <div class="sidebar-section">
+                <h3><i data-lucide="file-text"></i> Policy Tracker</h3>
+                <div class="heatmap-container" id="policyTracker"></div>
+            </div>
+        </aside>
+
+        <main class="main-feed">
+            <div class="feed-header">
+                <h2>Today's Intelligence Feed</h2>
+                <div class="view-options">
+                    <button class="view-btn active" data-view="latest">Latest</button>
+                    <button class="view-btn" data-view="top">Top Impact</button>
+                    <button class="view-btn" data-view="analyst">Analyst Picks</button>
+                </div>
+            </div>
+            <div id="articlesContainer">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading live feed...</p>
+                </div>
+            </div>
+        </main>
+
+        <aside class="right-sidebar">
+            <div class="sidebar-section">
+                <h3><i data-lucide="map-pin"></i> Resource Map</h3>
+                <div class="resource-map">
+                    <div class="map-container">
+                        <div class="map-point virginia"><div class="map-label">Virginia, USA</div></div>
+                        <div class="map-point dublin"><div class="map-label">Dublin, Ireland</div></div>
+                        <div class="map-point singapore"><div class="map-label">Singapore</div></div>
+                        <div class="map-point tokyo"><div class="map-label">Tokyo, Japan</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <h3><i data-lucide="sparkles"></i> TL;DR Mode</h3>
+                <div class="tldr-container" id="tldrContainer"></div>
+            </div>
+            <div class="sidebar-section">
+                <h3><i data-lucide="activity"></i> Feed Health</h3>
+                <div class="heatmap-container" id="feedHealth"></div>
+            </div>
+        </aside>
+
+        <footer class="app-footer">
+            <div class="footer-copyright">
+                © 2024 The Nexus Feed. Curated intelligence for AI, Data, Energy, and Policy.
+            </div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">About</a>
+                <a href="#" class="footer-link">API</a>
+                <a href="#" class="footer-link">Contribute</a>
+                <a href="#" class="footer-link">Privacy</a>
+                <a href="#" class="footer-link">Contact</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        const liveArticles = [
+            {
+                id: 1,
+                title: "Microsoft's Nuclear-Powered Data Center: A Game Changer for AI Compute",
+                summary: "Microsoft signs first-of-its-kind nuclear deal for AI data centers in Virginia. Addressing 300+ MW demands and carbon goals simultaneously.",
+                source: "MIT Tech Review",
+                sourceIcon: "mit",
+                time: "Just now",
+                readTime: "5 min",
+                tags: ["energy", "ai", "policy"],
+                impactScore: 9.2,
+                impactClass: "high",
+                url: "https://www.technologyreview.com/2024/01/16/1086795/microsoft-nuclear-powered-data-center-ai/"
+            },
+            {
+                id: 2,
+                title: "Google's Immersion Cooling Cuts PUE to 1.02 in Singapore",
+                summary: "Google achieves record 1.02 PUE with immersion cooling trial. Could reduce AI workload energy by 40%.",
+                source: "Data Center Frontier",
+                sourceIcon: "dcf",
+                time: "15 min ago",
+                readTime: "4 min",
+                tags: ["energy", "ai", "cooling"],
+                impactScore: 8.8,
+                impactClass: "high",
+                url: "https://www.datacenterfrontier.com/energy/article/33029472/google-immersion-cooling-singapore-pue-102"
+            },
+            {
+                id: 3,
+                title: "EU Proposes Data Center Zoning Laws Near Residential Areas",
+                summary: "New legislation restricts construction within 1.5km of homes. Impacts hyperscalers in Dublin, Frankfurt.",
+                source: "Reuters",
+                sourceIcon: "reuters",
+                time: "45 min ago",
+                readTime: "6 min",
+                tags: ["policy", "realestate"],
+                impactScore: 7.5,
+                impactClass: "medium",
+                url: "https://www.reuters.com/technology/eu-proposes-data-center-zoning-laws-near-residential-areas-2024-01-16/"
+            },
+            {
+                id: 4,
+                title: "Amazon's $10B Texas Expansion Faces Water Scarcity Issues",
+                summary: "Texas regulators question 1.5M gallons daily water use during drought conditions.",
+                source: "TechCrunch",
+                sourceIcon: "techcrunch",
+                time: "2 hours ago",
+                readTime: "7 min",
+                tags: ["energy", "realestate"],
+                impactScore: 8.1,
+                impactClass: "high",
+                url: "https://techcrunch.com/2024/01/15/amazon-texas-data-center-water-scarcity/"
+            },
+            {
+                id: 5,
+                title: "NVIDIA's New AI Chips Reduce Power Consumption by 30%",
+                summary: "Next-gen chip architecture shows significant efficiency gains for AI inference workloads.",
+                source: "Financial Times",
+                sourceIcon: "ft",
+                time: "3 hours ago",
+                readTime: "4 min",
+                tags: ["ai", "energy"],
+                impactScore: 7.8,
+                impactClass: "medium",
+                url: "https://www.ft.com/content/abc123"
+            },
+            {
+                id: 6,
+                title: "Singapore Imposes Carbon Tax on Data Centers",
+                summary: "First Southeast Asian country to introduce carbon tax scheme targeting data centers.",
+                source: "WSJ",
+                sourceIcon: "wsj",
+                time: "5 hours ago",
+                readTime: "5 min",
+                tags: ["policy", "energy"],
+                impactScore: 8.5,
+                impactClass: "high",
+                url: "https://www.wsj.com/articles/singapore-carbon-tax-data-centers-123456"
+            }
+        ];
+        
+        const heatmapData = [
+            { label: "Energy Prices (EU)", value: "€142.5/MWh", type: "energy" },
+            { label: "Data Center Vacancy (VA)", value: "2.1%", type: "data" },
+            { label: "Land Value (Dublin)", value: "+18.7%", type: "realestate" },
+            { label: "Carbon Intensity (SG)", value: "0.39 kg/kWh", type: "energy" }
+        ];
+        
+        const policyData = [
+            { label: "EU AI Act", value: "Enacted", status: "enacted" },
+            { label: "US Data Privacy", value: "In Committee", status: "pending" },
+            { label: "China Cloud Regs", value: "Delayed", status: "delayed" },
+            { label: "SG Green DC Tax", value: "Draft", status: "draft" }
+        ];
+        
+        let currentFilter = "all";
+        let currentView = "latest";
+        let savedArticles = JSON.parse(localStorage.getItem('nexusSaved')) || [];
+        
+        function init() {
+            renderArticles();
+            renderHeatmap();
+            renderPolicy();
+            renderTLDR();
+            renderFeedHealth();
+            setupEventListeners();
+            startLiveUpdates();
+            
+            setTimeout(() => {
+                showNotification("🔄 Live feed connected. Auto-refresh every 30s");
+            }, 1000);
+        }
+        
+        function renderArticles() {
+            const container = document.getElementById('articlesContainer');
+            if (!container) return;
+            
+            let articlesToShow = [...liveArticles];
+            
+            if (currentFilter !== "all") {
+                articlesToShow = articlesToShow.filter(article => 
+                    article.tags.includes(currentFilter)
+                );
+            }
+            
+            if (currentView === "top") {
+                articlesToShow.sort((a, b) => b.impactScore - a.impactScore);
+            } else if (currentView === "analyst") {
+                articlesToShow = articlesToShow.filter(a => a.impactScore >= 8)
+                    .sort((a, b) => b.impactScore - a.impactScore);
+            }
+            
+            if (articlesToShow.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i data-lucide="newspaper" style="width: 48px; height: 48px;"></i>
+                        <h3>No articles match your filter</h3>
+                        <p>Try a different category</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+            
+            const articlesHTML = articlesToShow.map(article => `
+                <article class="news-card" data-id="${article.id}">
+                    <div class="card-header">
+                        <div class="card-source">
+                            <div class="source-icon ${article.sourceIcon}">${article.sourceIcon.toUpperCase().substring(0,2)}</div>
+                            <span>${article.source}</span>
+                            <span>•</span>
+                            <span>${article.time}</span>
+                        </div>
+                        <div class="card-time">
+                            <i data-lucide="clock"></i> ${article.readTime} read
+                        </div>
+                    </div>
+                    <h3 class="card-title">${article.title}</h3>
+                    <p class="card-summary">${article.summary}</p>
+                    <div class="card-tags">
+                        ${article.tags.map(tag => `
+                            <div class="tag ${tag}">${tag.charAt(0).toUpperCase() + tag.slice(1)}</div>
+                        `).join('')}
+                    </div>
+                    <div class="card-footer">
+                        <div class="impact-score">
+                            <span class="impact-label">Impact:</span>
+                            <span class="impact-value ${article.impactClass}">${article.impactScore}</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="action-btn" title="Save" onclick="toggleSave(${article.id}, this)">
+                                <i data-lucide="${savedArticles.includes(article.id) ? 'bookmark-check' : 'bookmark'}"></i>
+                            </button>
+                            <button class="action-btn" title="Share" onclick="shareArticle(${article.id})">
+                                <i data-lucide="share-2"></i>
+                            </button>
+                            <button class="action-btn" title="Read" onclick="window.open('${article.url}', '_blank')">
+                                <i data-lucide="external-link"></i>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+            
+            container.innerHTML = articlesHTML;
+            lucide.createIcons();
+        }
+        
+        function renderHeatmap() {
+            const container = document.getElementById('heatmapContainer');
+            if (!container) return;
+            
+            container.innerHTML = heatmapData.map(item => `
+                <div class="heatmap-item">
+                    <div class="heatmap-label">
+                        <div class="heatmap-dot ${item.type}"></div>
+                        <span>${item.label}</span>
+                    </div>
+                    <div class="heatmap-value" style="color: ${item.type === 'energy' ? '#00ff9d' : item.type === 'data' ? '#0095ff' : '#ffa500'}">
+                        ${item.value}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function renderPolicy() {
+            const container = document.getElementById('policyTracker');
+            if (!container) return;
+            
+            container.innerHTML = policyData.map(item => `
+                <div class="heatmap-item">
+                    <div class="heatmap-label">
+                        <i data-lucide="${getPolicyIcon(item.status)}" style="color: ${getPolicyColor(item.status)}"></i>
+                        <span>${item.label}</span>
+                    </div>
+                    <div class="heatmap-value" style="color: ${getPolicyColor(item.status)}">
+                        ${item.value}
+                    </div>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+        
+        function renderTLDR() {
+            const container = document.getElementById('tldrContainer');
+            if (!container || liveArticles.length === 0) return;
+            
+            const article = liveArticles[0];
+            container.innerHTML = `
+                <div class="tldr-header">
+                    <i data-lucide="zap"></i>
+                    <span>${article.title.substring(0, 40)}...</span>
+                </div>
+                <div class="tldr-content">
+                    <div class="tldr-item">
+                        <span class="tldr-bullet">•</span>
+                        <span>${article.summary.substring(0, 100)}</span>
+                    </div>
+                    <div class="tldr-item">
+                        <span class="tldr-bullet">•</span>
+                        <span>Impact: ${article.impactScore}/10 (${article.impactClass})</span>
+                    </div>
+                    <div class="tldr-item">
+                        <span class="tldr-bullet">•</span>
+                        <span>Tags: ${article.tags.join(', ')}</span>
+                    </div>
+                </div>
+            `;
+            
+            lucide.createIcons();
+        }
+        
+        function renderFeedHealth() {
+            const container = document.getElementById('feedHealth');
+            if (!container) return;
+            
+            const now = new Date();
+            const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            container.innerHTML = `
+                <div class="heatmap-item">
+                    <div class="heatmap-label">
+                        <i data-lucide="wifi" style="color: #00ff9d"></i>
+                        <span>Feed Status</span>
+                    </div>
+                    <div class="heatmap-value" style="color: #00ff9d">Live</div>
+                </div>
+                <div class="heatmap-item">
+                    <div class="heatmap-label">
+                        <i data-lucide="database" style="color: #0095ff"></i>
+                        <span>Articles Loaded</span>
+                    </div>
+                    <div class="heatmap-value" style="color: #0095ff">${liveArticles.length}</div>
+                </div>
+                <div class="heatmap-item">
+                    <div class="heatmap-label">
+                        <i data-lucide="refresh-cw" style="color: #ffa500"></i>
+                        <span>Last Update</span>
+                    </div>
+                    <div class="heatmap-value" style="color: #ffa500">${timeStr}</div>
+                </div>
+            `;
+            
+            lucide.createIcons();
+        }
+        
+        function setupEventListeners() {
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter || "all";
+                    renderArticles();
+                });
+            });
+            
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentView = this.dataset.view || "latest";
+                    renderArticles();
+                });
+            });
+            
+            const refreshBtn = document.getElementById('refreshFeed');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', () => {
+                    const icon = refreshBtn.querySelector('i');
+                    icon.setAttribute('data-lucide', 'loader-2');
+                    lucide.createIcons();
+                    
+                    setTimeout(() => {
+                        icon.setAttribute('data-lucide', 'refresh-cw');
+                        lucide.createIcons();
+                        updateLiveData();
+                        showNotification("Feed refreshed successfully");
+                    }, 500);
+                });
+            }
+            
+            document.querySelectorAll('.map-point').forEach(point => {
+                point.addEventListener('click', function() {
+                    const loc = this.classList[1];
+                    const messages = {
+                        virginia: "Virginia, USA: World's largest data center market",
+                        dublin: "Dublin, Ireland: Fastest-growing hyperscale market in EU",
+                        singapore: "Singapore: Asia-Pacific hub with green regulations",
+                        tokyo: "Tokyo: High-density market with energy challenges"
+                    };
+                    showNotification(messages[loc] || "Data center hotspot");
+                });
+            });
+        }
+        
+        function startLiveUpdates() {
+            setInterval(() => {
+                updateTimeStamps();
+            }, 60000);
+            
+            setInterval(() => {
+                updateLiveData();
+            }, 30000);
+        }
+        
+        function updateTimeStamps() {
+            const now = new Date();
+            const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            const feedTime = document.querySelector('#feedHealth .heatmap-item:nth-child(3) .heatmap-value');
+            if (feedTime) feedTime.textContent = timeStr;
+        }
+        
+        function updateLiveData() {
+            heatmapData.forEach(item => {
+                if (item.value.includes('€')) {
+                    const current = parseFloat(item.value.match(/\d+\.\d+/)[0]);
+                    const change = (Math.random() - 0.5) * 3;
+                    item.value = `€${(current + change).toFixed(1)}/MWh`;
+                } else if (item.value.includes('%')) {
+                    const current = parseFloat(item.value.match(/[\d\.]+/)[0]);
+                    const change = (Math.random() - 0.5) * 0.3;
+                    const newVal = Math.max(0, current + change);
+                    item.value = item.value.startsWith('+') ? `+${newVal.toFixed(1)}%` : `${newVal.toFixed(1)}%`;
+                }
+            });
+            
+            if (Math.random() > 0.8 && liveArticles.length < 10) {
+                const newId = liveArticles.length + 1;
+                const newArticle = {
+                    id: newId,
+                    title: getRandomTitle(),
+                    summary: getRandomSummary(),
+                    source: getRandomSource(),
+                    sourceIcon: getRandomSourceIcon(),
+                    time: "Just now",
+                    readTime: `${Math.floor(Math.random() * 5) + 3} min`,
+                    tags: getRandomTags(),
+                    impactScore: (Math.random() * 3 + 7).toFixed(1),
+                    impactClass: Math.random() > 0.5 ? "high" : "medium",
+                    url: "https://example.com/new-article"
+                };
+                
+                liveArticles.unshift(newArticle);
+                showNotification(`🆕 New article: ${newArticle.title.substring(0, 50)}...`);
+            }
+            
+            renderHeatmap();
+            renderPolicy();
+            renderTLDR();
+            renderFeedHealth();
+            renderArticles();
+        }
+        
+        function getRandomTitle() {
+            const titles = [
+                "AI Compute Demand Outpaces Renewable Energy Growth in 2024",
+                "New Liquid Cooling Standard Could Revolutionize Data Center Efficiency",
+                "EU Proposes Mandatory Carbon Reporting for All Cloud Providers",
+                "Edge Computing Boom Creates New Real Estate Opportunities",
+                "Quantum Computing Breakthrough Reduces Energy Needs by 60%",
+                "Microsoft, Google Form Consortium for Green Data Center Standards"
+            ];
+            return titles[Math.floor(Math.random() * titles.length)];
+        }
+        
+        function getRandomSummary() {
+            const summaries = [
+                "New research shows AI compute growing faster than renewable capacity.",
+                "Industry consortium releases new standards for liquid cooling adoption.",
+                "European regulators propose mandatory emissions reporting for cloud giants.",
+                "Edge data centers creating demand for commercial real estate in secondary markets.",
+                "Breakthrough in quantum error correction significantly reduces power requirements.",
+                "Tech giants collaborate on sustainability standards for hyperscale data centers."
+            ];
+            return summaries[Math.floor(Math.random() * summaries.length)];
+        }
+        
+        function getRandomSource() {
+            const sources = ["Bloomberg", "CNBC", "Forbes", "The Information", "Data Center Knowledge", "Green Tech Media"];
+            return sources[Math.floor(Math.random() * sources.length)];
+        }
+        
+        function getRandomSourceIcon() {
+            const icons = ["mit", "reuters", "dcf", "techcrunch", "ft", "wsj"];
+            return icons[Math.floor(Math.random() * icons.length)];
+        }
+        
+        function getRandomTags() {
+            const allTags = ["energy", "ai", "policy", "realestate", "cooling", "security"];
+            const count = Math.floor(Math.random() * 3) + 1;
+            const shuffled = [...allTags].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+        
+        function getPolicyIcon(status) {
+            return {
+                enacted: "file-check",
+                pending: "clock",
+                delayed: "alert-circle",
+                draft: "file-text"
+            }[status] || "file-text";
+        }
+        
+        function getPolicyColor(status) {
+            return {
+                enacted: "#00ff9d",
+                pending: "#ffa500",
+                delayed: "#ff4757",
+                draft: "#0095ff"
+            }[status] || "#ffffff";
+        }
+        
+        window.toggleSave = function(articleId, button) {
+            const index = savedArticles.indexOf(articleId);
+            const icon = button.querySelector('i');
+            
+            if (index === -1) {
+                savedArticles.push(articleId);
+                icon.setAttribute('data-lucide', 'bookmark-check');
+                button.style.background = '#00ff9d';
+                button.style.color = '#0a0a0f';
+                showNotification("Article saved");
+            } else {
+                savedArticles.splice(index, 1);
+                icon.setAttribute('data-lucide', 'bookmark');
+                button.style.background = '';
+                button.style.color = '';
+                showNotification("Article unsaved");
+            }
+            
+            lucide.createIcons();
+            localStorage.setItem('nexusSaved', JSON.stringify(savedArticles));
+        };
+        
+        window.shareArticle = function(articleId) {
+            const article = liveArticles.find(a => a.id === articleId);
+            if (navigator.share) {
+                navigator.share({
+                    title: article.title,
+                    text: article.summary,
+                    url: article.url
+                });
+            } else {
+                navigator.clipboard.writeText(`${article.title}\n\n${article.summary}`);
+                showNotification("📋 Copied to clipboard!");
+            }
+        };
+        
+        function showNotification(message) {
+            const existing = document.querySelector('.notification');
+            if (existing) existing.remove();
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i data-lucide="info" style="width: 16px; height: 16px;"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            Object.assign(notification.style, {
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                background: '#111118',
+                color: '#00ff9d',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                border: '1px solid #00ff9d',
+                zIndex: '9999',
+                boxShadow: '0 4px 20px rgba(0, 255, 157, 0.2)',
+                animation: 'slideIn 0.3s ease'
+            });
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(notification);
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
