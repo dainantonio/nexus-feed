@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
-        /* ===== IMPROVED STYLES ===== */
         :root {
             --color-bg-dark: #0a0a0f;
             --color-bg-card: #111118;
@@ -42,7 +41,6 @@
             overflow-x: hidden;
         }
 
-        /* ===== IMPROVED HEADER ===== */
         .app-container {
             display: grid;
             grid-template-columns: 280px 1fr 320px;
@@ -103,7 +101,6 @@
             gap: 10px;
         }
 
-        /* ===== IMPROVED FILTER CHIPS ===== */
         .filter-container {
             display: flex;
             gap: 10px;
@@ -140,7 +137,6 @@
             font-weight: 600;
         }
 
-        /* ===== IMPROVED SIDEBAR ===== */
         .left-sidebar {
             grid-column: 1;
             background-color: var(--color-bg-sidebar);
@@ -164,7 +160,6 @@
             gap: 8px;
         }
 
-        /* ===== IMPROVED HEAT MAP ===== */
         .heatmap-container {
             background-color: var(--color-bg-card);
             border-radius: var(--border-radius);
@@ -216,7 +211,6 @@
             font-weight: 600;
         }
 
-        /* ===== IMPROVED MAIN FEED ===== */
         .main-feed {
             grid-column: 2;
             padding: 1.5rem;
@@ -271,7 +265,6 @@
             border-color: var(--color-electric-green);
         }
 
-        /* ===== IMPROVED NEWS CARDS ===== */
         .news-card {
             background-color: var(--color-bg-card);
             border-radius: var(--border-radius);
@@ -382,6 +375,16 @@
 
         .source-icon.wired {
             background-color: #000;
+            color: white;
+        }
+
+        .source-icon.zdnet {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        .source-icon.arstechnica {
+            background-color: #ff6600;
             color: white;
         }
 
@@ -507,7 +510,6 @@
             color: var(--color-bg-dark);
         }
 
-        /* ===== IMPROVED RIGHT SIDEBAR ===== */
         .right-sidebar {
             grid-column: 3;
             background-color: var(--color-bg-sidebar);
@@ -583,7 +585,6 @@
             opacity: 1;
         }
 
-        /* ===== IMPROVED TLDR SECTION ===== */
         .tldr-container {
             background-color: var(--color-bg-card);
             border-radius: var(--border-radius);
@@ -623,7 +624,6 @@
             margin-top: 2px;
         }
 
-        /* ===== IMPROVED FOOTER ===== */
         .app-footer {
             grid-column: 1 / -1;
             background-color: var(--color-bg-sidebar);
@@ -651,7 +651,6 @@
             color: var(--color-electric-green);
         }
 
-        /* ===== NEW: TRENDING TOPICS ===== */
         .trending-topics {
             display: flex;
             flex-wrap: wrap;
@@ -675,7 +674,6 @@
             transform: translateY(-2px);
         }
 
-        /* ===== NEW: BREAKING NEWS BANNER ===== */
         .breaking-banner {
             background: linear-gradient(90deg, #ff4757, #ff6b81);
             color: white;
@@ -688,7 +686,6 @@
             animation: pulse 2s infinite;
         }
 
-        /* ===== NEW: LOADING STATES ===== */
         .loading {
             display: flex;
             flex-direction: column;
@@ -730,7 +727,6 @@
             100% { background-position: -200% 0; }
         }
 
-        /* ===== IMPROVED RESPONSIVE ===== */
         @media (max-width: 1200px) {
             .app-container {
                 grid-template-columns: 240px 1fr 280px;
@@ -742,13 +738,11 @@
                 grid-template-columns: 1fr;
                 grid-template-rows: auto auto 1fr auto auto;
             }
-
             .left-sidebar, .right-sidebar {
                 grid-column: 1;
                 border: none;
                 border-bottom: 1px solid var(--color-border);
             }
-
             .main-feed {
                 grid-column: 1;
             }
@@ -760,44 +754,36 @@
                 gap: 1rem;
                 align-items: flex-start;
             }
-
             .filter-container {
                 margin: 1rem;
             }
-
             .feed-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
             }
-
             .feed-stats {
                 justify-content: space-between;
                 width: 100%;
             }
-
             .view-options {
                 align-self: flex-end;
             }
-
             .card-header {
                 flex-direction: column;
                 gap: 0.5rem;
                 align-items: flex-start;
             }
-
             .card-footer {
                 flex-direction: column;
                 gap: 1rem;
                 align-items: flex-start;
             }
-
             .card-actions {
                 align-self: flex-end;
             }
         }
 
-        /* ===== NEW: NOTIFICATION STYLES ===== */
         .notification {
             position: fixed;
             top: 20px;
@@ -829,7 +815,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
         <header class="app-header">
             <div class="logo-container">
                 <div class="logo-icon">
@@ -853,7 +838,6 @@
             </div>
         </header>
 
-        <!-- Filter Chips -->
         <div class="filter-container">
             <div class="filter-chip active" data-filter="all">
                 <i data-lucide="zap"></i> All Nexus
@@ -875,27 +859,21 @@
             </div>
         </div>
 
-        <!-- Left Sidebar -->
         <aside class="left-sidebar">
             <div class="sidebar-section">
                 <h3><i data-lucide="trending-up"></i> Live Heat Maps</h3>
                 <div class="heatmap-container" id="heatmapContainer"></div>
             </div>
-
             <div class="sidebar-section">
                 <h3><i data-lucide="file-text"></i> Policy Tracker</h3>
                 <div class="heatmap-container" id="policyTracker"></div>
             </div>
-
             <div class="sidebar-section">
                 <h3><i data-lucide="trending-up"></i> Trending Topics</h3>
-                <div class="trending-topics" id="trendingTopics">
-                    <!-- Will be populated by JavaScript -->
-                </div>
+                <div class="trending-topics" id="trendingTopics"></div>
             </div>
         </aside>
 
-        <!-- Main Feed -->
         <main class="main-feed">
             <div class="feed-header">
                 <div>
@@ -922,13 +900,11 @@
                 </div>
             </div>
 
-            <!-- Breaking News Banner (Conditional) -->
             <div id="breakingBanner" class="breaking-banner" style="display: none;">
                 <i data-lucide="alert-circle"></i>
                 <span id="breakingText">Breaking News</span>
             </div>
 
-            <!-- Articles Container -->
             <div id="articlesContainer">
                 <div class="loading">
                     <div class="loading-spinner"></div>
@@ -937,7 +913,6 @@
             </div>
         </main>
 
-        <!-- Right Sidebar -->
         <aside class="right-sidebar">
             <div class="sidebar-section">
                 <h3><i data-lucide="map-pin"></i> Data Center Map</h3>
@@ -950,19 +925,16 @@
                     </div>
                 </div>
             </div>
-
             <div class="sidebar-section">
                 <h3><i data-lucide="sparkles"></i> TL;DR Mode</h3>
                 <div class="tldr-container" id="tldrContainer"></div>
             </div>
-
             <div class="sidebar-section">
                 <h3><i data-lucide="activity"></i> Feed Health</h3>
                 <div class="heatmap-container" id="feedHealth"></div>
             </div>
         </aside>
 
-        <!-- Footer -->
         <footer class="app-footer">
             <div class="footer-copyright">
                 © 2024 The Nexus Feed. Real-time intelligence for AI, Data, Energy, and Policy.
@@ -978,65 +950,63 @@
     </div>
 
     <script>
-        // ============================================
-        // ENHANCED NEWS FEED WITH MULTIPLE SOURCES
-        // ============================================
-
-        // Initialize icons
         lucide.createIcons();
-
-        // API Configuration
+        
         const NEWS_CONFIG = {
-            // Multiple news sources for redundancy
             SOURCES: [
                 {
                     name: "NewsAPI",
                     url: "https://newsapi.org/v2/everything",
-                    apiKey: "YOUR_NEWSAPI_KEY", // Get from https://newsapi.org
+                    apiKey: "e09ab63096474026a4e546d9a0c988e4",
                     params: {
-                        q: "(AI OR artificial intelligence) AND (data center OR energy OR policy)",
+                        q: "(AI OR artificial intelligence OR machine learning) AND (data center OR energy OR policy OR regulation OR real estate)",
                         language: "en",
                         sortBy: "publishedAt",
-                        pageSize: 10
+                        pageSize: 15,
+                        from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
                     }
                 },
                 {
                     name: "GNews",
                     url: "https://gnews.io/api/v4/search",
-                    apiKey: "YOUR_GNEWS_KEY", // Get from https://gnews.io
+                    apiKey: "f6ac1015751e1fbd24ef4ebe63d281f8",
                     params: {
-                        q: "technology AI data center energy policy",
+                        q: "technology AI data center energy policy real estate zoning cooling security",
                         lang: "en",
-                        max: 10
+                        max: 10,
+                        country: "us",
+                        from: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
                     }
                 }
             ],
             
-            // RSS Feeds as backup
             RSS_FEEDS: [
                 "https://techcrunch.com/feed/",
                 "https://www.wired.com/feed/rss",
                 "https://feeds.arstechnica.com/arstechnica/index",
                 "https://www.theverge.com/rss/index.xml",
-                "https://www.zdnet.com/news/rss.xml"
+                "https://www.zdnet.com/news/rss.xml",
+                "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/technology/rss.xml",
+                "https://feeds.feedburner.com/techcrunch/",
+                "https://www.wired.com/feed/category/tech/latest/rss",
+                "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
+                "https://feeds.bloomberg.com/technology/news.rss"
             ],
             
-            // Update intervals
-            UPDATE_INTERVAL: 300000, // 5 minutes
-            BREAKING_CHECK_INTERVAL: 60000, // 1 minute
+            UPDATE_INTERVAL: 300000,
+            BREAKING_CHECK_INTERVAL: 60000,
             
-            // Keywords for categorization
             KEYWORDS: {
-                ai: ["AI", "artificial intelligence", "machine learning", "deep learning", "neural network", "GPT", "OpenAI"],
-                energy: ["energy", "power", "electricity", "solar", "wind", "nuclear", "renewable", "carbon"],
-                policy: ["policy", "regulation", "law", "legislation", "government", "EU", "US", "China"],
-                realestate: ["real estate", "zoning", "land", "property", "construction", "development"],
-                cooling: ["cooling", "immersion", "liquid", "thermal", "heat", "PUE"],
-                security: ["security", "cybersecurity", "privacy", "encryption", "attack", "breach"]
+                ai: ["AI", "artificial intelligence", "machine learning", "deep learning", "neural network", "GPT", "OpenAI", "Microsoft Copilot", "Google Gemini", "anthropic", "llm", "large language model"],
+                energy: ["energy", "power", "electricity", "solar", "wind", "nuclear", "renewable", "carbon", "grid", "megawatt", "PUE", "efficiency"],
+                policy: ["policy", "regulation", "law", "legislation", "government", "EU", "US", "China", "compliance", "standard", "tax", "subsidy"],
+                realestate: ["real estate", "zoning", "land", "property", "construction", "development", "facility", "campus", "hyperscale"],
+                cooling: ["cooling", "immersion", "liquid", "thermal", "heat", "PUE", "water", "chiller", "air conditioning"],
+                security: ["security", "cybersecurity", "privacy", "encryption", "attack", "breach", "hack", "vulnerability", "compliance"],
+                breaking: ["breaking", "urgent", "alert", "crisis", "emergency", "outage", "attack", "hack", "leak", "scandal", "recall"]
             }
         };
 
-        // State Management
         let currentFilter = "all";
         let currentView = "latest";
         let savedArticles = JSON.parse(localStorage.getItem('nexusSaved')) || [];
@@ -1044,10 +1014,8 @@
         let breakingNews = [];
         let trendingTopics = new Set();
         
-        // Initialize
         async function init() {
             try {
-                // Load initial data
                 await loadNews();
                 renderHeatmap();
                 renderPolicy();
@@ -1055,45 +1023,57 @@
                 renderFeedHealth();
                 updateFeedStats();
                 
-                // Setup event listeners
                 setupEventListeners();
-                
-                // Start background updates
                 startLiveUpdates();
                 
-                // Show welcome
                 showNotification("🔄 Connected to live news feed. Updates every 5 minutes.", "success");
                 
             } catch (error) {
                 console.error("Initialization error:", error);
-                // Fallback to sample data
                 loadSampleData();
-                showNotification("⚠️ Using sample data. Add API keys for live news.", "warning");
+                showNotification("⚠️ Using enhanced sample data with real-time simulation.", "warning");
             }
         }
 
-        // Enhanced News Loading
         async function loadNews() {
             try {
                 showLoadingState();
                 
-                // Try multiple sources
-                const articles = await Promise.any([
-                    fetchFromNewsAPI(),
-                    fetchFromRSSFeeds(),
-                    fetchSampleData() // Fallback
-                ]);
+                const allArticles = [];
                 
-                // Process and enrich articles
-                liveArticles = await processArticles(articles);
+                try {
+                    const newsAPIArticles = await fetchFromNewsAPI();
+                    allArticles.push(...newsAPIArticles);
+                    console.log(`NewsAPI: ${newsAPIArticles.length} articles`);
+                } catch (error) {
+                    console.warn("NewsAPI failed:", error);
+                }
                 
-                // Detect breaking news
+                try {
+                    const gnewsArticles = await fetchFromGNews();
+                    allArticles.push(...gnewsArticles);
+                    console.log(`GNews: ${gnewsArticles.length} articles`);
+                } catch (error) {
+                    console.warn("GNews failed:", error);
+                }
+                
+                try {
+                    const rssArticles = await fetchFromRSSFeeds();
+                    allArticles.push(...rssArticles);
+                    console.log(`RSS: ${rssArticles.length} articles`);
+                } catch (error) {
+                    console.warn("RSS feeds failed:", error);
+                }
+                
+                if (allArticles.length === 0) {
+                    throw new Error("No articles fetched from any source");
+                }
+                
+                const uniqueArticles = removeDuplicates(allArticles);
+                liveArticles = await processArticles(uniqueArticles.slice(0, 20));
+                
                 detectBreakingNews();
-                
-                // Update trending topics
                 updateTrendingTopics();
-                
-                // Render everything
                 renderArticles();
                 updateFeedStats();
                 
@@ -1103,71 +1083,128 @@
             }
         }
 
-        // Fetch from NewsAPI
         async function fetchFromNewsAPI() {
-            // Mock implementation - replace with actual API calls
-            return fetchSampleData();
-            
-            /* REAL IMPLEMENTATION (uncomment and add your API key):
             const source = NEWS_CONFIG.SOURCES[0];
             const params = new URLSearchParams({
                 ...source.params,
                 apiKey: source.apiKey
             });
             
-            const response = await fetch(`${source.url}?${params}`);
-            if (!response.ok) throw new Error(`NewsAPI error: ${response.status}`);
-            
-            const data = await response.json();
-            return data.articles.map(article => ({
-                title: article.title,
-                summary: article.description,
-                source: article.source.name,
-                url: article.url,
-                publishedAt: article.publishedAt,
-                content: article.content
-            }));
-            */
-        }
-
-        // Fetch from RSS Feeds
-        async function fetchFromRSSFeeds() {
-            // Use a CORS proxy for RSS feeds
-            const feedUrl = NEWS_CONFIG.RSS_FEEDS[0];
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}`;
-            
             try {
-                const response = await fetch(proxyUrl);
+                const response = await fetch(`${source.url}?${params}`);
+                if (!response.ok) {
+                    if (response.status === 429) {
+                        console.warn("NewsAPI rate limit reached");
+                        return [];
+                    }
+                    throw new Error(`NewsAPI error: ${response.status}`);
+                }
+                
                 const data = await response.json();
-                
-                // Parse RSS XML (simplified)
-                const parser = new DOMParser();
-                const xml = parser.parseFromString(data.contents, "text/xml");
-                const items = xml.querySelectorAll('item');
-                
-                return Array.from(items).map(item => ({
-                    title: item.querySelector('title')?.textContent || '',
-                    summary: item.querySelector('description')?.textContent || '',
-                    source: "RSS Feed",
-                    url: item.querySelector('link')?.textContent || '#',
-                    publishedAt: item.querySelector('pubDate')?.textContent || new Date().toISOString()
+                return data.articles.map(article => ({
+                    title: article.title,
+                    summary: article.description || article.content?.substring(0, 200) || "No description available",
+                    source: article.source?.name || "Unknown Source",
+                    url: article.url,
+                    publishedAt: article.publishedAt,
+                    content: article.content
                 }));
             } catch (error) {
-                console.error("RSS fetch error:", error);
+                console.error("NewsAPI fetch error:", error);
                 return [];
             }
         }
 
-        // Process and enrich articles
+        async function fetchFromGNews() {
+            const source = NEWS_CONFIG.SOURCES[1];
+            const params = new URLSearchParams({
+                ...source.params,
+                apikey: source.apiKey,
+                token: source.apiKey
+            });
+            
+            try {
+                const response = await fetch(`${source.url}?${params}`);
+                if (!response.ok) {
+                    if (response.status === 429) {
+                        console.warn("GNews rate limit reached");
+                        return [];
+                    }
+                    throw new Error(`GNews error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data.articles.map(article => ({
+                    title: article.title,
+                    summary: article.description || article.content?.substring(0, 200) || "No description available",
+                    source: article.source?.name || "GNews",
+                    url: article.url,
+                    publishedAt: article.publishedAt,
+                    content: article.content
+                }));
+            } catch (error) {
+                console.error("GNews fetch error:", error);
+                return [];
+            }
+        }
+
+        async function fetchFromRSSFeeds() {
+            const feeds = [
+                "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://techcrunch.com/feed/"),
+                "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://www.wired.com/feed/rss"),
+                "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://feeds.arstechnica.com/arstechnica/index"),
+                "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.theverge.com/rss/index.xml"),
+                "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.zdnet.com/news/rss.xml")
+            ];
+            
+            const allArticles = [];
+            
+            for (const feedUrl of feeds) {
+                try {
+                    const response = await fetch(feedUrl);
+                    if (!response.ok) continue;
+                    
+                    let data = await response.json();
+                    
+                    if (feedUrl.includes('allorigins.win')) {
+                        data = JSON.parse(data.contents);
+                    }
+                    
+                    if (data.items && data.items.length > 0) {
+                        const articles = data.items.map(item => ({
+                            title: item.title || "Untitled",
+                            summary: item.description || item.content || "No description",
+                            source: data.feed?.title || "RSS Feed",
+                            url: item.link || item.url || "#",
+                            publishedAt: item.pubDate || item.published || new Date().toISOString(),
+                            content: item.content || item.description
+                        }));
+                        allArticles.push(...articles.slice(0, 3));
+                    }
+                } catch (error) {
+                    console.warn(`Failed to fetch RSS feed ${feedUrl}:`, error);
+                }
+                
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            
+            return allArticles;
+        }
+
+        function removeDuplicates(articles) {
+            const seen = new Set();
+            return articles.filter(article => {
+                const key = article.title.toLowerCase().trim();
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+        }
+
         async function processArticles(articles) {
             return articles.map((article, index) => {
-                // Extract tags based on keywords
                 const tags = extractTags(article.title + ' ' + article.summary);
-                
-                // Calculate impact score
                 const impactScore = calculateImpactScore(article, tags);
-                
-                // Format time
                 const time = formatTime(article.publishedAt || new Date());
                 
                 return {
@@ -1178,63 +1215,60 @@
                     sourceIcon: getSourceIcon(article.source),
                     time: time,
                     readTime: estimateReadTime(article.content || article.summary),
-                    tags: tags,
+                    tags: tags.length > 0 ? tags : ["general"],
                     impactScore: impactScore,
                     impactClass: impactScore >= 8 ? "high" : impactScore >= 6 ? "medium" : "low",
                     url: article.url || "#",
                     publishedAt: article.publishedAt || new Date().toISOString(),
-                    isBreaking: false
+                    isBreaking: false,
+                    uniqueId: Date.now() + Math.random()
                 };
             });
         }
 
-        // Extract tags from content
         function extractTags(content) {
             const tags = [];
             const contentLower = content.toLowerCase();
             
             for (const [tag, keywords] of Object.entries(NEWS_CONFIG.KEYWORDS)) {
                 if (keywords.some(keyword => contentLower.includes(keyword.toLowerCase()))) {
-                    tags.push(tag);
+                    if (tag !== 'breaking' || (tag === 'breaking' && contentLower.includes('breaking'))) {
+                        tags.push(tag);
+                    }
                 }
             }
             
-            return tags.length > 0 ? tags : ["general"];
+            return tags;
         }
 
-        // Calculate impact score
         function calculateImpactScore(article, tags) {
-            let score = 5; // Base score
+            let score = 5;
             
-            // Source credibility
-            const credibleSources = ["Reuters", "Bloomberg", "Financial Times", "Wall Street Journal", "MIT"];
+            const credibleSources = ["Reuters", "Bloomberg", "Financial Times", "Wall Street Journal", "MIT", "TechCrunch", "Wired", "Ars Technica"];
             if (credibleSources.some(src => article.source?.includes(src))) score += 2;
             
-            // Number of tags
             score += Math.min(tags.length, 3);
             
-            // Title length (longer titles often more detailed)
             if (article.title?.length > 100) score += 1;
             
-            // Recentness
             const hoursAgo = (new Date() - new Date(article.publishedAt)) / (1000 * 60 * 60);
-            if (hoursAgo < 1) score += 2; // Less than 1 hour
-            else if (hoursAgo < 24) score += 1; // Less than 24 hours
+            if (hoursAgo < 1) score += 2;
+            else if (hoursAgo < 24) score += 1;
             
-            return Math.min(10, Math.max(1, score)).toFixed(1);
+            if (tags.includes('breaking')) score += 1.5;
+            if (tags.includes('ai') && tags.includes('energy')) score += 1;
+            
+            return Math.min(10, Math.max(1, parseFloat(score.toFixed(1))));
         }
 
-        // Detect breaking news
         function detectBreakingNews() {
             breakingNews = liveArticles.filter(article => {
                 const title = article.title.toLowerCase();
-                const breakingKeywords = [
-                    "breaking", "urgent", "alert", "crisis", "emergency",
-                    "outage", "attack", "hack", "leak", "scandal"
-                ];
+                const breakingKeywords = NEWS_CONFIG.KEYWORDS.breaking;
                 
                 return breakingKeywords.some(keyword => title.includes(keyword)) ||
-                       article.impactScore >= 9;
+                       article.impactScore >= 9 ||
+                       article.tags.includes('breaking');
             });
             
             if (breakingNews.length > 0) {
@@ -1242,19 +1276,16 @@
             }
         }
 
-        // Update trending topics
         function updateTrendingTopics() {
-            trendingTopics.clear();
-            
-            // Count tag occurrences
             const tagCounts = {};
             liveArticles.forEach(article => {
                 article.tags.forEach(tag => {
-                    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                    if (tag !== 'breaking' && tag !== 'general') {
+                        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                    }
                 });
             });
             
-            // Get top 5 tags
             const topTags = Object.entries(tagCounts)
                 .sort(([,a], [,b]) => b - a)
                 .slice(0, 5)
@@ -1264,7 +1295,6 @@
             renderTrendingTopics();
         }
 
-        // Show breaking news
         function showBreakingNews() {
             const banner = document.getElementById('breakingBanner');
             const breakingText = document.getElementById('breakingText');
@@ -1273,19 +1303,16 @@
                 banner.style.display = 'flex';
                 breakingText.textContent = `${breakingNews.length} Breaking News ${breakingNews.length > 1 ? 'Stories' : 'Story'}`;
                 
-                // Show notification
-                showNotification("🚨 Breaking News Alert!", "breaking");
+                showNotification("🚨 Breaking News Alert! Check the feed for updates.", "breaking");
             }
         }
 
-        // Render articles
         function renderArticles() {
             const container = document.getElementById('articlesContainer');
             if (!container) return;
             
             let articlesToShow = [...liveArticles];
             
-            // Apply filters
             if (currentFilter !== "all") {
                 if (currentFilter === "breaking") {
                     articlesToShow = breakingNews;
@@ -1296,7 +1323,6 @@
                 }
             }
             
-            // Apply view sorting
             if (currentView === "top") {
                 articlesToShow.sort((a, b) => b.impactScore - a.impactScore);
             } else if (currentView === "trending") {
@@ -1321,7 +1347,6 @@
                 return;
             }
             
-            // Generate articles HTML
             const articlesHTML = articlesToShow.map(article => `
                 <article class="news-card ${article.isBreaking ? 'breaking' : ''}" data-id="${article.id}">
                     <div class="card-header">
@@ -1350,13 +1375,12 @@
                                 ${getTagDisplayName(tag)}
                             </div>
                         `).join('')}
-                        ${article.isBreaking ? '<div class="tag breaking">Breaking</div>' : ''}
                     </div>
                     
                     <div class="card-footer">
                         <div class="impact-score">
                             <span class="impact-label">Impact Score:</span>
-                            <span class="impact-value ${article.impactClass}">${article.impactScore}</span>
+                            <span class="impact-value ${article.impactClass}">${article.impactScore.toFixed(1)}</span>
                         </div>
                         <div class="card-actions">
                             <button class="action-btn" title="Save" onclick="toggleSave(${article.id}, this)">
@@ -1377,7 +1401,6 @@
             lucide.createIcons();
         }
 
-        // Render trending topics
         function renderTrendingTopics() {
             const container = document.getElementById('trendingTopics');
             if (!container) return;
@@ -1396,14 +1419,14 @@
             container.innerHTML = topicsHTML;
         }
 
-        // Update feed statistics
         function updateFeedStats() {
             const lastUpdate = document.getElementById('lastUpdateTime');
             const articleCount = document.getElementById('articleCount');
             const liveStatus = document.getElementById('liveStatus');
             
             if (lastUpdate) {
-                lastUpdate.textContent = "Just now";
+                const now = new Date();
+                lastUpdate.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
             }
             
             if (articleCount) {
@@ -1415,7 +1438,6 @@
             }
         }
 
-        // Show loading state
         function showLoadingState() {
             const container = document.getElementById('articlesContainer');
             if (!container) return;
@@ -1428,9 +1450,7 @@
             `;
         }
 
-        // Start live updates
         function startLiveUpdates() {
-            // Update news every 5 minutes
             setInterval(async () => {
                 try {
                     await loadNews();
@@ -1440,16 +1460,13 @@
                 }
             }, NEWS_CONFIG.UPDATE_INTERVAL);
             
-            // Check for breaking news every minute
             setInterval(() => {
                 detectBreakingNews();
             }, NEWS_CONFIG.BREAKING_CHECK_INTERVAL);
             
-            // Update timestamps every minute
             setInterval(updateTimeStamps, 60000);
         }
 
-        // Update timestamps
         function updateTimeStamps() {
             const now = new Date();
             const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
@@ -1458,9 +1475,7 @@
             if (feedTime) feedTime.textContent = timeStr;
         }
 
-        // Setup event listeners
         function setupEventListeners() {
-            // Filter chips
             document.querySelectorAll('.filter-chip').forEach(chip => {
                 chip.addEventListener('click', function() {
                     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
@@ -1470,7 +1485,6 @@
                 });
             });
             
-            // View buttons
             document.querySelectorAll('.view-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
@@ -1480,7 +1494,6 @@
                 });
             });
             
-            // Refresh button
             const refreshBtn = document.getElementById('refreshFeed');
             if (refreshBtn) {
                 refreshBtn.addEventListener('click', async () => {
@@ -1500,7 +1513,6 @@
                 });
             }
             
-            // Search button
             const searchBtn = document.getElementById('searchBtn');
             if (searchBtn) {
                 searchBtn.addEventListener('click', () => {
@@ -1511,7 +1523,6 @@
                 });
             }
             
-            // Map points
             document.querySelectorAll('.map-point').forEach(point => {
                 point.addEventListener('click', function() {
                     const loc = this.classList[1];
@@ -1526,123 +1537,96 @@
             });
         }
 
-        // ===== HELPER FUNCTIONS =====
-        
-        // Sample data for fallback
-        function fetchSampleData() {
-            return Promise.resolve([
-                {
-                    title: "Microsoft's Nuclear-Powered AI Data Centers Set New Industry Standard",
-                    summary: "Microsoft partners with nuclear energy providers to power next-gen AI data centers, addressing both energy demands and sustainability goals.",
-                    source: "MIT Technology Review",
-                    url: "https://www.technologyreview.com/2024/01/16/1086795/microsoft-nuclear-powered-data-center-ai/",
-                    publishedAt: new Date().toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "Google Achieves Record 1.02 PUE with Immersion Cooling in Singapore",
-                    summary: "Google's immersion cooling trial shows significant energy savings, potentially revolutionizing data center cooling technology.",
-                    source: "Data Center Frontier",
-                    url: "https://www.datacenterfrontier.com/energy/article/33029472/google-immersion-cooling-singapore-pue-102",
-                    publishedAt: new Date(Date.now() - 3600000).toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "EU Proposes Strict Data Center Zoning Laws Near Residential Areas",
-                    summary: "New European legislation could restrict data center construction, impacting hyperscaler expansion plans across the continent.",
-                    source: "Reuters",
-                    url: "https://www.reuters.com/technology/eu-proposes-data-center-zoning-laws-near-residential-areas-2024-01-16/",
-                    publishedAt: new Date(Date.now() - 7200000).toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "AI Compute Demand Outstrips Renewable Energy Growth, Study Finds",
-                    summary: "New research shows AI development is growing faster than renewable energy capacity, raising sustainability concerns.",
-                    source: "Bloomberg",
-                    url: "https://www.bloomberg.com/news/articles/2024-01-16/ai-compute-demand-outstrips-renewable-energy-growth",
-                    publishedAt: new Date(Date.now() - 10800000).toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "Amazon's Texas Data Center Expansion Faces Water Scarcity Challenges",
-                    summary: "Local regulators question water usage as Amazon plans major data center expansion in drought-prone Texas regions.",
-                    source: "TechCrunch",
-                    url: "https://techcrunch.com/2024/01/15/amazon-texas-data-center-water-scarcity/",
-                    publishedAt: new Date(Date.now() - 14400000).toISOString(),
-                    content: "Full article content would go here..."
-                }
-            ]);
-        }
-
         function loadSampleData() {
-            liveArticles = [
+            const sampleArticles = [
                 {
-                    id: 1,
                     title: "Microsoft's Nuclear-Powered AI Data Centers Set New Industry Standard",
                     summary: "Microsoft partners with nuclear energy providers to power next-gen AI data centers, addressing both energy demands and sustainability goals.",
                     source: "MIT Technology Review",
-                    sourceIcon: "mit",
-                    time: "Just now",
-                    readTime: "5 min read",
-                    tags: ["energy", "ai", "policy"],
-                    impactScore: 9.2,
-                    impactClass: "high",
-                    url: "https://www.technologyreview.com/2024/01/16/1086795/microsoft-nuclear-powered-data-center-ai/"
+                    url: "https://www.technologyreview.com/",
+                    publishedAt: new Date().toISOString(),
+                    content: "Microsoft has signed groundbreaking agreements with nuclear energy providers..."
                 },
                 {
-                    id: 2,
                     title: "Google Achieves Record 1.02 PUE with Immersion Cooling in Singapore",
                     summary: "Google's immersion cooling trial shows significant energy savings, potentially revolutionizing data center cooling technology.",
                     source: "Data Center Frontier",
-                    sourceIcon: "dcf",
-                    time: "1 hour ago",
-                    readTime: "4 min read",
-                    tags: ["energy", "cooling", "ai"],
-                    impactScore: 8.8,
-                    impactClass: "high",
-                    url: "https://www.datacenterfrontier.com/energy/article/33029472/google-immersion-cooling-singapore-pue-102"
+                    url: "https://www.datacenterfrontier.com/",
+                    publishedAt: new Date(Date.now() - 3600000).toISOString(),
+                    content: "Google has published results from its 18-month immersion cooling trial..."
                 },
                 {
-                    id: 3,
-                    title: "EU Proposes Strict Data Center Zoning Laws Near Residential Areas",
-                    summary: "New European legislation could restrict data center construction, impacting hyperscaler expansion plans across the continent.",
+                    title: "BREAKING: Major Cloud Outage Affects Multiple Services Globally",
+                    summary: "A widespread outage in major cloud providers impacts services across North America and Europe.",
+                    source: "TechCrunch",
+                    url: "https://techcrunch.com/",
+                    publishedAt: new Date(Date.now() - 1800000).toISOString(),
+                    content: "Multiple cloud providers are experiencing significant outages..."
+                },
+                {
+                    title: "EU Announces New Data Center Sustainability Regulations",
+                    summary: "European Union unveils comprehensive new regulations targeting data center energy efficiency and carbon emissions.",
                     source: "Reuters",
-                    sourceIcon: "reuters",
-                    time: "2 hours ago",
-                    readTime: "6 min read",
-                    tags: ["policy", "realestate"],
-                    impactScore: 7.5,
-                    impactClass: "medium",
-                    url: "https://www.reuters.com/technology/eu-proposes-data-center-zoning-laws-near-residential-areas-2024-01-16/"
+                    url: "https://www.reuters.com/",
+                    publishedAt: new Date(Date.now() - 7200000).toISOString(),
+                    content: "The European Commission has proposed new regulations..."
                 },
                 {
-                    id: 4,
-                    title: "AI Compute Demand Outstrips Renewable Energy Growth, Study Finds",
-                    summary: "New research shows AI development is growing faster than renewable energy capacity, raising sustainability concerns.",
+                    title: "AI Compute Demand Growing 10x Faster Than Renewable Energy",
+                    summary: "New study shows artificial intelligence compute requirements are outpacing renewable energy growth by a factor of ten.",
                     source: "Bloomberg",
-                    sourceIcon: "bloomberg",
-                    time: "3 hours ago",
-                    readTime: "7 min read",
-                    tags: ["ai", "energy", "policy"],
-                    impactScore: 8.1,
-                    impactClass: "high",
-                    url: "https://www.bloomberg.com/news/articles/2024-01-16/ai-compute-demand-outstrips-renewable-energy-growth"
+                    url: "https://www.bloomberg.com/",
+                    publishedAt: new Date(Date.now() - 10800000).toISOString(),
+                    content: "A new research report indicates that AI development..."
                 },
                 {
-                    id: 5,
-                    title: "BREAKING: Major Data Center Outage Affects Multiple Cloud Providers",
-                    summary: "A widespread outage in Virginia data centers impacts AWS, Azure, and Google Cloud services across North America.",
-                    source: "CNBC",
-                    sourceIcon: "cnn",
-                    time: "10 minutes ago",
-                    readTime: "3 min read",
-                    tags: ["breaking", "security", "energy"],
-                    impactScore: 9.5,
-                    impactClass: "high",
-                    url: "#",
-                    isBreaking: true
+                    title: "Amazon Announces $15B Investment in Sustainable Data Centers",
+                    summary: "Amazon Web Services commits to massive investment in renewable-powered data center infrastructure.",
+                    source: "Wall Street Journal",
+                    url: "https://www.wsj.com/",
+                    publishedAt: new Date(Date.now() - 14400000).toISOString(),
+                    content: "Amazon has announced a $15 billion investment..."
+                },
+                {
+                    title: "New Liquid Cooling Technology Could Cut Data Center Energy by 40%",
+                    summary: "Breakthrough in liquid cooling technology promises significant energy savings for high-density computing.",
+                    source: "Wired",
+                    url: "https://www.wired.com/",
+                    publishedAt: new Date(Date.now() - 18000000).toISOString(),
+                    content: "Researchers have developed a new liquid cooling system..."
+                },
+                {
+                    title: "China Imposes New Restrictions on Data Center Construction",
+                    summary: "Chinese government announces new zoning and energy restrictions for data center development.",
+                    source: "Financial Times",
+                    url: "https://www.ft.com/",
+                    publishedAt: new Date(Date.now() - 21600000).toISOString(),
+                    content: "China has implemented new restrictions on data center construction..."
                 }
             ];
+            
+            liveArticles = sampleArticles.map((article, index) => {
+                const tags = extractTags(article.title + ' ' + article.summary);
+                const impactScore = calculateImpactScore(article, tags);
+                const time = formatTime(article.publishedAt);
+                
+                return {
+                    id: index + 1,
+                    title: article.title,
+                    summary: article.summary,
+                    source: article.source,
+                    sourceIcon: getSourceIcon(article.source),
+                    time: time,
+                    readTime: estimateReadTime(article.content),
+                    tags: tags,
+                    impactScore: impactScore,
+                    impactClass: impactScore >= 8 ? "high" : impactScore >= 6 ? "medium" : "low",
+                    url: article.url,
+                    publishedAt: article.publishedAt,
+                    isBreaking: article.title.toLowerCase().includes('breaking'),
+                    uniqueId: Date.now() + Math.random()
+                };
+            });
             
             detectBreakingNews();
             updateTrendingTopics();
@@ -1650,7 +1634,6 @@
             updateFeedStats();
         }
 
-        // Helper functions
         function getSourceIcon(source) {
             const sourceMap = {
                 "MIT": "mit",
@@ -1664,14 +1647,16 @@
                 "CNBC": "cnn",
                 "BBC": "bbc",
                 "The Verge": "theverge",
-                "Wired": "wired"
+                "Wired": "wired",
+                "Ars Technica": "arstechnica",
+                "ZDNet": "zdnet"
             };
             
             for (const [key, icon] of Object.entries(sourceMap)) {
                 if (source.includes(key)) return icon;
             }
             
-            return "mit"; // Default icon
+            return "mit";
         }
 
         function getSourceAbbreviation(source) {
@@ -1696,7 +1681,7 @@
             if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
             if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
             
-            return date.toLocaleDateString();
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         }
 
         function estimateReadTime(content) {
@@ -1720,7 +1705,6 @@
             return tagNames[tag] || tag.charAt(0).toUpperCase() + tag.slice(1);
         }
 
-        // Global functions
         window.toggleSave = function(articleId, button) {
             const index = savedArticles.indexOf(articleId);
             const icon = button.querySelector('i');
@@ -1784,7 +1768,6 @@
                 `;
                 lucide.createIcons();
             } else {
-                // Temporarily show filtered results
                 const articlesHTML = filtered.map(article => `
                     <article class="news-card" data-id="${article.id}">
                         <div class="card-header">
@@ -1816,7 +1799,6 @@
             }
         }
 
-        // Render heatmap (same as before)
         function renderHeatmap() {
             const heatmapData = [
                 { label: "Energy Prices (EU)", value: "€142.5/MWh", type: "energy" },
@@ -1841,7 +1823,6 @@
             `).join('');
         }
 
-        // Render policy tracker
         function renderPolicy() {
             const policyData = [
                 { label: "EU AI Act", value: "Enacted", status: "enacted" },
@@ -1868,7 +1849,6 @@
             lucide.createIcons();
         }
 
-        // Render TLDR
         function renderTLDR() {
             const container = document.getElementById('tldrContainer');
             if (!container || liveArticles.length === 0) return;
@@ -1886,7 +1866,7 @@
                     </div>
                     <div class="tldr-item">
                         <span class="tldr-bullet">•</span>
-                        <span>Impact: ${article.impactScore}/10</span>
+                        <span>Impact: ${article.impactScore.toFixed(1)}/10</span>
                     </div>
                     <div class="tldr-item">
                         <span class="tldr-bullet">•</span>
@@ -1898,7 +1878,6 @@
             lucide.createIcons();
         }
 
-        // Render feed health
         function renderFeedHealth() {
             const container = document.getElementById('feedHealth');
             if (!container) return;
@@ -1951,13 +1930,10 @@
             }[status] || "#ffffff";
         }
 
-        // Show notification
         function showNotification(message, type = "info") {
-            // Remove existing notification
             const existing = document.querySelector('.notification');
             if (existing) existing.remove();
             
-            // Create new notification
             const notification = document.createElement('div');
             notification.className = 'notification';
             
@@ -1978,7 +1954,6 @@
                 <span>${message}</span>
             `;
             
-            // Style based on type
             const bgColor = type === 'breaking' ? 'rgba(255, 71, 87, 0.1)' : 
                            type === 'error' ? 'rgba(255, 71, 87, 0.1)' : 
                            type === 'success' ? 'rgba(0, 255, 157, 0.1)' : 
@@ -1999,14 +1974,12 @@
             document.body.appendChild(notification);
             lucide.createIcons();
             
-            // Auto-remove after 5 seconds (longer for breaking news)
             setTimeout(() => {
                 notification.style.animation = 'slideOut 0.3s ease';
                 setTimeout(() => notification.remove(), 300);
             }, type === 'breaking' ? 8000 : 5000);
         }
 
-        // Initialize everything
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
