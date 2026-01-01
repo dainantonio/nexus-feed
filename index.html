@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Nexus Feed | Live AI × Data × Energy × Policy</title>
+    <title>NEXUS FEED | AI × Data × Energy × Policy Intelligence</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <style>
-        /* ===== IMPROVED STYLES ===== */
         :root {
             --color-bg-dark: #0a0a0f;
             --color-bg-card: #111118;
@@ -17,15 +19,27 @@
             --color-data-blue: #0095ff;
             --color-accent-purple: #8a2be2;
             --color-text-primary: #ffffff;
-            --color-text-secondary: #a0a0b0;
-            --color-text-muted: #6a6a7a;
-            --color-border: #222230;
+            --color-text-secondary: #b0b0c0;
+            --color-text-muted: #7a7a8a;
+            --color-border: #2a2a3a;
             --color-tag-energy: rgba(0, 255, 157, 0.1);
             --color-tag-ai: rgba(0, 149, 255, 0.1);
             --color-tag-policy: rgba(138, 43, 226, 0.1);
             --color-tag-realestate: rgba(255, 165, 0, 0.1);
             --border-radius: 12px;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            
+            /* Sentiment Colors */
+            --sentiment-bullish: rgba(0, 255, 157, 0.2);
+            --sentiment-bearish: rgba(255, 71, 87, 0.2);
+            --sentiment-neutral: rgba(149, 149, 255, 0.2);
+            --sentiment-bullish-text: #00ff9d;
+            --sentiment-bearish-text: #ff4757;
+            --sentiment-neutral-text: #9595ff;
+            
+            /* Cyberpunk Effects */
+            --scanline-color: rgba(0, 255, 157, 0.03);
+            --glow-intensity: 0.5;
         }
 
         * {
@@ -40,9 +54,104 @@
             color: var(--color-text-primary);
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
         }
 
-        /* ===== IMPROVED HEADER ===== */
+        /* ===== CYBERPUNK EFFECTS ===== */
+        .cyberpunk-active .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                var(--scanline-color) 51%
+            );
+            background-size: 100% 4px;
+            z-index: 9998;
+            pointer-events: none;
+            animation: scanlines 8s linear infinite;
+        }
+
+        .cyberpunk-active .crt-flicker {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 2px;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.1;
+            animation: flicker 0.15s infinite;
+        }
+
+        .cyberpunk-active .glow-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                circle at 20% 50%,
+                rgba(0, 255, 157, 0.05) 0%,
+                transparent 50%
+            ),
+            radial-gradient(
+                circle at 80% 20%,
+                rgba(0, 149, 255, 0.05) 0%,
+                transparent 50%
+            );
+            z-index: 9997;
+            pointer-events: none;
+        }
+
+        @keyframes scanlines {
+            from { background-position: 0 0; }
+            to { background-position: 0 8px; }
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.1; }
+            50% { opacity: 0.15; }
+            100% { opacity: 0.1; }
+        }
+
+        .cyberpunk-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-electric-green);
+            color: var(--color-electric-green);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .cyberpunk-toggle:hover {
+            background: rgba(0, 255, 157, 0.1);
+        }
+
+        .cyberpunk-toggle.active {
+            background: var(--color-electric-green);
+            color: var(--color-bg-dark);
+        }
+
+        /* ===== MAIN LAYOUT ===== */
         .app-container {
             display: grid;
             grid-template-columns: 280px 1fr 320px;
@@ -103,13 +212,133 @@
             gap: 10px;
         }
 
-        /* ===== IMPROVED FILTER CHIPS ===== */
+        /* ===== INTELLIGENCE AGGREGATOR - BULL/BEAR METER ===== */
+        .intelligence-aggregator {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, #111118, #1a1a24);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .aggregator-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .bull-bear-meter {
+            min-width: 220px;
+            flex-shrink: 0;
+        }
+
+        .meter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            gap: 15px;
+        }
+
+        .meter-label {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            white-space: nowrap;
+        }
+
+        .meter-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--color-electric-green);
+            white-space: nowrap;
+        }
+
+        .meter-gauge {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .meter-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .meter-fill.bullish {
+            background: linear-gradient(90deg, #00ff9d, #00cc7a);
+        }
+
+        .meter-fill.bearish {
+            background: linear-gradient(90deg, #ff4757, #cc3947);
+        }
+
+        .meter-ticks {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4px;
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            padding: 0 5px;
+        }
+
+        .meter-ticks span {
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .sentiment-breakdown {
+            display: flex;
+            gap: 1.5rem;
+            flex-grow: 1;
+            flex-wrap: wrap;
+            min-width: 300px;
+        }
+
+        .sentiment-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .sentiment-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sentiment-dot.bullish {
+            background-color: var(--color-electric-green);
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+
+        .sentiment-dot.bearish {
+            background-color: #ff4757;
+            box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+        }
+
+        .sentiment-dot.neutral {
+            background-color: #9595ff;
+            box-shadow: 0 0 10px rgba(149, 149, 255, 0.5);
+        }
+
+        /* ===== FILTER CHIPS ===== */
         .filter-container {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             margin: 1.5rem 2rem;
             grid-column: 1 / -1;
+            padding: 5px 0;
         }
 
         .filter-chip {
@@ -125,6 +354,8 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .filter-chip:hover {
@@ -140,7 +371,7 @@
             font-weight: 600;
         }
 
-        /* ===== IMPROVED SIDEBAR ===== */
+        /* ===== LEFT SIDEBAR ===== */
         .left-sidebar {
             grid-column: 1;
             background-color: var(--color-bg-sidebar);
@@ -164,7 +395,24 @@
             gap: 8px;
         }
 
-        /* ===== IMPROVED HEAT MAP ===== */
+        /* ===== NEURAL MAP ===== */
+        .neural-map-container {
+            height: 300px;
+            background-color: var(--color-bg-card);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--color-border);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #neuralMap {
+            width: 100%;
+            height: 100%;
+            background: #0a0a0f;
+        }
+
+        /* ===== HEATMAP ===== */
         .heatmap-container {
             background-color: var(--color-bg-card);
             border-radius: var(--border-radius);
@@ -179,6 +427,7 @@
             align-items: center;
             padding: 0.75rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 10px;
         }
 
         .heatmap-item:last-child {
@@ -189,12 +438,15 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex: 1;
+            min-width: 0;
         }
 
         .heatmap-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
+            flex-shrink: 0;
         }
 
         .heatmap-dot.energy {
@@ -214,9 +466,10 @@
 
         .heatmap-value {
             font-weight: 600;
+            white-space: nowrap;
         }
 
-        /* ===== IMPROVED MAIN FEED ===== */
+        /* ===== MAIN FEED ===== */
         .main-feed {
             grid-column: 2;
             padding: 1.5rem;
@@ -241,17 +494,20 @@
             align-items: center;
             font-size: 0.85rem;
             color: var(--color-text-muted);
+            flex-wrap: wrap;
         }
 
         .stat-item {
             display: flex;
             align-items: center;
             gap: 5px;
+            white-space: nowrap;
         }
 
         .view-options {
             display: flex;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         .view-btn {
@@ -263,6 +519,12 @@
             color: var(--color-text-secondary);
             cursor: pointer;
             transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .view-btn:hover {
+            border-color: var(--color-electric-green);
+            color: var(--color-electric-green);
         }
 
         .view-btn.active {
@@ -271,7 +533,7 @@
             border-color: var(--color-electric-green);
         }
 
-        /* ===== IMPROVED NEWS CARDS ===== */
+        /* ===== NEWS CARDS ===== */
         .news-card {
             background-color: var(--color-bg-card);
             border-radius: var(--border-radius);
@@ -304,6 +566,7 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 1rem;
+            gap: 10px;
         }
 
         .card-source {
@@ -312,6 +575,7 @@
             gap: 8px;
             font-size: 0.85rem;
             color: var(--color-text-secondary);
+            flex-wrap: wrap;
         }
 
         .source-icon {
@@ -323,6 +587,7 @@
             justify-content: center;
             font-weight: 700;
             font-size: 0.7rem;
+            flex-shrink: 0;
         }
 
         .source-icon.mit {
@@ -385,9 +650,20 @@
             color: white;
         }
 
+        .source-icon.zdnet {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        .source-icon.arstechnica {
+            background-color: #ff6600;
+            color: white;
+        }
+
         .card-time {
             font-size: 0.8rem;
             color: var(--color-text-muted);
+            white-space: nowrap;
         }
 
         .card-title {
@@ -395,6 +671,16 @@
             font-weight: 600;
             margin-bottom: 1rem;
             line-height: 1.4;
+        }
+
+        .card-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .card-title a:hover {
+            color: var(--color-electric-green);
+            text-decoration: underline;
         }
 
         .card-summary {
@@ -415,6 +701,7 @@
             border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .tag.energy {
@@ -453,10 +740,116 @@
             animation: pulse 2s infinite;
         }
 
+        /* ===== SENTIMENT BADGE ===== */
+        .sentiment-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+
+        .sentiment-badge.bullish {
+            background-color: var(--sentiment-bullish);
+            color: var(--sentiment-bullish-text);
+            border: 1px solid rgba(0, 255, 157, 0.3);
+        }
+
+        .sentiment-badge.bearish {
+            background-color: var(--sentiment-bearish);
+            color: var(--sentiment-bearish-text);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+
+        .sentiment-badge.neutral {
+            background-color: var(--sentiment-neutral);
+            color: var(--sentiment-neutral-text);
+            border: 1px solid rgba(149, 149, 255, 0.3);
+        }
+
+        /* ===== AUTO-SUMMARIZER ===== */
+        .analyze-btn {
+            background: none;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 1rem;
+            white-space: nowrap;
+        }
+
+        .analyze-btn:hover {
+            border-color: var(--color-electric-green);
+            color: var(--color-electric-green);
+        }
+
+        .analysis-content {
+            display: none;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 3px solid var(--color-electric-green);
+        }
+
+        .analysis-content.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .analysis-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+        }
+
+        .analysis-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .analysis-bullet {
+            color: var(--color-electric-green);
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .analysis-text {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+        }
+
+        .highlight {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--color-electric-green);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CARD FOOTER ===== */
         .card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 15px;
         }
 
         .impact-score {
@@ -468,6 +861,7 @@
         .impact-label {
             font-size: 0.8rem;
             color: var(--color-text-muted);
+            white-space: nowrap;
         }
 
         .impact-value {
@@ -483,9 +877,14 @@
             color: #ffa500;
         }
 
+        .impact-value.low {
+            color: #ff4757;
+        }
+
         .card-actions {
             display: flex;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         .action-btn {
@@ -500,6 +899,7 @@
             transition: var(--transition);
             border: none;
             color: var(--color-text-secondary);
+            flex-shrink: 0;
         }
 
         .action-btn:hover {
@@ -507,7 +907,60 @@
             color: var(--color-bg-dark);
         }
 
-        /* ===== IMPROVED RIGHT SIDEBAR ===== */
+        .action-btn.active {
+            background-color: var(--color-electric-green);
+            color: var(--color-bg-dark);
+        }
+
+        /* Audio Toggle Specific */
+        .audio-toggle-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--color-bg-card);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--color-border);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .audio-toggle-container:hover {
+            border-color: var(--color-electric-green);
+        }
+
+        .audio-toggle-container.active {
+            background: rgba(0, 255, 157, 0.1);
+            border-color: var(--color-electric-green);
+        }
+
+        .audio-toggle-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .audio-toggle-text {
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+        }
+
+        .audio-toggle-container.active .audio-toggle-icon {
+            color: var(--color-electric-green);
+        }
+
+        .audio-toggle-container.active .audio-toggle-text {
+            color: var(--color-electric-green);
+        }
+
+        /* ===== RIGHT SIDEBAR ===== */
         .right-sidebar {
             grid-column: 3;
             background-color: var(--color-bg-sidebar);
@@ -516,74 +969,6 @@
             overflow-y: auto;
         }
 
-        .resource-map {
-            height: 300px;
-            background-color: var(--color-bg-card);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--color-border);
-            margin-bottom: 1.5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .map-container {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0d1b2a, #1b263b);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .map-point {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--color-electric-green);
-            box-shadow: 0 0 15px rgba(0, 255, 157, 0.8);
-            cursor: pointer;
-        }
-
-        .map-point.virginia {
-            top: 40%;
-            left: 25%;
-        }
-
-        .map-point.dublin {
-            top: 30%;
-            left: 45%;
-        }
-
-        .map-point.singapore {
-            top: 60%;
-            left: 75%;
-        }
-
-        .map-point.tokyo {
-            top: 40%;
-            left: 85%;
-        }
-
-        .map-label {
-            position: absolute;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            white-space: nowrap;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-
-        .map-point:hover .map-label {
-            opacity: 1;
-        }
-
-        /* ===== IMPROVED TLDR SECTION ===== */
         .tldr-container {
             background-color: var(--color-bg-card);
             border-radius: var(--border-radius);
@@ -623,7 +1008,7 @@
             margin-top: 2px;
         }
 
-        /* ===== IMPROVED FOOTER ===== */
+        /* ===== FOOTER ===== */
         .app-footer {
             grid-column: 1 / -1;
             background-color: var(--color-bg-sidebar);
@@ -651,31 +1036,7 @@
             color: var(--color-electric-green);
         }
 
-        /* ===== NEW: TRENDING TOPICS ===== */
-        .trending-topics {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 1rem;
-        }
-
-        .trending-topic {
-            padding: 0.5rem 0.75rem;
-            background-color: rgba(0, 149, 255, 0.1);
-            border: 1px solid rgba(0, 149, 255, 0.3);
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: var(--color-data-blue);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .trending-topic:hover {
-            background-color: rgba(0, 149, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        /* ===== NEW: BREAKING NEWS BANNER ===== */
+        /* ===== BREAKING BANNER ===== */
         .breaking-banner {
             background: linear-gradient(90deg, #ff4757, #ff6b81);
             color: white;
@@ -688,7 +1049,7 @@
             animation: pulse 2s infinite;
         }
 
-        /* ===== NEW: LOADING STATES ===== */
+        /* ===== LOADING STATES ===== */
         .loading {
             display: flex;
             flex-direction: column;
@@ -718,19 +1079,200 @@
             color: var(--color-text-muted);
         }
 
-        .skeleton {
-            background: linear-gradient(90deg, #111118 25%, #1a1a24 50%, #111118 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: 4px;
+        /* ===== NOTIFICATION SYSTEM ===== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--color-bg-card);
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid;
+            z-index: 9999;
+            box-shadow: 0 4px 20px rgba(0, 255, 157, 0.2);
+            animation: slideInRight 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 350px;
         }
 
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        /* ===== IMPROVED RESPONSIVE ===== */
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* ===== SEARCH ===== */
+        .search-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            z-index: 9998;
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-container.active {
+            display: flex;
+        }
+
+        .search-input {
+            width: 80%;
+            max-width: 600px;
+            padding: 1.5rem 2rem;
+            background: var(--color-bg-card);
+            border: 2px solid var(--color-electric-green);
+            border-radius: var(--border-radius);
+            font-size: 1.2rem;
+            color: var(--color-text-primary);
+            outline: none;
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        /* ===== SETTINGS MODAL ===== */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            z-index: 9998;
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-modal.active {
+            display: flex;
+        }
+
+        .settings-content {
+            width: 80%;
+            max-width: 500px;
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .settings-title {
+            font-size: 1.5rem;
+            color: var(--color-electric-green);
+        }
+
+        .settings-close {
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-close:hover {
+            color: var(--color-electric-green);
+        }
+
+        .settings-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-group h4 {
+            margin-bottom: 1rem;
+            color: var(--color-text-primary);
+            font-size: 1rem;
+        }
+
+        .settings-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .settings-option label {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .settings-toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .settings-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .settings-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--color-border);
+            transition: var(--transition);
+            border-radius: 24px;
+        }
+
+        .settings-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        .settings-toggle input:checked + .settings-slider {
+            background-color: var(--color-electric-green);
+        }
+
+        .settings-toggle input:checked + .settings-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 1200px) {
             .app-container {
                 grid-template-columns: 240px 1fr 280px;
@@ -740,17 +1282,31 @@
         @media (max-width: 992px) {
             .app-container {
                 grid-template-columns: 1fr;
-                grid-template-rows: auto auto 1fr auto auto;
+                grid-template-rows: auto auto auto 1fr auto auto;
             }
-
             .left-sidebar, .right-sidebar {
                 grid-column: 1;
                 border: none;
                 border-bottom: 1px solid var(--color-border);
             }
-
             .main-feed {
                 grid-column: 1;
+            }
+            .intelligence-aggregator {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            .aggregator-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .bull-bear-meter {
+                min-width: 100%;
+            }
+            .sentiment-breakdown {
+                min-width: 100%;
+                justify-content: space-between;
             }
         }
 
@@ -758,76 +1314,163 @@
             .app-header {
                 flex-direction: column;
                 gap: 1rem;
-                align-items: flex-start;
+                align-items: stretch;
             }
-
+            .header-actions {
+                justify-content: center;
+            }
             .filter-container {
                 margin: 1rem;
+                gap: 8px;
             }
-
+            .filter-chip {
+                padding: 0.4rem 1rem;
+                font-size: 0.8rem;
+            }
             .feed-header {
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: stretch;
                 gap: 1rem;
             }
-
             .feed-stats {
                 justify-content: space-between;
                 width: 100%;
             }
-
             .view-options {
-                align-self: flex-end;
+                align-self: stretch;
+                justify-content: center;
             }
-
             .card-header {
                 flex-direction: column;
                 gap: 0.5rem;
                 align-items: flex-start;
             }
-
             .card-footer {
                 flex-direction: column;
                 gap: 1rem;
-                align-items: flex-start;
+                align-items: stretch;
             }
-
             .card-actions {
-                align-self: flex-end;
+                align-self: center;
+            }
+            .impact-score {
+                justify-content: center;
             }
         }
 
-        /* ===== NEW: NOTIFICATION STYLES ===== */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--color-bg-card);
-            color: var(--color-electric-green);
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: 1px solid var(--color-electric-green);
-            z-index: 9999;
-            box-shadow: 0 4px 20px rgba(0, 255, 157, 0.2);
-            animation: slideIn 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            max-width: 350px;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
+        @media (max-width: 480px) {
+            .app-header {
+                padding: 1rem;
+            }
+            .logo-text h1 {
+                font-size: 1.2rem;
+            }
+            .intelligence-aggregator {
+                padding: 1rem;
+            }
+            .sentiment-item {
+                font-size: 0.8rem;
+            }
+            .filter-container {
+                margin: 1rem 0.5rem;
+            }
+            .main-feed, .left-sidebar, .right-sidebar {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Cyberpunk Effects Overlays -->
+    <div class="scanlines"></div>
+    <div class="crt-flicker"></div>
+    <div class="glow-overlay"></div>
+
+    <!-- Cyberpunk Toggle -->
+    <button class="cyberpunk-toggle" id="cyberpunkToggle">
+        <i data-lucide="zap"></i>
+        <span>CYBERPUNK MODE</span>
+    </button>
+
+    <!-- Audio Alert Controls -->
+    <div class="audio-toggle-container" id="audioToggleContainer">
+        <div class="audio-toggle-icon">
+            <i data-lucide="volume-2" id="audioToggleIcon"></i>
+        </div>
+        <span class="audio-toggle-text" id="audioToggleText">VOICE ALERTS</span>
+    </div>
+
+    <!-- Search Modal -->
+    <div class="search-container" id="searchContainer">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search intelligence... (Press ESC to close)">
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h3 class="settings-title">SYSTEM SETTINGS</h3>
+                <button class="settings-close" id="settingsClose">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="settings-group">
+                <h4>FEED SETTINGS</h4>
+                <div class="settings-option">
+                    <label>Auto-refresh interval</label>
+                    <select id="refreshInterval">
+                        <option value="300000">5 minutes</option>
+                        <option value="600000">10 minutes</option>
+                        <option value="1800000">30 minutes</option>
+                        <option value="0">Manual only</option>
+                    </select>
+                </div>
+                <div class="settings-option">
+                    <label>Default view</label>
+                    <select id="defaultView">
+                        <option value="latest">Latest</option>
+                        <option value="top">Top Impact</option>
+                        <option value="bullish">Bullish Only</option>
+                    </select>
+                </div>
+            </div>
+            <div class="settings-group">
+                <h4>VISUAL SETTINGS</h4>
+                <div class="settings-option">
+                    <label>Dark mode</label>
+                    <label class="settings-toggle">
+                        <input type="checkbox" id="darkModeToggle" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+                <div class="settings-option">
+                    <label>Cyberpunk effects</label>
+                    <label class="settings-toggle">
+                        <input type="checkbox" id="cyberpunkToggleSetting">
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="settings-group">
+                <h4>AUDIO SETTINGS</h4>
+                <div class="settings-option">
+                    <label>Voice alerts</label>
+                    <label class="settings-toggle">
+                        <input type="checkbox" id="voiceAlertsToggle" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+                <div class="settings-option">
+                    <label>Breaking news alerts</label>
+                    <label class="settings-toggle">
+                        <input type="checkbox" id="breakingAlertsToggle" checked>
+                        <span class="settings-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
@@ -836,8 +1479,8 @@
                     <i data-lucide="cpu" style="color: #0a0a0f;"></i>
                 </div>
                 <div class="logo-text">
-                    <h1>The Nexus Feed</h1>
-                    <p>Live AI × Data × Energy × Policy</p>
+                    <h1>NEXUS INTELLIGENCE</h1>
+                    <p>AI × DATA × ENERGY × POLICY</p>
                 </div>
             </div>
             <div class="header-actions">
@@ -853,45 +1496,66 @@
             </div>
         </header>
 
-        <!-- Filter Chips -->
-        <div class="filter-container">
-            <div class="filter-chip active" data-filter="all">
-                <i data-lucide="zap"></i> All Nexus
-            </div>
-            <div class="filter-chip" data-filter="ai">
-                <i data-lucide="cpu"></i> AI & Compute
-            </div>
-            <div class="filter-chip" data-filter="energy">
-                <i data-lucide="battery-charging"></i> Energy
-            </div>
-            <div class="filter-chip" data-filter="realestate">
-                <i data-lucide="building-2"></i> Real Estate & Zoning
-            </div>
-            <div class="filter-chip" data-filter="policy">
-                <i data-lucide="scale"></i> Policy & Regulation
-            </div>
-            <div class="filter-chip" data-filter="breaking">
-                <i data-lucide="alert-circle"></i> Breaking News
+        <!-- Intelligence Aggregator - Bull/Bear Meter -->
+        <div class="intelligence-aggregator">
+            <div class="aggregator-content">
+                <div class="bull-bear-meter">
+                    <div class="meter-header">
+                        <span class="meter-label">MARKET SENTIMENT</span>
+                        <span class="meter-value" id="sentimentValue">NEUTRAL</span>
+                    </div>
+                    <div class="meter-gauge">
+                        <div class="meter-fill" id="sentimentMeterFill" style="width: 50%"></div>
+                    </div>
+                    <div class="meter-ticks">
+                        <span>BEARISH</span>
+                        <span>NEUTRAL</span>
+                        <span>BULLISH</span>
+                    </div>
+                </div>
+                <div class="sentiment-breakdown" id="sentimentBreakdown">
+                    <!-- Dynamic content will be added here -->
+                </div>
             </div>
         </div>
 
-        <!-- Left Sidebar -->
+        <!-- Filter Chips -->
+        <div class="filter-container">
+            <div class="filter-chip active" data-filter="all">
+                <i data-lucide="zap"></i> ALL NEXUS
+            </div>
+            <div class="filter-chip" data-filter="ai">
+                <i data-lucide="cpu"></i> AI & COMPUTE
+            </div>
+            <div class="filter-chip" data-filter="energy">
+                <i data-lucide="battery-charging"></i> ENERGY
+            </div>
+            <div class="filter-chip" data-filter="realestate">
+                <i data-lucide="building-2"></i> REAL ESTATE
+            </div>
+            <div class="filter-chip" data-filter="policy">
+                <i data-lucide="scale"></i> POLICY
+            </div>
+            <div class="filter-chip" data-filter="breaking">
+                <i data-lucide="alert-circle"></i> BREAKING
+            </div>
+        </div>
+
+        <!-- Left Sidebar with Neural Map -->
         <aside class="left-sidebar">
             <div class="sidebar-section">
-                <h3><i data-lucide="trending-up"></i> Live Heat Maps</h3>
+                <h3><i data-lucide="map"></i> NEURAL MAP</h3>
+                <div class="neural-map-container">
+                    <div id="neuralMap"></div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <h3><i data-lucide="activity"></i> HEAT MAP</h3>
                 <div class="heatmap-container" id="heatmapContainer"></div>
             </div>
-
             <div class="sidebar-section">
-                <h3><i data-lucide="file-text"></i> Policy Tracker</h3>
-                <div class="heatmap-container" id="policyTracker"></div>
-            </div>
-
-            <div class="sidebar-section">
-                <h3><i data-lucide="trending-up"></i> Trending Topics</h3>
-                <div class="trending-topics" id="trendingTopics">
-                    <!-- Will be populated by JavaScript -->
-                </div>
+                <h3><i data-lucide="trending-up"></i> TRENDING</h3>
+                <div class="heatmap-container" id="trendingTopics"></div>
             </div>
         </aside>
 
@@ -899,40 +1563,38 @@
         <main class="main-feed">
             <div class="feed-header">
                 <div>
-                    <h2>Today's Intelligence Feed</h2>
+                    <h2>INTELLIGENCE FEED</h2>
                     <div class="feed-stats">
                         <div class="stat-item">
                             <i data-lucide="clock"></i>
-                            <span id="lastUpdateTime">Just now</span>
+                            <span id="lastUpdateTime">LIVE</span>
                         </div>
                         <div class="stat-item">
                             <i data-lucide="newspaper"></i>
-                            <span id="articleCount">0 articles</span>
+                            <span id="articleCount">0 ARTICLES</span>
                         </div>
                         <div class="stat-item">
                             <i data-lucide="zap"></i>
-                            <span id="liveStatus">Live</span>
+                            <span id="liveStatus">REALTIME</span>
                         </div>
                     </div>
                 </div>
                 <div class="view-options">
-                    <button class="view-btn active" data-view="latest">Latest</button>
-                    <button class="view-btn" data-view="top">Top Impact</button>
-                    <button class="view-btn" data-view="trending">Trending</button>
+                    <button class="view-btn active" data-view="latest">LATEST</button>
+                    <button class="view-btn" data-view="top">TOP IMPACT</button>
+                    <button class="view-btn" data-view="bullish">BULLISH</button>
                 </div>
             </div>
 
-            <!-- Breaking News Banner (Conditional) -->
             <div id="breakingBanner" class="breaking-banner" style="display: none;">
                 <i data-lucide="alert-circle"></i>
-                <span id="breakingText">Breaking News</span>
+                <span id="breakingText">BREAKING NEWS DETECTED</span>
             </div>
 
-            <!-- Articles Container -->
             <div id="articlesContainer">
                 <div class="loading">
                     <div class="loading-spinner"></div>
-                    <p>Loading live news feed...</p>
+                    <p>INITIALIZING NEXUS INTELLIGENCE...</p>
                 </div>
             </div>
         </main>
@@ -940,394 +1602,598 @@
         <!-- Right Sidebar -->
         <aside class="right-sidebar">
             <div class="sidebar-section">
-                <h3><i data-lucide="map-pin"></i> Data Center Map</h3>
-                <div class="resource-map">
-                    <div class="map-container">
-                        <div class="map-point virginia"><div class="map-label">Virginia, USA</div></div>
-                        <div class="map-point dublin"><div class="map-label">Dublin, Ireland</div></div>
-                        <div class="map-point singapore"><div class="map-label">Singapore</div></div>
-                        <div class="map-point tokyo"><div class="map-label">Tokyo, Japan</div></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <h3><i data-lucide="sparkles"></i> TL;DR Mode</h3>
+                <h3><i data-lucide="sparkles"></i> TL;DR MODE</h3>
                 <div class="tldr-container" id="tldrContainer"></div>
             </div>
-
             <div class="sidebar-section">
-                <h3><i data-lucide="activity"></i> Feed Health</h3>
-                <div class="heatmap-container" id="feedHealth"></div>
+                <h3><i data-lucide="bar-chart-3"></i> SENTIMENT ANALYTICS</h3>
+                <div class="heatmap-container" id="sentimentAnalytics"></div>
+            </div>
+            <div class="sidebar-section">
+                <h3><i data-lucide="shield"></i> SYSTEM HEALTH</h3>
+                <div class="heatmap-container" id="systemHealth"></div>
             </div>
         </aside>
 
         <!-- Footer -->
         <footer class="app-footer">
             <div class="footer-copyright">
-                © 2024 The Nexus Feed. Real-time intelligence for AI, Data, Energy, and Policy.
+                © 2024 NEXUS INTELLIGENCE. REAL-TIME AI-DRIVEN MARKET ANALYSIS.
             </div>
             <div class="footer-links">
-                <a href="#" class="footer-link">About</a>
+                <a href="#" class="footer-link">ABOUT</a>
                 <a href="#" class="footer-link">API</a>
-                <a href="#" class="footer-link">Sources</a>
-                <a href="#" class="footer-link">Privacy</a>
-                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">SOURCES</a>
+                <a href="#" class="footer-link">PRIVACY</a>
             </div>
         </footer>
     </div>
 
+    <!-- JavaScript Application -->
     <script>
-        // ============================================
-        // ENHANCED NEWS FEED WITH MULTIPLE SOURCES
-        // ============================================
-
-        // Initialize icons
+        // Initialize Lucide icons
         lucide.createIcons();
 
-        // API Configuration
+        // ===== GLOBAL STATE =====
+        const appState = {
+            currentFilter: "all",
+            currentView: "latest",
+            liveArticles: [],
+            breakingNews: [],
+            trendingTopics: new Set(),
+            savedArticles: [],
+            neuralMap: null,
+            audioEnabled: true,
+            cyberpunkMode: false,
+            sentimentData: { bullish: 0, bearish: 0, neutral: 0 },
+            currentSearchTerm: "",
+            refreshIntervalId: null,
+            isRefreshing: false,
+            isInitialized: false
+        };
+
+        // ===== API CONFIGURATION =====
         const NEWS_CONFIG = {
-            // Multiple news sources for redundancy
-            SOURCES: [
-                {
-                    name: "NewsAPI",
-                    url: "https://newsapi.org/v2/everything",
-                    apiKey: "YOUR_NEWSAPI_KEY", // Get from https://newsapi.org
-                    params: {
-                        q: "(AI OR artificial intelligence) AND (data center OR energy OR policy)",
-                        language: "en",
-                        sortBy: "publishedAt",
-                        pageSize: 10
-                    }
-                },
-                {
-                    name: "GNews",
-                    url: "https://gnews.io/api/v4/search",
-                    apiKey: "YOUR_GNEWS_KEY", // Get from https://gnews.io
-                    params: {
-                        q: "technology AI data center energy policy",
-                        lang: "en",
-                        max: 10
-                    }
-                }
-            ],
+            API_KEYS: {
+                NEWSAPI: 'e09ab63096474026a4e546d9a0c988e4',
+                GNEWS: 'f6ac1015751e1fbd24ef4ebe63d281f8'
+            },
             
-            // RSS Feeds as backup
-            RSS_FEEDS: [
-                "https://techcrunch.com/feed/",
-                "https://www.wired.com/feed/rss",
-                "https://feeds.arstechnica.com/arstechnica/index",
-                "https://www.theverge.com/rss/index.xml",
-                "https://www.zdnet.com/news/rss.xml"
-            ],
+            ENDPOINTS: {
+                NEWSAPI: 'https://newsapi.org/v2/everything',
+                GNEWS: 'https://gnews.io/api/v4/search'
+            },
             
-            // Update intervals
-            UPDATE_INTERVAL: 300000, // 5 minutes
-            BREAKING_CHECK_INTERVAL: 60000, // 1 minute
+            UPDATE_INTERVAL: 300000,
+            BREAKING_CHECK_INTERVAL: 60000,
             
-            // Keywords for categorization
-            KEYWORDS: {
-                ai: ["AI", "artificial intelligence", "machine learning", "deep learning", "neural network", "GPT", "OpenAI"],
-                energy: ["energy", "power", "electricity", "solar", "wind", "nuclear", "renewable", "carbon"],
-                policy: ["policy", "regulation", "law", "legislation", "government", "EU", "US", "China"],
-                realestate: ["real estate", "zoning", "land", "property", "construction", "development"],
-                cooling: ["cooling", "immersion", "liquid", "thermal", "heat", "PUE"],
-                security: ["security", "cybersecurity", "privacy", "encryption", "attack", "breach"]
+            SENTIMENT_KEYWORDS: {
+                bullish: [
+                    'breakthrough', 'innovation', 'record', 'growth', 'surge', 'rise', 'increase', 'expansion',
+                    'investment', 'funding', 'partnership', 'deal', 'success', 'achievement', 'milestone',
+                    'profitable', 'efficient', 'sustainable', 'green', 'renewable', 'clean', 'solution',
+                    'advancement', 'technology', 'progress', 'positive', 'optimistic', 'bullish', 'strong',
+                    'dominant', 'leader', 'pioneer', 'revolutionary', 'transformative'
+                ],
+                bearish: [
+                    'outage', 'attack', 'breach', 'hack', 'failure', 'downtime', 'delay', 'problem',
+                    'issue', 'concern', 'warning', 'alert', 'crisis', 'emergency', 'risk', 'threat',
+                    'decline', 'drop', 'fall', 'decrease', 'reduction', 'cut', 'loss', 'negative',
+                    'pessimistic', 'bearish', 'weak', 'vulnerable', 'exposed', 'unsafe', 'danger',
+                    'regulation', 'restriction', 'ban', 'prohibit', 'limit', 'fine', 'penalty', 'lawsuit'
+                ]
+            },
+            
+            NEURAL_MAP_LOCATIONS: {
+                'San Francisco': { lat: 37.7749, lng: -122.4194, weight: 0.8 },
+                'New York': { lat: 40.7128, lng: -74.0060, weight: 0.7 },
+                'London': { lat: 51.5074, lng: -0.1278, weight: 0.6 },
+                'Tokyo': { lat: 35.6762, lng: 139.6503, weight: 0.5 },
+                'Singapore': { lat: 1.3521, lng: 103.8198, weight: 0.4 },
+                'Sydney': { lat: -33.8688, lng: 151.2093, weight: 0.3 },
+                'Berlin': { lat: 52.5200, lng: 13.4050, weight: 0.3 },
+                'Shanghai': { lat: 31.2304, lng: 121.4737, weight: 0.4 }
             }
         };
 
-        // State Management
-        let currentFilter = "all";
-        let currentView = "latest";
-        let savedArticles = JSON.parse(localStorage.getItem('nexusSaved')) || [];
-        let liveArticles = [];
-        let breakingNews = [];
-        let trendingTopics = new Set();
-        
-        // Initialize
+        // ===== INITIALIZATION =====
         async function init() {
             try {
+                console.log('🚀 Initializing Nexus Intelligence...');
+                
+                // Load settings from localStorage
+                loadSettings();
+                
+                // Initialize neural map
+                initNeuralMap();
+                
                 // Load initial data
                 await loadNews();
+                
+                // Setup UI components
                 renderHeatmap();
-                renderPolicy();
-                renderTLDR();
-                renderFeedHealth();
+                renderSentimentAnalytics();
+                renderSystemHealth();
                 updateFeedStats();
                 
                 // Setup event listeners
                 setupEventListeners();
                 
-                // Start background updates
+                // Start live updates
                 startLiveUpdates();
                 
-                // Show welcome
-                showNotification("🔄 Connected to live news feed. Updates every 5 minutes.", "success");
+                // Enable cyberpunk mode by default
+                toggleCyberpunkMode(true);
+                
+                // Show welcome notification
+                showNotification("NEXUS INTELLIGENCE ONLINE. REAL-TIME ANALYSIS ACTIVE.", "success");
+                
+                // Welcome voice alert
+                if (appState.audioEnabled) {
+                    speak("Nexus Intelligence online. Real-time market analysis active.");
+                }
+                
+                appState.isInitialized = true;
                 
             } catch (error) {
-                console.error("Initialization error:", error);
-                // Fallback to sample data
+                console.error('Initialization error:', error);
                 loadSampleData();
-                showNotification("⚠️ Using sample data. Add API keys for live news.", "warning");
+                showNotification("USING ENHANCED SAMPLE DATA. REAL-TIME SIMULATION ACTIVE.", "warning");
             }
         }
 
-        // Enhanced News Loading
+        // ===== SETTINGS MANAGEMENT =====
+        function loadSettings() {
+            const savedAudio = localStorage.getItem('nexus_audio_enabled');
+            const savedCyberpunk = localStorage.getItem('nexus_cyberpunk_mode');
+            
+            if (savedAudio !== null) {
+                appState.audioEnabled = savedAudio === 'true';
+                updateAudioToggleUI();
+            }
+            
+            if (savedCyberpunk !== null) {
+                appState.cyberpunkMode = savedCyberpunk === 'true';
+                toggleCyberpunkMode(appState.cyberpunkMode);
+            }
+        }
+
+        function saveSettings() {
+            localStorage.setItem('nexus_audio_enabled', appState.audioEnabled);
+            localStorage.setItem('nexus_cyberpunk_mode', appState.cyberpunkMode);
+        }
+
+        // ===== NEURAL MAP =====
+        function initNeuralMap() {
+            try {
+                if (!document.getElementById('neuralMap')) return;
+                
+                appState.neuralMap = L.map('neuralMap').setView([20, 0], 2);
+                
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '©Nexus Intelligence',
+                    maxZoom: 6,
+                    minZoom: 2
+                }).addTo(appState.neuralMap);
+                
+                Object.entries(NEWS_CONFIG.NEURAL_MAP_LOCATIONS).forEach(([city, data]) => {
+                    const marker = L.circleMarker([data.lat, data.lng], {
+                        radius: 15 * data.weight,
+                        fillColor: '#00ff9d',
+                        color: '#00ff9d',
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.3
+                    }).addTo(appState.neuralMap);
+                    
+                    marker.bindTooltip(city, {
+                        permanent: false,
+                        direction: 'top'
+                    });
+                });
+                
+                createMapPulses();
+                console.log('✅ Neural map initialized');
+            } catch (error) {
+                console.error('❌ Neural map initialization failed:', error);
+                document.getElementById('neuralMap').innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; font-size: 0.9rem;">
+                        Neural network visualization active
+                    </div>
+                `;
+            }
+        }
+
+        function createMapPulses() {
+            Object.entries(NEWS_CONFIG.NEURAL_MAP_LOCATIONS).forEach(([city, data]) => {
+                setInterval(() => {
+                    if (Math.random() < data.weight && appState.neuralMap) {
+                        createPulse(data.lat, data.lng);
+                    }
+                }, 3000 + Math.random() * 7000);
+            });
+        }
+
+        function createPulse(lat, lng) {
+            if (!appState.neuralMap) return;
+            
+            const pulse = L.circleMarker([lat, lng], {
+                radius: 5,
+                fillColor: '#00ff9d',
+                color: '#00ff9d',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.7
+            }).addTo(appState.neuralMap);
+            
+            setTimeout(() => {
+                appState.neuralMap.removeLayer(pulse);
+            }, 2000);
+            
+            pulse.setStyle({ radius: 20, opacity: 0, fillOpacity: 0 });
+        }
+
+        // ===== NEWS LOADING =====
         async function loadNews() {
+            if (appState.isRefreshing) return;
+            
+            appState.isRefreshing = true;
             try {
                 showLoadingState();
                 
-                // Try multiple sources
-                const articles = await Promise.any([
-                    fetchFromNewsAPI(),
-                    fetchFromRSSFeeds(),
-                    fetchSampleData() // Fallback
-                ]);
+                const allArticles = [];
                 
-                // Process and enrich articles
-                liveArticles = await processArticles(articles);
+                // Try NewsAPI
+                try {
+                    const newsAPIArticles = await fetchFromNewsAPI();
+                    allArticles.push(...newsAPIArticles);
+                    console.log(`✅ NewsAPI: ${newsAPIArticles.length} articles`);
+                } catch (error) {
+                    console.warn("❌ NewsAPI failed:", error.message);
+                }
                 
-                // Detect breaking news
-                detectBreakingNews();
+                // Try GNews
+                try {
+                    const gnewsArticles = await fetchFromGNews();
+                    allArticles.push(...gnewsArticles);
+                    console.log(`✅ GNews: ${gnewsArticles.length} articles`);
+                } catch (error) {
+                    console.warn("❌ GNews failed:", error.message);
+                }
                 
-                // Update trending topics
-                updateTrendingTopics();
+                // If no articles, use sample data
+                if (allArticles.length === 0) {
+                    throw new Error('No articles from APIs');
+                }
                 
-                // Render everything
-                renderArticles();
-                updateFeedStats();
+                const processedArticles = processArticles(allArticles.slice(0, 20));
+                appState.liveArticles = processedArticles;
+                
+                updateUI();
+                console.log(`✅ Loaded ${appState.liveArticles.length} articles`);
                 
             } catch (error) {
-                console.error("Error loading news:", error);
-                throw error;
+                console.error("❌ Error loading news:", error);
+                loadSampleData();
+                showNotification("FALLING BACK TO ENHANCED SAMPLE DATA", "warning");
+            } finally {
+                appState.isRefreshing = false;
             }
         }
 
-        // Fetch from NewsAPI
         async function fetchFromNewsAPI() {
-            // Mock implementation - replace with actual API calls
-            return fetchSampleData();
-            
-            /* REAL IMPLEMENTATION (uncomment and add your API key):
-            const source = NEWS_CONFIG.SOURCES[0];
-            const params = new URLSearchParams({
-                ...source.params,
-                apiKey: source.apiKey
-            });
-            
-            const response = await fetch(`${source.url}?${params}`);
-            if (!response.ok) throw new Error(`NewsAPI error: ${response.status}`);
-            
-            const data = await response.json();
-            return data.articles.map(article => ({
-                title: article.title,
-                summary: article.description,
-                source: article.source.name,
-                url: article.url,
-                publishedAt: article.publishedAt,
-                content: article.content
-            }));
-            */
-        }
-
-        // Fetch from RSS Feeds
-        async function fetchFromRSSFeeds() {
-            // Use a CORS proxy for RSS feeds
-            const feedUrl = NEWS_CONFIG.RSS_FEEDS[0];
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}`;
-            
             try {
-                const response = await fetch(proxyUrl);
+                const params = new URLSearchParams({
+                    q: 'AI technology data center energy',
+                    language: 'en',
+                    sortBy: 'publishedAt',
+                    pageSize: 10,
+                    apiKey: NEWS_CONFIG.API_KEYS.NEWSAPI
+                });
+                
+                const response = await fetch(`${NEWS_CONFIG.ENDPOINTS.NEWSAPI}?${params}`);
+                
+                if (!response.ok) {
+                    throw new Error(`NewsAPI error: ${response.status}`);
+                }
+                
                 const data = await response.json();
                 
-                // Parse RSS XML (simplified)
-                const parser = new DOMParser();
-                const xml = parser.parseFromString(data.contents, "text/xml");
-                const items = xml.querySelectorAll('item');
+                if (!data.articles || data.articles.length === 0) {
+                    throw new Error('No articles from NewsAPI');
+                }
                 
-                return Array.from(items).map(item => ({
-                    title: item.querySelector('title')?.textContent || '',
-                    summary: item.querySelector('description')?.textContent || '',
-                    source: "RSS Feed",
-                    url: item.querySelector('link')?.textContent || '#',
-                    publishedAt: item.querySelector('pubDate')?.textContent || new Date().toISOString()
+                return data.articles.map(article => ({
+                    title: article.title,
+                    summary: article.description || article.content?.substring(0, 200) || "No description available",
+                    source: article.source?.name || "Unknown Source",
+                    url: article.url,
+                    publishedAt: article.publishedAt,
+                    content: article.content
                 }));
             } catch (error) {
-                console.error("RSS fetch error:", error);
+                console.error("NewsAPI fetch error:", error);
                 return [];
             }
         }
 
-        // Process and enrich articles
-        async function processArticles(articles) {
-            return articles.map((article, index) => {
-                // Extract tags based on keywords
-                const tags = extractTags(article.title + ' ' + article.summary);
+        async function fetchFromGNews() {
+            try {
+                const params = new URLSearchParams({
+                    q: 'AI data center technology',
+                    lang: 'en',
+                    max: 10,
+                    token: NEWS_CONFIG.API_KEYS.GNEWS
+                });
                 
-                // Calculate impact score
-                const impactScore = calculateImpactScore(article, tags);
+                const response = await fetch(`${NEWS_CONFIG.ENDPOINTS.GNEWS}?${params}`);
                 
-                // Format time
-                const time = formatTime(article.publishedAt || new Date());
+                if (!response.ok) {
+                    throw new Error(`GNews error: ${response.status}`);
+                }
                 
-                return {
-                    id: index + 1,
-                    title: article.title || "Untitled Article",
-                    summary: article.summary || "No summary available.",
-                    source: article.source || "Unknown Source",
-                    sourceIcon: getSourceIcon(article.source),
-                    time: time,
-                    readTime: estimateReadTime(article.content || article.summary),
-                    tags: tags,
-                    impactScore: impactScore,
-                    impactClass: impactScore >= 8 ? "high" : impactScore >= 6 ? "medium" : "low",
-                    url: article.url || "#",
-                    publishedAt: article.publishedAt || new Date().toISOString(),
-                    isBreaking: false
-                };
-            });
+                const data = await response.json();
+                
+                if (!data.articles || data.articles.length === 0) {
+                    throw new Error('No articles from GNews');
+                }
+                
+                return data.articles.map(article => ({
+                    title: article.title,
+                    summary: article.description || article.content?.substring(0, 200) || "No description available",
+                    source: article.source?.name || "GNews",
+                    url: article.url,
+                    publishedAt: article.publishedAt,
+                    content: article.content
+                }));
+            } catch (error) {
+                console.error("GNews fetch error:", error);
+                return [];
+            }
         }
 
-        // Extract tags from content
+        // ===== HELPER FUNCTIONS =====
+        function processArticles(articles) {
+            return articles.map((article, index) => ({
+                id: Date.now() + index,
+                title: article.title || 'Untitled Article',
+                summary: article.summary || 'No summary available.',
+                source: article.source || 'Unknown Source',
+                sourceIcon: getSourceIcon(article.source),
+                time: formatTime(article.publishedAt || new Date()),
+                readTime: estimateReadTime(article.content || article.summary),
+                tags: extractTags(article.title + ' ' + article.summary),
+                sentiment: analyzeSentiment(article.title, article.summary),
+                impactScore: calculateImpactScore(article),
+                url: article.url || 'https://example.com',
+                publishedAt: article.publishedAt || new Date().toISOString(),
+                isBreaking: article.title.toLowerCase().includes('breaking') || 
+                            article.title.toLowerCase().includes('urgent'),
+                location: extractLocation(article.content || article.title),
+                analysis: generateAnalysis(article.title, article.summary)
+            })).map(article => ({
+                ...article,
+                sentimentConfidence: article.sentiment.confidence,
+                sentimentType: article.sentiment.type,
+                sentimentDescription: getSentimentDescription(article.sentiment),
+                impactClass: article.impactScore >= 8 ? 'high' : article.impactScore >= 6 ? 'medium' : 'low'
+            }));
+        }
+
+        function analyzeSentiment(title, summary) {
+            const text = (title + ' ' + summary).toLowerCase();
+            let bullishScore = 0;
+            let bearishScore = 0;
+            
+            NEWS_CONFIG.SENTIMENT_KEYWORDS.bullish.forEach(keyword => {
+                const regex = new RegExp(keyword, 'gi');
+                const matches = text.match(regex);
+                if (matches) bullishScore += matches.length;
+            });
+            
+            NEWS_CONFIG.SENTIMENT_KEYWORDS.bearish.forEach(keyword => {
+                const regex = new RegExp(keyword, 'gi');
+                const matches = text.match(regex);
+                if (matches) bearishScore += matches.length;
+            });
+            
+            const totalScore = bullishScore + bearishScore;
+            
+            if (totalScore === 0) {
+                return { type: 'neutral', confidence: 50 };
+            }
+            
+            const bullishPercentage = (bullishScore / totalScore) * 100;
+            const bearishPercentage = (bearishScore / totalScore) * 100;
+            
+            if (bullishPercentage > 60) {
+                return { type: 'bullish', confidence: Math.min(95, bullishPercentage) };
+            } else if (bearishPercentage > 60) {
+                return { type: 'bearish', confidence: Math.min(95, bearishPercentage) };
+            } else {
+                return { type: 'neutral', confidence: Math.min(95, Math.abs(bullishPercentage - bearishPercentage)) };
+            }
+        }
+
+        function getSentimentDescription(sentiment) {
+            if (sentiment.confidence >= 80) {
+                return sentiment.type === 'bullish' ? 'STRONGLY POSITIVE' : 
+                       sentiment.type === 'bearish' ? 'STRONGLY NEGATIVE' : 'NEUTRAL';
+            } else if (sentiment.confidence >= 60) {
+                return sentiment.type === 'bullish' ? 'MODERATELY POSITIVE' : 
+                       sentiment.type === 'bearish' ? 'MODERATELY NEGATIVE' : 'NEUTRAL';
+            } else {
+                return sentiment.type === 'bullish' ? 'SLIGHTLY POSITIVE' : 
+                       sentiment.type === 'bearish' ? 'SLIGHTLY NEGATIVE' : 'NEUTRAL';
+            }
+        }
+
         function extractTags(content) {
             const tags = [];
             const contentLower = content.toLowerCase();
             
-            for (const [tag, keywords] of Object.entries(NEWS_CONFIG.KEYWORDS)) {
-                if (keywords.some(keyword => contentLower.includes(keyword.toLowerCase()))) {
-                    tags.push(tag);
+            if (contentLower.includes('ai') || contentLower.includes('artificial intelligence')) tags.push('ai');
+            if (contentLower.includes('energy') || contentLower.includes('power')) tags.push('energy');
+            if (contentLower.includes('real estate') || contentLower.includes('property')) tags.push('realestate');
+            if (contentLower.includes('policy') || contentLower.includes('regulation')) tags.push('policy');
+            if (contentLower.includes('cooling') || contentLower.includes('thermal')) tags.push('cooling');
+            if (contentLower.includes('security') || contentLower.includes('cyber')) tags.push('security');
+            if (contentLower.includes('breaking') || contentLower.includes('urgent')) tags.push('breaking');
+            
+            return tags.length > 0 ? tags : ['general'];
+        }
+
+        function calculateImpactScore(article) {
+            let score = 5;
+            const credibleSources = ['Reuters', 'Bloomberg', 'Financial Times', 'Wall Street Journal', 'MIT', 'TechCrunch'];
+            if (credibleSources.some(src => article.source?.includes(src))) score += 2;
+            
+            const hoursAgo = (new Date() - new Date(article.publishedAt)) / (1000 * 60 * 60);
+            if (hoursAgo < 1) score += 2;
+            else if (hoursAgo < 24) score += 1;
+            
+            return Math.min(10, Math.max(1, parseFloat(score.toFixed(1))));
+        }
+
+        function getSourceIcon(source) {
+            const sourceMap = {
+                'MIT': 'mit',
+                'Reuters': 'reuters',
+                'Bloomberg': 'bloomberg',
+                'TechCrunch': 'techcrunch',
+                'Financial Times': 'ft',
+                'Wall Street Journal': 'wsj',
+                'New York Times': 'nyt',
+                'Data Center Frontier': 'dcf'
+            };
+            
+            for (const [key, icon] of Object.entries(sourceMap)) {
+                if (source.includes(key)) return icon;
+            }
+            
+            return 'mit';
+        }
+
+        function formatTime(dateString) {
+            try {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                
+                if (diffMins < 1) return 'JUST NOW';
+                if (diffMins < 60) return `${diffMins}M AGO`;
+                if (diffHours < 24) return `${diffHours}H AGO`;
+                
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
+            } catch (e) {
+                return 'RECENT';
+            }
+        }
+
+        function estimateReadTime(content) {
+            if (!content) return '3 MIN';
+            const words = content.split(/\s+/).length;
+            const minutes = Math.ceil(words / 200);
+            return `${minutes} MIN`;
+        }
+
+        function extractLocation(content) {
+            const locations = Object.keys(NEWS_CONFIG.NEURAL_MAP_LOCATIONS);
+            const contentLower = content.toLowerCase();
+            
+            for (const location of locations) {
+                if (contentLower.includes(location.toLowerCase())) {
+                    return location;
                 }
             }
             
-            return tags.length > 0 ? tags : ["general"];
+            return locations[Math.floor(Math.random() * locations.length)];
         }
 
-        // Calculate impact score
-        function calculateImpactScore(article, tags) {
-            let score = 5; // Base score
+        function generateAnalysis(title, summary) {
+            const analysis = [];
+            const text = (title + ' ' + summary).toLowerCase();
             
-            // Source credibility
-            const credibleSources = ["Reuters", "Bloomberg", "Financial Times", "Wall Street Journal", "MIT"];
-            if (credibleSources.some(src => article.source?.includes(src))) score += 2;
-            
-            // Number of tags
-            score += Math.min(tags.length, 3);
-            
-            // Title length (longer titles often more detailed)
-            if (article.title?.length > 100) score += 1;
-            
-            // Recentness
-            const hoursAgo = (new Date() - new Date(article.publishedAt)) / (1000 * 60 * 60);
-            if (hoursAgo < 1) score += 2; // Less than 1 hour
-            else if (hoursAgo < 24) score += 1; // Less than 24 hours
-            
-            return Math.min(10, Math.max(1, score)).toFixed(1);
-        }
-
-        // Detect breaking news
-        function detectBreakingNews() {
-            breakingNews = liveArticles.filter(article => {
-                const title = article.title.toLowerCase();
-                const breakingKeywords = [
-                    "breaking", "urgent", "alert", "crisis", "emergency",
-                    "outage", "attack", "hack", "leak", "scandal"
-                ];
-                
-                return breakingKeywords.some(keyword => title.includes(keyword)) ||
-                       article.impactScore >= 9;
+            const companies = ['microsoft', 'google', 'amazon', 'nvidia', 'openai', 'tesla', 'apple'];
+            companies.forEach(company => {
+                if (text.includes(company)) {
+                    analysis.push(`Involves ${company.toUpperCase()}, a major player in the tech industry`);
+                }
             });
             
-            if (breakingNews.length > 0) {
-                showBreakingNews();
+            if (text.includes('data center') || text.includes('datacenter')) {
+                analysis.push('Direct impact on data center infrastructure and operations');
             }
-        }
-
-        // Update trending topics
-        function updateTrendingTopics() {
-            trendingTopics.clear();
             
-            // Count tag occurrences
-            const tagCounts = {};
-            liveArticles.forEach(article => {
-                article.tags.forEach(tag => {
-                    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-                });
-            });
-            
-            // Get top 5 tags
-            const topTags = Object.entries(tagCounts)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 5)
-                .map(([tag]) => tag);
-            
-            trendingTopics = new Set(topTags);
-            renderTrendingTopics();
-        }
-
-        // Show breaking news
-        function showBreakingNews() {
-            const banner = document.getElementById('breakingBanner');
-            const breakingText = document.getElementById('breakingText');
-            
-            if (breakingNews.length > 0) {
-                banner.style.display = 'flex';
-                breakingText.textContent = `${breakingNews.length} Breaking News ${breakingNews.length > 1 ? 'Stories' : 'Story'}`;
-                
-                // Show notification
-                showNotification("🚨 Breaking News Alert!", "breaking");
+            if (text.includes('energy') || text.includes('power')) {
+                analysis.push('Significant energy implications for computing infrastructure');
             }
+            
+            if (analysis.length === 0) {
+                analysis.push('General industry news with broad implications');
+            }
+            
+            return analysis;
         }
 
-        // Render articles
+        // ===== UI RENDERING =====
         function renderArticles() {
             const container = document.getElementById('articlesContainer');
             if (!container) return;
             
-            let articlesToShow = [...liveArticles];
+            let articlesToShow = [...appState.liveArticles];
             
-            // Apply filters
-            if (currentFilter !== "all") {
-                if (currentFilter === "breaking") {
-                    articlesToShow = breakingNews;
+            // Apply filter
+            if (appState.currentFilter !== 'all') {
+                if (appState.currentFilter === 'breaking') {
+                    articlesToShow = appState.breakingNews;
                 } else {
                     articlesToShow = articlesToShow.filter(article => 
-                        article.tags.includes(currentFilter)
+                        article.tags.includes(appState.currentFilter)
                     );
                 }
             }
             
-            // Apply view sorting
-            if (currentView === "top") {
+            // Apply search
+            if (appState.currentSearchTerm) {
+                const searchTerm = appState.currentSearchTerm.toLowerCase();
+                articlesToShow = articlesToShow.filter(article => 
+                    article.title.toLowerCase().includes(searchTerm) ||
+                    article.summary.toLowerCase().includes(searchTerm) ||
+                    article.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            // Apply view
+            if (appState.currentView === 'top') {
                 articlesToShow.sort((a, b) => b.impactScore - a.impactScore);
-            } else if (currentView === "trending") {
-                articlesToShow.sort((a, b) => {
-                    const aTrending = a.tags.some(tag => trendingTopics.has(tag));
-                    const bTrending = b.tags.some(tag => trendingTopics.has(tag));
-                    if (aTrending && !bTrending) return -1;
-                    if (!aTrending && bTrending) return 1;
-                    return b.impactScore - a.impactScore;
-                });
+            } else if (appState.currentView === 'bullish') {
+                articlesToShow = articlesToShow.filter(a => a.sentimentType === 'bullish');
+                articlesToShow.sort((a, b) => b.sentimentConfidence - a.sentimentConfidence);
+            } else {
+                articlesToShow.sort((a, b) => b.id - a.id);
             }
             
             if (articlesToShow.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <i data-lucide="newspaper" style="width: 48px; height: 48px;"></i>
-                        <h3>No articles found</h3>
-                        <p>Try a different filter or refresh the feed</p>
+                        <h3>NO ARTICLES FOUND</h3>
+                        <p>TRY A DIFFERENT FILTER OR SEARCH TERM</p>
                     </div>
                 `;
                 lucide.createIcons();
                 return;
             }
             
-            // Generate articles HTML
             const articlesHTML = articlesToShow.map(article => `
                 <article class="news-card ${article.isBreaking ? 'breaking' : ''}" data-id="${article.id}">
                     <div class="card-header">
                         <div class="card-source">
                             <div class="source-icon ${article.sourceIcon}">
-                                ${getSourceAbbreviation(article.source)}
+                                ${article.source.substring(0, 2).toUpperCase()}
                             </div>
                             <span>${article.source}</span>
                             <span>•</span>
@@ -1339,33 +2205,52 @@
                     </div>
                     
                     <h3 class="card-title">
-                        ${article.isBreaking ? '🚨 ' : ''}${article.title}
+                        <a href="${article.url}" target="_blank" rel="noopener noreferrer">
+                            ${article.isBreaking ? '🚨 ' : ''}${article.title}
+                        </a>
                     </h3>
                     
                     <p class="card-summary">${article.summary}</p>
                     
-                    <div class="card-tags">
-                        ${article.tags.map(tag => `
-                            <div class="tag ${tag} ${article.isBreaking && tag === 'breaking' ? 'breaking' : ''}">
-                                ${getTagDisplayName(tag)}
+                    <button class="analyze-btn" onclick="app.toggleAnalysis(${article.id})">
+                        <i data-lucide="brain"></i> AI ANALYSIS
+                    </button>
+                    
+                    <div class="analysis-content" id="analysis-${article.id}">
+                        ${article.analysis.map(item => `
+                            <div class="analysis-item">
+                                <span class="analysis-bullet">•</span>
+                                <span class="analysis-text">${highlightKeywords(item)}</span>
                             </div>
                         `).join('')}
-                        ${article.isBreaking ? '<div class="tag breaking">Breaking</div>' : ''}
+                    </div>
+                    
+                    <div class="card-tags">
+                        <div class="sentiment-badge ${article.sentimentType}">
+                            <i data-lucide="${article.sentimentType === 'bullish' ? 'trending-up' : article.sentimentType === 'bearish' ? 'trending-down' : 'minus'}"></i>
+                            ${article.sentimentDescription} (${Math.round(article.sentimentConfidence)}%)
+                        </div>
+                        
+                        ${article.tags.map(tag => `
+                            <div class="tag ${tag}">
+                                ${tag.toUpperCase()}
+                            </div>
+                        `).join('')}
                     </div>
                     
                     <div class="card-footer">
                         <div class="impact-score">
-                            <span class="impact-label">Impact Score:</span>
-                            <span class="impact-value ${article.impactClass}">${article.impactScore}</span>
+                            <span class="impact-label">IMPACT:</span>
+                            <span class="impact-value ${article.impactClass}">${article.impactScore.toFixed(1)}</span>
                         </div>
                         <div class="card-actions">
-                            <button class="action-btn" title="Save" onclick="toggleSave(${article.id}, this)">
-                                <i data-lucide="${savedArticles.includes(article.id) ? 'bookmark-check' : 'bookmark'}"></i>
+                            <button class="action-btn" title="Save" onclick="app.toggleSave(${article.id}, this)">
+                                <i data-lucide="bookmark"></i>
                             </button>
-                            <button class="action-btn" title="Share" onclick="shareArticle(${article.id})">
+                            <button class="action-btn" title="Share" onclick="app.shareArticle(${article.id})">
                                 <i data-lucide="share-2"></i>
                             </button>
-                            <button class="action-btn" title="Read" onclick="window.open('${article.url}', '_blank')">
+                            <button class="action-btn" title="Read Full Article" onclick="window.open('${article.url}', '_blank')">
                                 <i data-lucide="external-link"></i>
                             </button>
                         </div>
@@ -1377,456 +2262,28 @@
             lucide.createIcons();
         }
 
-        // Render trending topics
-        function renderTrendingTopics() {
-            const container = document.getElementById('trendingTopics');
-            if (!container) return;
-            
-            if (trendingTopics.size === 0) {
-                container.innerHTML = '<span style="color: var(--color-text-muted); font-size: 0.9rem;">No trending topics yet</span>';
-                return;
-            }
-            
-            const topicsHTML = Array.from(trendingTopics).map(topic => `
-                <div class="trending-topic" onclick="filterByTopic('${topic}')">
-                    #${getTagDisplayName(topic)}
-                </div>
-            `).join('');
-            
-            container.innerHTML = topicsHTML;
-        }
-
-        // Update feed statistics
-        function updateFeedStats() {
-            const lastUpdate = document.getElementById('lastUpdateTime');
-            const articleCount = document.getElementById('articleCount');
-            const liveStatus = document.getElementById('liveStatus');
-            
-            if (lastUpdate) {
-                lastUpdate.textContent = "Just now";
-            }
-            
-            if (articleCount) {
-                articleCount.textContent = `${liveArticles.length} articles`;
-            }
-            
-            if (liveStatus) {
-                liveStatus.textContent = "Live";
-            }
-        }
-
-        // Show loading state
-        function showLoadingState() {
-            const container = document.getElementById('articlesContainer');
-            if (!container) return;
-            
-            container.innerHTML = `
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <p>Fetching latest news from multiple sources...</p>
-                </div>
-            `;
-        }
-
-        // Start live updates
-        function startLiveUpdates() {
-            // Update news every 5 minutes
-            setInterval(async () => {
-                try {
-                    await loadNews();
-                    showNotification("📰 Feed updated with latest news", "success");
-                } catch (error) {
-                    console.error("Auto-update error:", error);
-                }
-            }, NEWS_CONFIG.UPDATE_INTERVAL);
-            
-            // Check for breaking news every minute
-            setInterval(() => {
-                detectBreakingNews();
-            }, NEWS_CONFIG.BREAKING_CHECK_INTERVAL);
-            
-            // Update timestamps every minute
-            setInterval(updateTimeStamps, 60000);
-        }
-
-        // Update timestamps
-        function updateTimeStamps() {
-            const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            
-            const feedTime = document.querySelector('#feedHealth .heatmap-item:nth-child(3) .heatmap-value');
-            if (feedTime) feedTime.textContent = timeStr;
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            // Filter chips
-            document.querySelectorAll('.filter-chip').forEach(chip => {
-                chip.addEventListener('click', function() {
-                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-                    this.classList.add('active');
-                    currentFilter = this.dataset.filter || "all";
-                    renderArticles();
-                });
+        function highlightKeywords(text) {
+            const keywords = ['NVIDIA', 'data center', 'energy', 'AI', 'sustainable'];
+            let highlighted = text;
+            keywords.forEach(keyword => {
+                const regex = new RegExp(keyword, 'gi');
+                highlighted = highlighted.replace(regex, match => 
+                    `<span class="highlight">${match}</span>`
+                );
             });
-            
-            // View buttons
-            document.querySelectorAll('.view-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentView = this.dataset.view || "latest";
-                    renderArticles();
-                });
-            });
-            
-            // Refresh button
-            const refreshBtn = document.getElementById('refreshFeed');
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', async () => {
-                    const icon = refreshBtn.querySelector('i');
-                    icon.setAttribute('data-lucide', 'loader-2');
-                    lucide.createIcons();
-                    
-                    try {
-                        await loadNews();
-                        showNotification("✅ Feed refreshed successfully", "success");
-                    } catch (error) {
-                        showNotification("❌ Failed to refresh feed", "error");
-                    } finally {
-                        icon.setAttribute('data-lucide', 'refresh-cw');
-                        lucide.createIcons();
-                    }
-                });
-            }
-            
-            // Search button
-            const searchBtn = document.getElementById('searchBtn');
-            if (searchBtn) {
-                searchBtn.addEventListener('click', () => {
-                    const query = prompt("Search articles:");
-                    if (query) {
-                        filterBySearch(query);
-                    }
-                });
-            }
-            
-            // Map points
-            document.querySelectorAll('.map-point').forEach(point => {
-                point.addEventListener('click', function() {
-                    const loc = this.classList[1];
-                    const messages = {
-                        virginia: "Virginia, USA: World's largest data center market",
-                        dublin: "Dublin, Ireland: Fastest-growing hyperscale market in EU",
-                        singapore: "Singapore: Asia-Pacific hub with green regulations",
-                        tokyo: "Tokyo: High-density market with energy challenges"
-                    };
-                    showNotification(messages[loc] || "Data center hotspot");
-                });
-            });
+            return highlighted;
         }
 
-        // ===== HELPER FUNCTIONS =====
-        
-        // Sample data for fallback
-        function fetchSampleData() {
-            return Promise.resolve([
-                {
-                    title: "Microsoft's Nuclear-Powered AI Data Centers Set New Industry Standard",
-                    summary: "Microsoft partners with nuclear energy providers to power next-gen AI data centers, addressing both energy demands and sustainability goals.",
-                    source: "MIT Technology Review",
-                    url: "https://www.technologyreview.com/2024/01/16/1086795/microsoft-nuclear-powered-data-center-ai/",
-                    publishedAt: new Date().toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "Google Achieves Record 1.02 PUE with Immersion Cooling in Singapore",
-                    summary: "Google's immersion cooling trial shows significant energy savings, potentially revolutionizing data center cooling technology.",
-                    source: "Data Center Frontier",
-                    url: "https://www.datacenterfrontier.com/energy/article/33029472/google-immersion-cooling-singapore-pue-102",
-                    publishedAt: new Date(Date.now() - 3600000).toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "EU Proposes Strict Data Center Zoning Laws Near Residential Areas",
-                    summary: "New European legislation could restrict data center construction, impacting hyperscaler expansion plans across the continent.",
-                    source: "Reuters",
-                    url: "https://www.reuters.com/technology/eu-proposes-data-center-zoning-laws-near-residential-areas-2024-01-16/",
-                    publishedAt: new Date(Date.now() - 7200000).toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "AI Compute Demand Outstrips Renewable Energy Growth, Study Finds",
-                    summary: "New research shows AI development is growing faster than renewable energy capacity, raising sustainability concerns.",
-                    source: "Bloomberg",
-                    url: "https://www.bloomberg.com/news/articles/2024-01-16/ai-compute-demand-outstrips-renewable-energy-growth",
-                    publishedAt: new Date(Date.now() - 10800000).toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "Amazon's Texas Data Center Expansion Faces Water Scarcity Challenges",
-                    summary: "Local regulators question water usage as Amazon plans major data center expansion in drought-prone Texas regions.",
-                    source: "TechCrunch",
-                    url: "https://techcrunch.com/2024/01/15/amazon-texas-data-center-water-scarcity/",
-                    publishedAt: new Date(Date.now() - 14400000).toISOString(),
-                    content: "Full article content would go here..."
-                }
-            ]);
-        }
-
-        function loadSampleData() {
-            liveArticles = [
-                {
-                    id: 1,
-                    title: "Microsoft's Nuclear-Powered AI Data Centers Set New Industry Standard",
-                    summary: "Microsoft partners with nuclear energy providers to power next-gen AI data centers, addressing both energy demands and sustainability goals.",
-                    source: "MIT Technology Review",
-                    sourceIcon: "mit",
-                    time: "Just now",
-                    readTime: "5 min read",
-                    tags: ["energy", "ai", "policy"],
-                    impactScore: 9.2,
-                    impactClass: "high",
-                    url: "https://www.technologyreview.com/2024/01/16/1086795/microsoft-nuclear-powered-data-center-ai/"
-                },
-                {
-                    id: 2,
-                    title: "Google Achieves Record 1.02 PUE with Immersion Cooling in Singapore",
-                    summary: "Google's immersion cooling trial shows significant energy savings, potentially revolutionizing data center cooling technology.",
-                    source: "Data Center Frontier",
-                    sourceIcon: "dcf",
-                    time: "1 hour ago",
-                    readTime: "4 min read",
-                    tags: ["energy", "cooling", "ai"],
-                    impactScore: 8.8,
-                    impactClass: "high",
-                    url: "https://www.datacenterfrontier.com/energy/article/33029472/google-immersion-cooling-singapore-pue-102"
-                },
-                {
-                    id: 3,
-                    title: "EU Proposes Strict Data Center Zoning Laws Near Residential Areas",
-                    summary: "New European legislation could restrict data center construction, impacting hyperscaler expansion plans across the continent.",
-                    source: "Reuters",
-                    sourceIcon: "reuters",
-                    time: "2 hours ago",
-                    readTime: "6 min read",
-                    tags: ["policy", "realestate"],
-                    impactScore: 7.5,
-                    impactClass: "medium",
-                    url: "https://www.reuters.com/technology/eu-proposes-data-center-zoning-laws-near-residential-areas-2024-01-16/"
-                },
-                {
-                    id: 4,
-                    title: "AI Compute Demand Outstrips Renewable Energy Growth, Study Finds",
-                    summary: "New research shows AI development is growing faster than renewable energy capacity, raising sustainability concerns.",
-                    source: "Bloomberg",
-                    sourceIcon: "bloomberg",
-                    time: "3 hours ago",
-                    readTime: "7 min read",
-                    tags: ["ai", "energy", "policy"],
-                    impactScore: 8.1,
-                    impactClass: "high",
-                    url: "https://www.bloomberg.com/news/articles/2024-01-16/ai-compute-demand-outstrips-renewable-energy-growth"
-                },
-                {
-                    id: 5,
-                    title: "BREAKING: Major Data Center Outage Affects Multiple Cloud Providers",
-                    summary: "A widespread outage in Virginia data centers impacts AWS, Azure, and Google Cloud services across North America.",
-                    source: "CNBC",
-                    sourceIcon: "cnn",
-                    time: "10 minutes ago",
-                    readTime: "3 min read",
-                    tags: ["breaking", "security", "energy"],
-                    impactScore: 9.5,
-                    impactClass: "high",
-                    url: "#",
-                    isBreaking: true
-                }
-            ];
-            
-            detectBreakingNews();
-            updateTrendingTopics();
-            renderArticles();
-            updateFeedStats();
-        }
-
-        // Helper functions
-        function getSourceIcon(source) {
-            const sourceMap = {
-                "MIT": "mit",
-                "Reuters": "reuters",
-                "Bloomberg": "bloomberg",
-                "TechCrunch": "techcrunch",
-                "Financial Times": "ft",
-                "Wall Street Journal": "wsj",
-                "New York Times": "nyt",
-                "Data Center Frontier": "dcf",
-                "CNBC": "cnn",
-                "BBC": "bbc",
-                "The Verge": "theverge",
-                "Wired": "wired"
-            };
-            
-            for (const [key, icon] of Object.entries(sourceMap)) {
-                if (source.includes(key)) return icon;
-            }
-            
-            return "mit"; // Default icon
-        }
-
-        function getSourceAbbreviation(source) {
-            if (!source) return "??";
-            const words = source.split(' ');
-            if (words.length >= 2) {
-                return (words[0][0] + words[1][0]).toUpperCase();
-            }
-            return source.substring(0, 2).toUpperCase();
-        }
-
-        function formatTime(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-            
-            if (diffMins < 1) return "Just now";
-            if (diffMins < 60) return `${diffMins} min ago`;
-            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-            
-            return date.toLocaleDateString();
-        }
-
-        function estimateReadTime(content) {
-            if (!content) return "3 min";
-            const words = content.split(/\s+/).length;
-            const minutes = Math.ceil(words / 200);
-            return `${minutes} min`;
-        }
-
-        function getTagDisplayName(tag) {
-            const tagNames = {
-                'energy': 'Energy',
-                'ai': 'AI',
-                'policy': 'Policy',
-                'realestate': 'Real Estate',
-                'cooling': 'Cooling',
-                'security': 'Security',
-                'breaking': 'Breaking',
-                'general': 'General'
-            };
-            return tagNames[tag] || tag.charAt(0).toUpperCase() + tag.slice(1);
-        }
-
-        // Global functions
-        window.toggleSave = function(articleId, button) {
-            const index = savedArticles.indexOf(articleId);
-            const icon = button.querySelector('i');
-            
-            if (index === -1) {
-                savedArticles.push(articleId);
-                icon.setAttribute('data-lucide', 'bookmark-check');
-                button.style.background = '#00ff9d';
-                button.style.color = '#0a0a0f';
-                showNotification("Article saved to bookmarks", "success");
-            } else {
-                savedArticles.splice(index, 1);
-                icon.setAttribute('data-lucide', 'bookmark');
-                button.style.background = '';
-                button.style.color = '';
-                showNotification("Article removed from bookmarks", "info");
-            }
-            
-            lucide.createIcons();
-            localStorage.setItem('nexusSaved', JSON.stringify(savedArticles));
-        };
-
-        window.shareArticle = function(articleId) {
-            const article = liveArticles.find(a => a.id === articleId);
-            if (!article) return;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: article.title,
-                    text: article.summary,
-                    url: article.url
-                });
-            } else {
-                navigator.clipboard.writeText(`${article.title}\n\n${article.summary}\n\nRead more: ${article.url}`);
-                showNotification("📋 Article copied to clipboard!", "success");
-            }
-        };
-
-        window.filterByTopic = function(topic) {
-            const chip = document.querySelector(`[data-filter="${topic}"]`);
-            if (chip) {
-                chip.click();
-            }
-        };
-
-        function filterBySearch(query) {
-            const filtered = liveArticles.filter(article => 
-                article.title.toLowerCase().includes(query.toLowerCase()) ||
-                article.summary.toLowerCase().includes(query.toLowerCase()) ||
-                article.tags.some(tag => tag.includes(query.toLowerCase()))
-            );
-            
-            const container = document.getElementById('articlesContainer');
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i data-lucide="search" style="width: 48px; height: 48px;"></i>
-                        <h3>No results for "${query}"</h3>
-                        <p>Try a different search term</p>
-                    </div>
-                `;
-                lucide.createIcons();
-            } else {
-                // Temporarily show filtered results
-                const articlesHTML = filtered.map(article => `
-                    <article class="news-card" data-id="${article.id}">
-                        <div class="card-header">
-                            <div class="card-source">
-                                <div class="source-icon ${article.sourceIcon}">${getSourceAbbreviation(article.source)}</div>
-                                <span>${article.source}</span>
-                                <span>•</span>
-                                <span>${article.time}</span>
-                            </div>
-                        </div>
-                        <h3 class="card-title">${article.title}</h3>
-                        <p class="card-summary">${article.summary}</p>
-                        <div class="card-tags">
-                            ${article.tags.map(tag => `<div class="tag ${tag}">${getTagDisplayName(tag)}</div>`).join('')}
-                        </div>
-                    </article>
-                `).join('');
-                
-                container.innerHTML = `
-                    <div style="margin-bottom: 1.5rem;">
-                        <h3 style="color: var(--color-electric-green);">Search Results for "${query}" (${filtered.length} found)</h3>
-                        <button onclick="renderArticles()" style="background: none; border: 1px solid var(--color-border); color: var(--color-text-secondary); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
-                            <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i> Back to all articles
-                        </button>
-                    </div>
-                    ${articlesHTML}
-                `;
-                lucide.createIcons();
-            }
-        }
-
-        // Render heatmap (same as before)
         function renderHeatmap() {
-            const heatmapData = [
-                { label: "Energy Prices (EU)", value: "€142.5/MWh", type: "energy" },
-                { label: "Data Center Vacancy (VA)", value: "2.1%", type: "data" },
-                { label: "Land Value (Dublin)", value: "+18.7%", type: "realestate" },
-                { label: "Carbon Intensity (SG)", value: "0.39 kg/kWh", type: "energy" }
-            ];
-            
             const container = document.getElementById('heatmapContainer');
             if (!container) return;
+            
+            const heatmapData = [
+                { label: 'AI COMPUTE DEMAND', value: '+42%', type: 'data' },
+                { label: 'ENERGY PRICES (EU)', value: '€145/MWH', type: 'energy' },
+                { label: 'DATA CENTER VACANCY', value: '2.3%', type: 'data' },
+                { label: 'CARBON INTENSITY', value: '0.41 KG/KWH', type: 'energy' }
+            ];
             
             container.innerHTML = heatmapData.map(item => `
                 <div class="heatmap-item">
@@ -1834,73 +2291,44 @@
                         <div class="heatmap-dot ${item.type}"></div>
                         <span>${item.label}</span>
                     </div>
-                    <div class="heatmap-value" style="color: ${item.type === 'energy' ? '#00ff9d' : item.type === 'data' ? '#0095ff' : '#ffa500'}">
+                    <div class="heatmap-value" style="color: ${item.type === 'energy' ? '#00ff9d' : '#0095ff'}">
                         ${item.value}
                     </div>
                 </div>
             `).join('');
         }
 
-        // Render policy tracker
-        function renderPolicy() {
-            const policyData = [
-                { label: "EU AI Act", value: "Enacted", status: "enacted" },
-                { label: "US Data Privacy", value: "In Committee", status: "pending" },
-                { label: "China Cloud Regs", value: "Delayed", status: "delayed" },
-                { label: "SG Green DC Tax", value: "Draft", status: "draft" }
-            ];
-            
-            const container = document.getElementById('policyTracker');
+        function renderSentimentAnalytics() {
+            const container = document.getElementById('sentimentAnalytics');
             if (!container) return;
             
-            container.innerHTML = policyData.map(item => `
+            const bullishPercent = appState.liveArticles.length > 0 ? 
+                Math.round((appState.sentimentData.bullish / appState.liveArticles.length) * 100) : 0;
+            const bearishPercent = appState.liveArticles.length > 0 ? 
+                Math.round((appState.sentimentData.bearish / appState.liveArticles.length) * 100) : 0;
+            
+            container.innerHTML = `
                 <div class="heatmap-item">
                     <div class="heatmap-label">
-                        <i data-lucide="${getPolicyIcon(item.status)}" style="color: ${getPolicyColor(item.status)}"></i>
-                        <span>${item.label}</span>
+                        <i data-lucide="trending-up" style="color: #00ff9d"></i>
+                        <span>BULLISH TREND</span>
                     </div>
-                    <div class="heatmap-value" style="color: ${getPolicyColor(item.status)}">
-                        ${item.value}
-                    </div>
+                    <div class="heatmap-value" style="color: #00ff9d">${bullishPercent}%</div>
                 </div>
-            `).join('');
-            
-            lucide.createIcons();
-        }
-
-        // Render TLDR
-        function renderTLDR() {
-            const container = document.getElementById('tldrContainer');
-            if (!container || liveArticles.length === 0) return;
-            
-            const article = liveArticles[0];
-            container.innerHTML = `
-                <div class="tldr-header">
-                    <i data-lucide="zap"></i>
-                    <span>${article.title.substring(0, 40)}...</span>
-                </div>
-                <div class="tldr-content">
-                    <div class="tldr-item">
-                        <span class="tldr-bullet">•</span>
-                        <span>${article.summary.substring(0, 100)}</span>
+                <div class="heatmap-item">
+                    <div class="heatmap-label">
+                        <i data-lucide="trending-down" style="color: #ff4757"></i>
+                        <span>BEARISH TREND</span>
                     </div>
-                    <div class="tldr-item">
-                        <span class="tldr-bullet">•</span>
-                        <span>Impact: ${article.impactScore}/10</span>
-                    </div>
-                    <div class="tldr-item">
-                        <span class="tldr-bullet">•</span>
-                        <span>Source: ${article.source}</span>
-                    </div>
+                    <div class="heatmap-value" style="color: #ff4757">${bearishPercent}%</div>
                 </div>
             `;
             
             lucide.createIcons();
         }
 
-        // Render feed health
-        function renderFeedHealth() {
-            const container = document.getElementById('feedHealth');
+        function renderSystemHealth() {
+            const container = document.getElementById('systemHealth');
             if (!container) return;
             
             const now = new Date();
@@ -1910,54 +2338,326 @@
                 <div class="heatmap-item">
                     <div class="heatmap-label">
                         <i data-lucide="wifi" style="color: #00ff9d"></i>
-                        <span>Feed Status</span>
+                        <span>SYSTEM STATUS</span>
                     </div>
-                    <div class="heatmap-value" style="color: #00ff9d">Live</div>
+                    <div class="heatmap-value" style="color: #00ff9d">OPERATIONAL</div>
                 </div>
                 <div class="heatmap-item">
                     <div class="heatmap-label">
                         <i data-lucide="database" style="color: #0095ff"></i>
-                        <span>Articles</span>
+                        <span>ARTICLES LOADED</span>
                     </div>
-                    <div class="heatmap-value" style="color: #0095ff">${liveArticles.length}</div>
-                </div>
-                <div class="heatmap-item">
-                    <div class="heatmap-label">
-                        <i data-lucide="refresh-cw" style="color: #ffa500"></i>
-                        <span>Last Update</span>
-                    </div>
-                    <div class="heatmap-value" style="color: #ffa500">${timeStr}</div>
+                    <div class="heatmap-value" style="color: #0095ff">${appState.liveArticles.length}</div>
                 </div>
             `;
             
             lucide.createIcons();
         }
 
-        function getPolicyIcon(status) {
-            return {
-                enacted: "file-check",
-                pending: "clock",
-                delayed: "alert-circle",
-                draft: "file-text"
-            }[status] || "file-text";
+        function updateUI() {
+            detectBreakingNews();
+            updateSentimentAnalysis();
+            updateBullBearMeter();
+            renderArticles();
+            updateFeedStats();
+            updateTLDR();
+            updateTrendingTopics();
+            updateNeuralMap();
+            renderSentimentAnalytics();
         }
 
-        function getPolicyColor(status) {
-            return {
-                enacted: "#00ff9d",
-                pending: "#ffa500",
-                delayed: "#ff4757",
-                draft: "#0095ff"
-            }[status] || "#ffffff";
+        function updateSentimentAnalysis() {
+            appState.sentimentData = { bullish: 0, bearish: 0, neutral: 0 };
+            appState.liveArticles.forEach(article => {
+                appState.sentimentData[article.sentimentType]++;
+            });
         }
 
-        // Show notification
+        function updateBullBearMeter() {
+            const total = appState.liveArticles.length;
+            if (total === 0) return;
+            
+            const bullishPercent = (appState.sentimentData.bullish / total) * 100;
+            const bearishPercent = (appState.sentimentData.bearish / total) * 100;
+            
+            let meterPosition = 50;
+            let sentimentValue = 'NEUTRAL';
+            
+            if (bullishPercent > bearishPercent) {
+                meterPosition = 50 + (bullishPercent / 2);
+                sentimentValue = 'BULLISH';
+            } else if (bearishPercent > bullishPercent) {
+                meterPosition = 50 - (bearishPercent / 2);
+                sentimentValue = 'BEARISH';
+            }
+            
+            meterPosition = Math.max(0, Math.min(100, meterPosition));
+            
+            const meterFill = document.getElementById('sentimentMeterFill');
+            const sentimentValueElement = document.getElementById('sentimentValue');
+            
+            if (meterFill) {
+                meterFill.style.width = `${meterPosition}%`;
+                meterFill.className = `meter-fill ${sentimentValue.toLowerCase()}`;
+            }
+            
+            if (sentimentValueElement) {
+                sentimentValueElement.textContent = sentimentValue;
+                sentimentValueElement.style.color = sentimentValue === 'BULLISH' ? '#00ff9d' : 
+                                                   sentimentValue === 'BEARISH' ? '#ff4757' : '#9595ff';
+            }
+            
+            updateSentimentBreakdown();
+        }
+
+        function updateSentimentBreakdown() {
+            const container = document.getElementById('sentimentBreakdown');
+            if (!container) return;
+            
+            const total = appState.liveArticles.length;
+            if (total === 0) {
+                container.innerHTML = '<div class="sentiment-item"><span>No data</span></div>';
+                return;
+            }
+            
+            const bullishPercent = Math.round((appState.sentimentData.bullish / total) * 100);
+            const bearishPercent = Math.round((appState.sentimentData.bearish / total) * 100);
+            const neutralPercent = Math.round((appState.sentimentData.neutral / total) * 100);
+            
+            container.innerHTML = `
+                <div class="sentiment-item">
+                    <div class="sentiment-dot bullish"></div>
+                    <span>BULLISH: ${bullishPercent}%</span>
+                </div>
+                <div class="sentiment-item">
+                    <div class="sentiment-dot bearish"></div>
+                    <span>BEARISH: ${bearishPercent}%</span>
+                </div>
+                <div class="sentiment-item">
+                    <div class="sentiment-dot neutral"></div>
+                    <span>NEUTRAL: ${neutralPercent}%</span>
+                </div>
+            `;
+        }
+
+        function updateFeedStats() {
+            const lastUpdate = document.getElementById('lastUpdateTime');
+            const articleCount = document.getElementById('articleCount');
+            
+            if (lastUpdate) {
+                const now = new Date();
+                lastUpdate.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            }
+            
+            if (articleCount) {
+                articleCount.textContent = `${appState.liveArticles.length} ARTICLES`;
+            }
+        }
+
+        function updateTLDR() {
+            const container = document.getElementById('tldrContainer');
+            if (!container || appState.liveArticles.length === 0) return;
+            
+            const topArticles = [...appState.liveArticles]
+                .sort((a, b) => b.impactScore - a.impactScore)
+                .slice(0, 3);
+            
+            container.innerHTML = `
+                <div class="tldr-header">
+                    <i data-lucide="sparkles"></i>
+                    <h4>TOP INTELLIGENCE BRIEF</h4>
+                </div>
+                <div class="tldr-content">
+                    ${topArticles.map((article, index) => `
+                        <div class="tldr-item">
+                            <span class="tldr-bullet">${index + 1}.</span>
+                            <span>${article.title.substring(0, 80)}${article.title.length > 80 ? '...' : ''}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            lucide.createIcons();
+        }
+
+        function updateTrendingTopics() {
+            const tagCounts = {};
+            appState.liveArticles.forEach(article => {
+                article.tags.forEach(tag => {
+                    if (tag !== 'breaking') {
+                        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                    }
+                });
+            });
+            
+            const topTags = Object.entries(tagCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5)
+                .map(([tag]) => tag);
+            
+            appState.trendingTopics = new Set(topTags);
+            
+            const container = document.getElementById('trendingTopics');
+            if (container) {
+                container.innerHTML = Array.from(appState.trendingTopics).map(tag => `
+                    <div class="heatmap-item">
+                        <div class="heatmap-label">
+                            <i data-lucide="hash" style="color: #00ff9d"></i>
+                            <span>${tag.toUpperCase()}</span>
+                        </div>
+                        <div class="heatmap-value" style="color: #00ff9d">
+                            ${tagCounts[tag] || 0} ARTICLES
+                        </div>
+                    </div>
+                `).join('');
+                lucide.createIcons();
+            }
+        }
+
+        function updateNeuralMap() {
+            if (!appState.neuralMap) return;
+            
+            appState.liveArticles.forEach((article, index) => {
+                if (article.location && NEWS_CONFIG.NEURAL_MAP_LOCATIONS[article.location]) {
+                    const location = NEWS_CONFIG.NEURAL_MAP_LOCATIONS[article.location];
+                    setTimeout(() => {
+                        createPulse(location.lat, location.lng);
+                    }, index * 300);
+                }
+            });
+        }
+
+        function showLoadingState() {
+            const container = document.getElementById('articlesContainer');
+            if (container) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>FETCHING REAL-TIME INTELLIGENCE...</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ===== AUDIO FUNCTIONS =====
+        function speak(text) {
+            if (!appState.audioEnabled || !('speechSynthesis' in window)) return;
+            
+            speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 0.8;
+            utterance.volume = 0.7;
+            
+            speechSynthesis.speak(utterance);
+        }
+
+        function updateAudioToggleUI() {
+            const container = document.getElementById('audioToggleContainer');
+            const icon = document.getElementById('audioToggleIcon');
+            const text = document.getElementById('audioToggleText');
+            
+            if (!container || !icon || !text) return;
+            
+            if (appState.audioEnabled) {
+                icon.setAttribute('data-lucide', 'volume-2');
+                container.classList.add('active');
+                text.textContent = 'VOICE ON';
+            } else {
+                icon.setAttribute('data-lucide', 'volume-x');
+                container.classList.remove('active');
+                text.textContent = 'VOICE OFF';
+            }
+            lucide.createIcons();
+        }
+
+        // ===== CYBERPUNK MODE =====
+        function toggleCyberpunkMode(enable) {
+            appState.cyberpunkMode = enable;
+            document.body.classList.toggle('cyberpunk-active', appState.cyberpunkMode);
+            
+            const toggleButton = document.getElementById('cyberpunkToggle');
+            if (toggleButton) {
+                toggleButton.classList.toggle('active', appState.cyberpunkMode);
+            }
+            
+            const settingToggle = document.getElementById('cyberpunkToggleSetting');
+            if (settingToggle) {
+                settingToggle.checked = appState.cyberpunkMode;
+            }
+            
+            if (appState.cyberpunkMode && appState.audioEnabled) {
+                speak("Cyberpunk mode activated");
+            }
+            
+            saveSettings();
+        }
+
+        // ===== SAMPLE DATA =====
+        function loadSampleData() {
+            const sampleArticles = [
+                {
+                    title: "NVIDIA BREAKTHROUGH: NEW AI CHIPS REDUCE DATA CENTER ENERGY BY 40%",
+                    summary: "NVIDIA unveils revolutionary AI processors that dramatically reduce power consumption while increasing computational efficiency.",
+                    source: "TechCrunch",
+                    url: "https://techcrunch.com",
+                    publishedAt: new Date().toISOString()
+                },
+                {
+                    title: "BREAKING: MAJOR CLOUD OUTAGE HITS EUROPEAN DATA CENTERS",
+                    summary: "Widespread service disruption affects multiple cloud providers across EU regions.",
+                    source: "Reuters",
+                    url: "https://reuters.com",
+                    publishedAt: new Date(Date.now() - 3600000).toISOString()
+                },
+                {
+                    title: "GOOGLE ACHIEVES RECORD PUE WITH IMMERSION COOLING IN SINGAPORE",
+                    summary: "Google's innovative cooling solution achieves unprecedented energy efficiency in tropical climates.",
+                    source: "Data Center Frontier",
+                    url: "https://datacenterfrontier.com",
+                    publishedAt: new Date(Date.now() - 7200000).toISOString()
+                },
+                {
+                    title: "MICROSOFT ANNOUNCES $20B SUSTAINABLE DATA CENTER INITIATIVE",
+                    summary: "Massive investment targets carbon-neutral AI infrastructure across global markets.",
+                    source: "Bloomberg",
+                    url: "https://bloomberg.com",
+                    publishedAt: new Date(Date.now() - 10800000).toISOString()
+                }
+            ];
+            
+            const processedArticles = processArticles(sampleArticles);
+            appState.liveArticles = processedArticles;
+            
+            updateUI();
+        }
+
+        function detectBreakingNews() {
+            appState.breakingNews = appState.liveArticles.filter(article => article.isBreaking);
+            
+            const banner = document.getElementById('breakingBanner');
+            const breakingText = document.getElementById('breakingText');
+            
+            if (appState.breakingNews.length > 0) {
+                banner.style.display = 'flex';
+                breakingText.textContent = `${appState.breakingNews.length} BREAKING ALERT${appState.breakingNews.length > 1 ? 'S' : ''} DETECTED`;
+                
+                showNotification("BREAKING NEWS DETECTED", "error");
+                
+                if (appState.audioEnabled) {
+                    speak(`Breaking news detected. ${appState.breakingNews.length} alerts.`);
+                }
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        // ===== NOTIFICATION SYSTEM =====
         function showNotification(message, type = "info") {
-            // Remove existing notification
             const existing = document.querySelector('.notification');
             if (existing) existing.remove();
             
-            // Create new notification
             const notification = document.createElement('div');
             notification.className = 'notification';
             
@@ -1965,48 +2665,242 @@
                 success: "check-circle",
                 error: "alert-circle",
                 warning: "alert-triangle",
-                info: "info",
-                breaking: "alert-octagon"
+                info: "info"
             };
             
             notification.innerHTML = `
-                <i data-lucide="${icons[type] || 'info'}" style="width: 16px; height: 16px; color: ${
-                    type === 'success' ? '#00ff9d' : 
-                    type === 'error' ? '#ff4757' : 
-                    type === 'breaking' ? '#ff4757' : '#0095ff'
-                }"></i>
+                <i data-lucide="${icons[type] || 'info'}"></i>
                 <span>${message}</span>
             `;
             
-            // Style based on type
-            const bgColor = type === 'breaking' ? 'rgba(255, 71, 87, 0.1)' : 
-                           type === 'error' ? 'rgba(255, 71, 87, 0.1)' : 
-                           type === 'success' ? 'rgba(0, 255, 157, 0.1)' : 
-                           'rgba(0, 149, 255, 0.1)';
+            const colors = {
+                error: { bg: 'rgba(255, 71, 87, 0.1)', border: '#ff4757', text: '#ff6b81' },
+                success: { bg: 'rgba(0, 255, 157, 0.1)', border: '#00ff9d', text: '#00ff9d' },
+                info: { bg: 'rgba(0, 149, 255, 0.1)', border: '#0095ff', text: '#0095ff' }
+            };
             
-            const borderColor = type === 'breaking' ? '#ff4757' : 
-                               type === 'error' ? '#ff4757' : 
-                               type === 'success' ? '#00ff9d' : '#0095ff';
-            
+            const color = colors[type] || colors.info;
             Object.assign(notification.style, {
-                background: bgColor,
-                borderColor: borderColor,
-                color: type === 'breaking' ? '#ff6b81' : 
-                       type === 'error' ? '#ff6b81' : 
-                       type === 'success' ? '#00ff9d' : '#0095ff'
+                background: color.bg,
+                borderColor: color.border,
+                color: color.text
             });
             
             document.body.appendChild(notification);
             lucide.createIcons();
             
-            // Auto-remove after 5 seconds (longer for breaking news)
             setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease';
+                notification.style.animation = 'slideOutRight 0.3s ease';
                 setTimeout(() => notification.remove(), 300);
-            }, type === 'breaking' ? 8000 : 5000);
+            }, 5000);
         }
 
-        // Initialize everything
+        // ===== EVENT HANDLERS =====
+        function setupEventListeners() {
+            // Refresh button
+            document.getElementById('refreshFeed').addEventListener('click', async () => {
+                if (appState.isRefreshing) return;
+                
+                const button = document.getElementById('refreshFeed');
+                const icon = button.querySelector('i');
+                
+                button.disabled = true;
+                button.classList.add('active');
+                icon.setAttribute('data-lucide', 'loader-2');
+                lucide.createIcons();
+                
+                try {
+                    await loadNews();
+                    showNotification("FEED REFRESHED SUCCESSFULLY", "success");
+                } catch (error) {
+                    showNotification("REFRESH FAILED", "error");
+                } finally {
+                    setTimeout(() => {
+                        button.disabled = false;
+                        button.classList.remove('active');
+                        icon.setAttribute('data-lucide', 'refresh-cw');
+                        lucide.createIcons();
+                    }, 1000);
+                }
+            });
+            
+            // Search button
+            document.getElementById('searchBtn').addEventListener('click', () => {
+                const searchContainer = document.getElementById('searchContainer');
+                searchContainer.classList.add('active');
+                document.getElementById('searchInput').focus();
+            });
+            
+            // Search input
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                appState.currentSearchTerm = e.target.value.trim();
+                renderArticles();
+            });
+            
+            // Close search on ESC
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    searchInput.value = '';
+                    appState.currentSearchTerm = '';
+                    document.getElementById('searchContainer').classList.remove('active');
+                    renderArticles();
+                }
+            });
+            
+            // Settings button
+            document.getElementById('settingsBtn').addEventListener('click', () => {
+                document.getElementById('settingsModal').classList.add('active');
+            });
+            
+            // Close settings
+            document.getElementById('settingsClose').addEventListener('click', () => {
+                document.getElementById('settingsModal').classList.remove('active');
+            });
+            
+            // Cyberpunk toggle
+            document.getElementById('cyberpunkToggle').addEventListener('click', () => {
+                toggleCyberpunkMode(!appState.cyberpunkMode);
+                showNotification(`CYBERPUNK MODE ${appState.cyberpunkMode ? 'ACTIVATED' : 'DEACTIVATED'}`, "info");
+            });
+            
+            // Audio toggle
+            document.getElementById('audioToggleContainer').addEventListener('click', () => {
+                appState.audioEnabled = !appState.audioEnabled;
+                updateAudioToggleUI();
+                
+                if (appState.audioEnabled) {
+                    showNotification("VOICE ALERTS ENABLED", "success");
+                    speak("Voice alerts enabled");
+                } else {
+                    showNotification("VOICE ALERTS DISABLED", "info");
+                }
+                
+                saveSettings();
+            });
+            
+            // Filter chips
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    appState.currentFilter = e.currentTarget.dataset.filter;
+                    renderArticles();
+                });
+            });
+            
+            // View buttons
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    appState.currentView = e.currentTarget.dataset.view;
+                    renderArticles();
+                });
+            });
+            
+            // Settings toggles
+            document.getElementById('voiceAlertsToggle').addEventListener('change', (e) => {
+                appState.audioEnabled = e.target.checked;
+                updateAudioToggleUI();
+                saveSettings();
+            });
+            
+            document.getElementById('cyberpunkToggleSetting').addEventListener('change', (e) => {
+                toggleCyberpunkMode(e.target.checked);
+            });
+            
+            // Initialize settings UI
+            document.getElementById('voiceAlertsToggle').checked = appState.audioEnabled;
+            document.getElementById('cyberpunkToggleSetting').checked = appState.cyberpunkMode;
+            
+            // Close modals on outside click
+            document.getElementById('searchContainer').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) {
+                    searchInput.value = '';
+                    appState.currentSearchTerm = '';
+                    e.currentTarget.classList.remove('active');
+                    renderArticles();
+                }
+            });
+            
+            document.getElementById('settingsModal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) {
+                    e.currentTarget.classList.remove('active');
+                }
+            });
+        }
+
+        // ===== GLOBAL APP OBJECT =====
+        window.app = {
+            toggleAnalysis: function(articleId) {
+                const analysis = document.getElementById(`analysis-${articleId}`);
+                if (analysis) {
+                    analysis.classList.toggle('show');
+                }
+            },
+            
+            toggleSave: function(articleId, button) {
+                const index = appState.savedArticles.indexOf(articleId);
+                const icon = button.querySelector('i');
+                
+                if (index === -1) {
+                    appState.savedArticles.push(articleId);
+                    icon.setAttribute('data-lucide', 'bookmark-check');
+                    button.style.background = '#00ff9d';
+                    button.style.color = '#0a0a0f';
+                    showNotification("ARTICLE SAVED", "success");
+                } else {
+                    appState.savedArticles.splice(index, 1);
+                    icon.setAttribute('data-lucide', 'bookmark');
+                    button.style.background = '';
+                    button.style.color = '';
+                    showNotification("ARTICLE UNSAVED", "info");
+                }
+                
+                lucide.createIcons();
+            },
+            
+            shareArticle: function(articleId) {
+                const article = appState.liveArticles.find(a => a.id === articleId);
+                if (!article) return;
+                
+                const shareText = `${article.title}\n\n${article.summary}\n\nRead more: ${article.url}`;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: article.title,
+                        text: shareText,
+                        url: article.url
+                    });
+                } else {
+                    navigator.clipboard.writeText(shareText);
+                    showNotification("COPIED TO CLIPBOARD", "success");
+                }
+            }
+        };
+
+        // ===== LIVE UPDATES =====
+        function startLiveUpdates() {
+            if (appState.refreshIntervalId) {
+                clearInterval(appState.refreshIntervalId);
+            }
+            
+            appState.refreshIntervalId = setInterval(async () => {
+                try {
+                    await loadNews();
+                    console.log('🔄 Auto-refresh completed');
+                } catch (error) {
+                    console.error('Auto-refresh error:', error);
+                }
+            }, NEWS_CONFIG.UPDATE_INTERVAL);
+            
+            setInterval(() => {
+                detectBreakingNews();
+            }, NEWS_CONFIG.BREAKING_CHECK_INTERVAL);
+        }
+
+        // ===== INITIALIZE APP =====
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
