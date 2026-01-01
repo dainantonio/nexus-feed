@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Nexus Feed | Live AI × Data × Energy × Policy</title>
+    <meta name="description" content="Real-time intelligence dashboard for AI, Data Centers, Energy, and Policy news">
+    <meta name="theme-color" content="#0a0a0f">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
-        /* ===== IMPROVED STYLES ===== */
+        /* ===== CSS Variables & Base Styles ===== */
         :root {
             --color-bg-dark: #0a0a0f;
             --color-bg-card: #111118;
@@ -17,15 +19,22 @@
             --color-data-blue: #0095ff;
             --color-accent-purple: #8a2be2;
             --color-text-primary: #ffffff;
-            --color-text-secondary: #a0a0b0;
-            --color-text-muted: #6a6a7a;
-            --color-border: #222230;
+            --color-text-secondary: #b0b0c0;
+            --color-text-muted: #7a7a8a;
+            --color-border: #2a2a3a;
             --color-tag-energy: rgba(0, 255, 157, 0.1);
             --color-tag-ai: rgba(0, 149, 255, 0.1);
             --color-tag-policy: rgba(138, 43, 226, 0.1);
             --color-tag-realestate: rgba(255, 165, 0, 0.1);
+            --color-tag-cooling: rgba(0, 191, 255, 0.1);
+            --color-tag-security: rgba(255, 65, 108, 0.1);
             --border-radius: 12px;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            
+            /* Scoring Constants */
+            --score-high: #00ff9d;
+            --score-medium: #ffa500;
+            --score-low: #ff4757;
         }
 
         * {
@@ -42,7 +51,7 @@
             overflow-x: hidden;
         }
 
-        /* ===== IMPROVED HEADER ===== */
+        /* ===== Application Layout ===== */
         .app-container {
             display: grid;
             grid-template-columns: 280px 1fr 320px;
@@ -51,6 +60,7 @@
             gap: 0;
         }
 
+        /* ===== Header Styles ===== */
         .app-header {
             grid-column: 1 / -1;
             background: rgba(10, 10, 15, 0.95);
@@ -103,7 +113,7 @@
             gap: 10px;
         }
 
-        /* ===== IMPROVED FILTER CHIPS ===== */
+        /* ===== Filter Styles ===== */
         .filter-container {
             display: flex;
             gap: 10px;
@@ -125,6 +135,8 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .filter-chip:hover {
@@ -140,7 +152,7 @@
             font-weight: 600;
         }
 
-        /* ===== IMPROVED SIDEBAR ===== */
+        /* ===== Sidebar Styles ===== */
         .left-sidebar {
             grid-column: 1;
             background-color: var(--color-bg-sidebar);
@@ -164,7 +176,6 @@
             gap: 8px;
         }
 
-        /* ===== IMPROVED HEAT MAP ===== */
         .heatmap-container {
             background-color: var(--color-bg-card);
             border-radius: var(--border-radius);
@@ -216,11 +227,12 @@
             font-weight: 600;
         }
 
-        /* ===== IMPROVED MAIN FEED ===== */
+        /* ===== Main Feed Styles ===== */
         .main-feed {
             grid-column: 2;
             padding: 1.5rem;
             overflow-y: auto;
+            position: relative;
         }
 
         .feed-header {
@@ -263,6 +275,8 @@
             color: var(--color-text-secondary);
             cursor: pointer;
             transition: var(--transition);
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .view-btn.active {
@@ -271,7 +285,7 @@
             border-color: var(--color-electric-green);
         }
 
-        /* ===== IMPROVED NEWS CARDS ===== */
+        /* ===== Article Card Styles ===== */
         .news-card {
             background-color: var(--color-bg-card);
             border-radius: var(--border-radius);
@@ -385,9 +399,22 @@
             color: white;
         }
 
+        .source-icon.zdnet {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        .source-icon.arstechnica {
+            background-color: #ff6600;
+            color: white;
+        }
+
         .card-time {
             font-size: 0.8rem;
             color: var(--color-text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .card-title {
@@ -415,6 +442,8 @@
             border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 500;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .tag.energy {
@@ -438,12 +467,12 @@
         }
 
         .tag.cooling {
-            background-color: rgba(0, 191, 255, 0.1);
+            background-color: var(--color-tag-cooling);
             color: #00bfff;
         }
 
         .tag.security {
-            background-color: rgba(255, 65, 108, 0.1);
+            background-color: var(--color-tag-security);
             color: #ff416c;
         }
 
@@ -476,11 +505,15 @@
         }
 
         .impact-value.high {
-            color: var(--color-electric-green);
+            color: var(--score-high);
         }
 
         .impact-value.medium {
-            color: #ffa500;
+            color: var(--score-medium);
+        }
+
+        .impact-value.low {
+            color: var(--score-low);
         }
 
         .card-actions {
@@ -500,6 +533,8 @@
             transition: var(--transition);
             border: none;
             color: var(--color-text-secondary);
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .action-btn:hover {
@@ -507,7 +542,7 @@
             color: var(--color-bg-dark);
         }
 
-        /* ===== IMPROVED RIGHT SIDEBAR ===== */
+        /* ===== Right Sidebar Styles ===== */
         .right-sidebar {
             grid-column: 3;
             background-color: var(--color-bg-sidebar);
@@ -544,6 +579,11 @@
             background-color: var(--color-electric-green);
             box-shadow: 0 0 15px rgba(0, 255, 157, 0.8);
             cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .map-point:hover {
+            transform: scale(1.5);
         }
 
         .map-point.virginia {
@@ -577,13 +617,15 @@
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .map-point:hover .map-label {
             opacity: 1;
         }
 
-        /* ===== IMPROVED TLDR SECTION ===== */
         .tldr-container {
             background-color: var(--color-bg-card);
             border-radius: var(--border-radius);
@@ -623,7 +665,7 @@
             margin-top: 2px;
         }
 
-        /* ===== IMPROVED FOOTER ===== */
+        /* ===== Footer Styles ===== */
         .app-footer {
             grid-column: 1 / -1;
             background-color: var(--color-bg-sidebar);
@@ -651,7 +693,7 @@
             color: var(--color-electric-green);
         }
 
-        /* ===== NEW: TRENDING TOPICS ===== */
+        /* ===== Trending Topics ===== */
         .trending-topics {
             display: flex;
             flex-wrap: wrap;
@@ -668,6 +710,8 @@
             color: var(--color-data-blue);
             cursor: pointer;
             transition: var(--transition);
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .trending-topic:hover {
@@ -675,7 +719,7 @@
             transform: translateY(-2px);
         }
 
-        /* ===== NEW: BREAKING NEWS BANNER ===== */
+        /* ===== Breaking Banner ===== */
         .breaking-banner {
             background: linear-gradient(90deg, #ff4757, #ff6b81);
             color: white;
@@ -688,7 +732,7 @@
             animation: pulse 2s infinite;
         }
 
-        /* ===== NEW: LOADING STATES ===== */
+        /* ===== Loading States ===== */
         .loading {
             display: flex;
             flex-direction: column;
@@ -718,6 +762,7 @@
             color: var(--color-text-muted);
         }
 
+        /* ===== Skeleton Loader ===== */
         .skeleton {
             background: linear-gradient(90deg, #111118 25%, #1a1a24 50%, #111118 75%);
             background-size: 200% 100%;
@@ -725,88 +770,41 @@
             border-radius: 4px;
         }
 
+        .skeleton-card {
+            height: 200px;
+            margin-bottom: 1.5rem;
+        }
+
+        .skeleton-title {
+            height: 24px;
+            width: 70%;
+            margin-bottom: 1rem;
+        }
+
+        .skeleton-text {
+            height: 16px;
+            width: 90%;
+            margin-bottom: 0.75rem;
+        }
+
+        .skeleton-text.short {
+            width: 60%;
+        }
+
         @keyframes loading {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
         }
 
-        /* ===== IMPROVED RESPONSIVE ===== */
-        @media (max-width: 1200px) {
-            .app-container {
-                grid-template-columns: 240px 1fr 280px;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .app-container {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto 1fr auto auto;
-            }
-
-            .left-sidebar, .right-sidebar {
-                grid-column: 1;
-                border: none;
-                border-bottom: 1px solid var(--color-border);
-            }
-
-            .main-feed {
-                grid-column: 1;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .app-header {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-
-            .filter-container {
-                margin: 1rem;
-            }
-
-            .feed-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-
-            .feed-stats {
-                justify-content: space-between;
-                width: 100%;
-            }
-
-            .view-options {
-                align-self: flex-end;
-            }
-
-            .card-header {
-                flex-direction: column;
-                gap: 0.5rem;
-                align-items: flex-start;
-            }
-
-            .card-footer {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: flex-start;
-            }
-
-            .card-actions {
-                align-self: flex-end;
-            }
-        }
-
-        /* ===== NEW: NOTIFICATION STYLES ===== */
+        /* ===== Notification System ===== */
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
             background: var(--color-bg-card);
-            color: var(--color-electric-green);
             padding: 12px 20px;
             border-radius: 8px;
-            border: 1px solid var(--color-electric-green);
+            border: 1px solid;
             z-index: 9999;
             box-shadow: 0 4px 20px rgba(0, 255, 157, 0.2);
             animation: slideIn 0.3s ease;
@@ -814,6 +812,7 @@
             align-items: center;
             gap: 10px;
             max-width: 350px;
+            font-size: 0.9rem;
         }
 
         @keyframes slideIn {
@@ -825,15 +824,165 @@
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
         }
+
+        /* ===== Search Modal ===== */
+        .search-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .search-modal.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 1rem 1.5rem;
+            background: var(--color-bg-card);
+            border: 2px solid var(--color-border);
+            border-radius: var(--border-radius);
+            color: var(--color-text-primary);
+            font-size: 1.1rem;
+            margin-top: 100px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-electric-green);
+        }
+
+        .close-search {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: none;
+            border: none;
+            color: var(--color-text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* ===== Responsive Design ===== */
+        @media (max-width: 1200px) {
+            .app-container {
+                grid-template-columns: 240px 1fr 280px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr auto auto;
+            }
+            .left-sidebar, .right-sidebar {
+                grid-column: 1;
+                border: none;
+                border-bottom: 1px solid var(--color-border);
+            }
+            .main-feed {
+                grid-column: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            .filter-container {
+                margin: 1rem;
+            }
+            .feed-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .feed-stats {
+                justify-content: space-between;
+                width: 100%;
+            }
+            .view-options {
+                align-self: flex-end;
+            }
+            .card-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+            .card-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            .card-actions {
+                align-self: flex-end;
+            }
+            .app-footer {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        /* ===== Accessibility Improvements ===== */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ===== Focus States ===== */
+        .action-btn:focus,
+        .filter-chip:focus,
+        .view-btn:focus,
+        .trending-topic:focus {
+            outline: 2px solid var(--color-electric-green);
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body>
+    <!-- Search Modal -->
+    <div id="searchModal" class="search-modal" role="dialog" aria-label="Search articles">
+        <button class="close-search" id="closeSearch" aria-label="Close search">
+            <i data-lucide="x"></i>
+        </button>
+        <input 
+            type="text" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Search articles by title, summary, or tags..."
+            aria-label="Search articles"
+        >
+        <div id="searchResults" class="search-results" style="margin-top: 2rem; width: 100%; max-width: 800px;"></div>
+    </div>
+
+    <!-- Main Application Container -->
     <div class="app-container">
         <!-- Header -->
-        <header class="app-header">
+        <header class="app-header" role="banner">
             <div class="logo-container">
-                <div class="logo-icon">
-                    <i data-lucide="cpu" style="color: #0a0a0f;"></i>
+                <div class="logo-icon" aria-hidden="true">
+                    <i data-lucide="cpu"></i>
                 </div>
                 <div class="logo-text">
                     <h1>The Nexus Feed</h1>
@@ -841,95 +990,98 @@
                 </div>
             </div>
             <div class="header-actions">
-                <button class="action-btn" title="Refresh Feed" id="refreshFeed">
+                <button class="action-btn" id="refreshFeed" aria-label="Refresh feed" title="Refresh Feed">
                     <i data-lucide="refresh-cw"></i>
                 </button>
-                <button class="action-btn" title="Search" id="searchBtn">
+                <button class="action-btn" id="searchBtn" aria-label="Search articles" title="Search">
                     <i data-lucide="search"></i>
                 </button>
-                <button class="action-btn" title="Settings" id="settingsBtn">
+                <button class="action-btn" id="settingsBtn" aria-label="Settings" title="Settings">
                     <i data-lucide="settings"></i>
                 </button>
             </div>
         </header>
 
         <!-- Filter Chips -->
-        <div class="filter-container">
-            <div class="filter-chip active" data-filter="all">
-                <i data-lucide="zap"></i> All Nexus
+        <div class="filter-container" role="navigation" aria-label="Article filters">
+            <div class="filter-chip active" data-filter="all" role="button" tabindex="0" aria-pressed="true">
+                <i data-lucide="zap" aria-hidden="true"></i> All Nexus
             </div>
-            <div class="filter-chip" data-filter="ai">
-                <i data-lucide="cpu"></i> AI & Compute
+            <div class="filter-chip" data-filter="ai" role="button" tabindex="0" aria-pressed="false">
+                <i data-lucide="cpu" aria-hidden="true"></i> AI & Compute
             </div>
-            <div class="filter-chip" data-filter="energy">
-                <i data-lucide="battery-charging"></i> Energy
+            <div class="filter-chip" data-filter="energy" role="button" tabindex="0" aria-pressed="false">
+                <i data-lucide="battery-charging" aria-hidden="true"></i> Energy
             </div>
-            <div class="filter-chip" data-filter="realestate">
-                <i data-lucide="building-2"></i> Real Estate & Zoning
+            <div class="filter-chip" data-filter="realestate" role="button" tabindex="0" aria-pressed="false">
+                <i data-lucide="building-2" aria-hidden="true"></i> Real Estate & Zoning
             </div>
-            <div class="filter-chip" data-filter="policy">
-                <i data-lucide="scale"></i> Policy & Regulation
+            <div class="filter-chip" data-filter="policy" role="button" tabindex="0" aria-pressed="false">
+                <i data-lucide="scale" aria-hidden="true"></i> Policy & Regulation
             </div>
-            <div class="filter-chip" data-filter="breaking">
-                <i data-lucide="alert-circle"></i> Breaking News
+            <div class="filter-chip" data-filter="breaking" role="button" tabindex="0" aria-pressed="false">
+                <i data-lucide="alert-circle" aria-hidden="true"></i> Breaking News
             </div>
         </div>
 
         <!-- Left Sidebar -->
-        <aside class="left-sidebar">
+        <aside class="left-sidebar" role="complementary" aria-label="Heat maps and trending topics">
             <div class="sidebar-section">
-                <h3><i data-lucide="trending-up"></i> Live Heat Maps</h3>
+                <h3><i data-lucide="trending-up" aria-hidden="true"></i> Live Heat Maps</h3>
                 <div class="heatmap-container" id="heatmapContainer"></div>
             </div>
-
             <div class="sidebar-section">
-                <h3><i data-lucide="file-text"></i> Policy Tracker</h3>
+                <h3><i data-lucide="file-text" aria-hidden="true"></i> Policy Tracker</h3>
                 <div class="heatmap-container" id="policyTracker"></div>
             </div>
-
             <div class="sidebar-section">
-                <h3><i data-lucide="trending-up"></i> Trending Topics</h3>
-                <div class="trending-topics" id="trendingTopics">
-                    <!-- Will be populated by JavaScript -->
-                </div>
+                <h3><i data-lucide="trending-up" aria-hidden="true"></i> Trending Topics</h3>
+                <div class="trending-topics" id="trendingTopics"></div>
             </div>
         </aside>
 
         <!-- Main Feed -->
-        <main class="main-feed">
+        <main class="main-feed" role="main" aria-label="News articles">
             <div class="feed-header">
                 <div>
                     <h2>Today's Intelligence Feed</h2>
                     <div class="feed-stats">
                         <div class="stat-item">
-                            <i data-lucide="clock"></i>
+                            <i data-lucide="clock" aria-hidden="true"></i>
                             <span id="lastUpdateTime">Just now</span>
                         </div>
                         <div class="stat-item">
-                            <i data-lucide="newspaper"></i>
+                            <i data-lucide="newspaper" aria-hidden="true"></i>
                             <span id="articleCount">0 articles</span>
                         </div>
                         <div class="stat-item">
-                            <i data-lucide="zap"></i>
+                            <i data-lucide="zap" aria-hidden="true"></i>
                             <span id="liveStatus">Live</span>
                         </div>
                     </div>
                 </div>
-                <div class="view-options">
-                    <button class="view-btn active" data-view="latest">Latest</button>
-                    <button class="view-btn" data-view="top">Top Impact</button>
-                    <button class="view-btn" data-view="trending">Trending</button>
+                <div class="view-options" role="radiogroup" aria-label="View options">
+                    <button class="view-btn active" data-view="latest" role="radio" aria-checked="true" tabindex="0">
+                        Latest
+                    </button>
+                    <button class="view-btn" data-view="top" role="radio" aria-checked="false" tabindex="0">
+                        Top Impact
+                    </button>
+                    <button class="view-btn" data-view="trending" role="radio" aria-checked="false" tabindex="0">
+                        Trending
+                    </button>
                 </div>
             </div>
 
-            <!-- Breaking News Banner (Conditional) -->
-            <div id="breakingBanner" class="breaking-banner" style="display: none;">
-                <i data-lucide="alert-circle"></i>
+            <!-- Breaking News Banner -->
+            <div id="breakingBanner" class="breaking-banner" style="display: none;" role="alert" aria-live="assertive">
+                <i data-lucide="alert-circle" aria-hidden="true"></i>
                 <span id="breakingText">Breaking News</span>
             </div>
 
             <!-- Articles Container -->
             <div id="articlesContainer">
+                <!-- Loading skeleton -->
                 <div class="loading">
                     <div class="loading-spinner"></div>
                     <p>Loading live news feed...</p>
@@ -938,32 +1090,38 @@
         </main>
 
         <!-- Right Sidebar -->
-        <aside class="right-sidebar">
+        <aside class="right-sidebar" role="complementary" aria-label="Data center map and TL;DR">
             <div class="sidebar-section">
-                <h3><i data-lucide="map-pin"></i> Data Center Map</h3>
+                <h3><i data-lucide="map-pin" aria-hidden="true"></i> Data Center Map</h3>
                 <div class="resource-map">
                     <div class="map-container">
-                        <div class="map-point virginia"><div class="map-label">Virginia, USA</div></div>
-                        <div class="map-point dublin"><div class="map-label">Dublin, Ireland</div></div>
-                        <div class="map-point singapore"><div class="map-label">Singapore</div></div>
-                        <div class="map-point tokyo"><div class="map-label">Tokyo, Japan</div></div>
+                        <div class="map-point virginia" role="button" tabindex="0" aria-label="Virginia data center">
+                            <div class="map-label">Virginia, USA</div>
+                        </div>
+                        <div class="map-point dublin" role="button" tabindex="0" aria-label="Dublin data center">
+                            <div class="map-label">Dublin, Ireland</div>
+                        </div>
+                        <div class="map-point singapore" role="button" tabindex="0" aria-label="Singapore data center">
+                            <div class="map-label">Singapore</div>
+                        </div>
+                        <div class="map-point tokyo" role="button" tabindex="0" aria-label="Tokyo data center">
+                            <div class="map-label">Tokyo, Japan</div>
+                        </div>
                     </div>
                 </div>
             </div>
-
             <div class="sidebar-section">
-                <h3><i data-lucide="sparkles"></i> TL;DR Mode</h3>
+                <h3><i data-lucide="sparkles" aria-hidden="true"></i> TL;DR Mode</h3>
                 <div class="tldr-container" id="tldrContainer"></div>
             </div>
-
             <div class="sidebar-section">
-                <h3><i data-lucide="activity"></i> Feed Health</h3>
+                <h3><i data-lucide="activity" aria-hidden="true"></i> Feed Health</h3>
                 <div class="heatmap-container" id="feedHealth"></div>
             </div>
         </aside>
 
         <!-- Footer -->
-        <footer class="app-footer">
+        <footer class="app-footer" role="contentinfo">
             <div class="footer-copyright">
                 © 2024 The Nexus Feed. Real-time intelligence for AI, Data, Energy, and Policy.
             </div>
@@ -977,1037 +1135,1266 @@
         </footer>
     </div>
 
+    <!-- JavaScript Application -->
     <script>
-        // ============================================
-        // ENHANCED NEWS FEED WITH MULTIPLE SOURCES
-        // ============================================
-
-        // Initialize icons
+        // Initialize Lucide icons
         lucide.createIcons();
 
-        // API Configuration
-        const NEWS_CONFIG = {
-            // Multiple news sources for redundancy
-            SOURCES: [
-                {
-                    name: "NewsAPI",
-                    url: "https://newsapi.org/v2/everything",
-                    apiKey: "YOUR_NEWSAPI_KEY", // Get from https://newsapi.org
-                    params: {
-                        q: "(AI OR artificial intelligence) AND (data center OR energy OR policy)",
-                        language: "en",
-                        sortBy: "publishedAt",
-                        pageSize: 10
-                    }
-                },
-                {
-                    name: "GNews",
-                    url: "https://gnews.io/api/v4/search",
-                    apiKey: "YOUR_GNEWS_KEY", // Get from https://gnews.io
-                    params: {
-                        q: "technology AI data center energy policy",
-                        lang: "en",
-                        max: 10
-                    }
-                }
-            ],
-            
-            // RSS Feeds as backup
-            RSS_FEEDS: [
-                "https://techcrunch.com/feed/",
-                "https://www.wired.com/feed/rss",
-                "https://feeds.arstechnica.com/arstechnica/index",
-                "https://www.theverge.com/rss/index.xml",
-                "https://www.zdnet.com/news/rss.xml"
-            ],
-            
-            // Update intervals
-            UPDATE_INTERVAL: 300000, // 5 minutes
-            BREAKING_CHECK_INTERVAL: 60000, // 1 minute
-            
-            // Keywords for categorization
-            KEYWORDS: {
-                ai: ["AI", "artificial intelligence", "machine learning", "deep learning", "neural network", "GPT", "OpenAI"],
-                energy: ["energy", "power", "electricity", "solar", "wind", "nuclear", "renewable", "carbon"],
-                policy: ["policy", "regulation", "law", "legislation", "government", "EU", "US", "China"],
-                realestate: ["real estate", "zoning", "land", "property", "construction", "development"],
-                cooling: ["cooling", "immersion", "liquid", "thermal", "heat", "PUE"],
-                security: ["security", "cybersecurity", "privacy", "encryption", "attack", "breach"]
+        // ===== CONSTANTS =====
+        const CONSTANTS = {
+            SCORING: {
+                RECENCY_BONUS_1HR: 2,
+                RECENCY_BONUS_24HR: 1,
+                CREDIBLE_SOURCE_BONUS: 2,
+                TAG_BONUS_PER_TAG: 1,
+                MAX_TAG_BONUS: 3,
+                BREAKING_BONUS: 1.5,
+                SYNERGY_BONUS: 1,
+                MIN_SCORE: 1,
+                MAX_SCORE: 10,
+                TITLE_LENGTH_BONUS_THRESHOLD: 100,
+                TITLE_LENGTH_BONUS: 1
+            },
+            CACHE: {
+                MAX_SIZE: 100,
+                ARTICLE_TTL: 300000, // 5 minutes
+                BREAKING_TTL: 60000, // 1 minute
+                TRENDING_TTL: 600000 // 10 minutes
+            },
+            UI: {
+                ARTICLES_PER_PAGE: 20,
+                MAX_VISIBLE_ARTICLES: 50,
+                SCROLL_THROTTLE: 100,
+                SEARCH_DEBOUNCE: 300
+            },
+            API: {
+                MAX_RETRIES: 3,
+                RETRY_DELAY: 1000,
+                TIMEOUT: 10000
             }
         };
 
-        // State Management
-        let currentFilter = "all";
-        let currentView = "latest";
-        let savedArticles = JSON.parse(localStorage.getItem('nexusSaved')) || [];
-        let liveArticles = [];
-        let breakingNews = [];
-        let trendingTopics = new Set();
-        
-        // Initialize
-        async function init() {
-            try {
-                // Load initial data
-                await loadNews();
-                renderHeatmap();
-                renderPolicy();
-                renderTLDR();
-                renderFeedHealth();
-                updateFeedStats();
-                
-                // Setup event listeners
-                setupEventListeners();
-                
-                // Start background updates
-                startLiveUpdates();
-                
-                // Show welcome
-                showNotification("🔄 Connected to live news feed. Updates every 5 minutes.", "success");
-                
-            } catch (error) {
-                console.error("Initialization error:", error);
-                // Fallback to sample data
-                loadSampleData();
-                showNotification("⚠️ Using sample data. Add API keys for live news.", "warning");
-            }
-        }
-
-        // Enhanced News Loading
-        async function loadNews() {
-            try {
-                showLoadingState();
-                
-                // Try multiple sources
-                const articles = await Promise.any([
-                    fetchFromNewsAPI(),
-                    fetchFromRSSFeeds(),
-                    fetchSampleData() // Fallback
-                ]);
-                
-                // Process and enrich articles
-                liveArticles = await processArticles(articles);
-                
-                // Detect breaking news
-                detectBreakingNews();
-                
-                // Update trending topics
-                updateTrendingTopics();
-                
-                // Render everything
-                renderArticles();
-                updateFeedStats();
-                
-            } catch (error) {
-                console.error("Error loading news:", error);
-                throw error;
-            }
-        }
-
-        // Fetch from NewsAPI
-        async function fetchFromNewsAPI() {
-            // Mock implementation - replace with actual API calls
-            return fetchSampleData();
-            
-            /* REAL IMPLEMENTATION (uncomment and add your API key):
-            const source = NEWS_CONFIG.SOURCES[0];
-            const params = new URLSearchParams({
-                ...source.params,
-                apiKey: source.apiKey
-            });
-            
-            const response = await fetch(`${source.url}?${params}`);
-            if (!response.ok) throw new Error(`NewsAPI error: ${response.status}`);
-            
-            const data = await response.json();
-            return data.articles.map(article => ({
-                title: article.title,
-                summary: article.description,
-                source: article.source.name,
-                url: article.url,
-                publishedAt: article.publishedAt,
-                content: article.content
-            }));
-            */
-        }
-
-        // Fetch from RSS Feeds
-        async function fetchFromRSSFeeds() {
-            // Use a CORS proxy for RSS feeds
-            const feedUrl = NEWS_CONFIG.RSS_FEEDS[0];
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}`;
-            
-            try {
-                const response = await fetch(proxyUrl);
-                const data = await response.json();
-                
-                // Parse RSS XML (simplified)
-                const parser = new DOMParser();
-                const xml = parser.parseFromString(data.contents, "text/xml");
-                const items = xml.querySelectorAll('item');
-                
-                return Array.from(items).map(item => ({
-                    title: item.querySelector('title')?.textContent || '',
-                    summary: item.querySelector('description')?.textContent || '',
-                    source: "RSS Feed",
-                    url: item.querySelector('link')?.textContent || '#',
-                    publishedAt: item.querySelector('pubDate')?.textContent || new Date().toISOString()
-                }));
-            } catch (error) {
-                console.error("RSS fetch error:", error);
-                return [];
-            }
-        }
-
-        // Process and enrich articles
-        async function processArticles(articles) {
-            return articles.map((article, index) => {
-                // Extract tags based on keywords
-                const tags = extractTags(article.title + ' ' + article.summary);
-                
-                // Calculate impact score
-                const impactScore = calculateImpactScore(article, tags);
-                
-                // Format time
-                const time = formatTime(article.publishedAt || new Date());
-                
-                return {
-                    id: index + 1,
-                    title: article.title || "Untitled Article",
-                    summary: article.summary || "No summary available.",
-                    source: article.source || "Unknown Source",
-                    sourceIcon: getSourceIcon(article.source),
-                    time: time,
-                    readTime: estimateReadTime(article.content || article.summary),
-                    tags: tags,
-                    impactScore: impactScore,
-                    impactClass: impactScore >= 8 ? "high" : impactScore >= 6 ? "medium" : "low",
-                    url: article.url || "#",
-                    publishedAt: article.publishedAt || new Date().toISOString(),
-                    isBreaking: false
+        // ===== APPLICATION STATE =====
+        class AppState {
+            constructor() {
+                this._state = {
+                    articles: [],
+                    filteredArticles: [],
+                    savedArticles: [],
+                    filters: {
+                        category: 'all',
+                        view: 'latest'
+                    },
+                    ui: {
+                        loading: false,
+                        error: null,
+                        lastUpdate: null
+                    },
+                    breakingNews: [],
+                    trendingTopics: new Set(),
+                    cache: new Map()
                 };
-            });
-        }
-
-        // Extract tags from content
-        function extractTags(content) {
-            const tags = [];
-            const contentLower = content.toLowerCase();
-            
-            for (const [tag, keywords] of Object.entries(NEWS_CONFIG.KEYWORDS)) {
-                if (keywords.some(keyword => contentLower.includes(keyword.toLowerCase()))) {
-                    tags.push(tag);
-                }
+                this.listeners = new Set();
             }
-            
-            return tags.length > 0 ? tags : ["general"];
-        }
 
-        // Calculate impact score
-        function calculateImpactScore(article, tags) {
-            let score = 5; // Base score
-            
-            // Source credibility
-            const credibleSources = ["Reuters", "Bloomberg", "Financial Times", "Wall Street Journal", "MIT"];
-            if (credibleSources.some(src => article.source?.includes(src))) score += 2;
-            
-            // Number of tags
-            score += Math.min(tags.length, 3);
-            
-            // Title length (longer titles often more detailed)
-            if (article.title?.length > 100) score += 1;
-            
-            // Recentness
-            const hoursAgo = (new Date() - new Date(article.publishedAt)) / (1000 * 60 * 60);
-            if (hoursAgo < 1) score += 2; // Less than 1 hour
-            else if (hoursAgo < 24) score += 1; // Less than 24 hours
-            
-            return Math.min(10, Math.max(1, score)).toFixed(1);
-        }
+            get(key) {
+                return key.split('.').reduce((obj, k) => obj?.[k], this._state);
+            }
 
-        // Detect breaking news
-        function detectBreakingNews() {
-            breakingNews = liveArticles.filter(article => {
-                const title = article.title.toLowerCase();
-                const breakingKeywords = [
-                    "breaking", "urgent", "alert", "crisis", "emergency",
-                    "outage", "attack", "hack", "leak", "scandal"
-                ];
-                
-                return breakingKeywords.some(keyword => title.includes(keyword)) ||
-                       article.impactScore >= 9;
-            });
-            
-            if (breakingNews.length > 0) {
-                showBreakingNews();
+            set(key, value) {
+                const keys = key.split('.');
+                const lastKey = keys.pop();
+                const target = keys.reduce((obj, k) => obj[k], this._state);
+                target[lastKey] = value;
+                this.notifyListeners(key, value);
+            }
+
+            subscribe(listener) {
+                this.listeners.add(listener);
+                return () => this.listeners.delete(listener);
+            }
+
+            notifyListeners(key, value) {
+                this.listeners.forEach(listener => listener(key, value));
             }
         }
 
-        // Update trending topics
-        function updateTrendingTopics() {
-            trendingTopics.clear();
-            
-            // Count tag occurrences
-            const tagCounts = {};
-            liveArticles.forEach(article => {
-                article.tags.forEach(tag => {
-                    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-                });
-            });
-            
-            // Get top 5 tags
-            const topTags = Object.entries(tagCounts)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 5)
-                .map(([tag]) => tag);
-            
-            trendingTopics = new Set(topTags);
-            renderTrendingTopics();
-        }
+        const appState = new AppState();
 
-        // Show breaking news
-        function showBreakingNews() {
-            const banner = document.getElementById('breakingBanner');
-            const breakingText = document.getElementById('breakingText');
-            
-            if (breakingNews.length > 0) {
-                banner.style.display = 'flex';
-                breakingText.textContent = `${breakingNews.length} Breaking News ${breakingNews.length > 1 ? 'Stories' : 'Story'}`;
-                
-                // Show notification
-                showNotification("🚨 Breaking News Alert!", "breaking");
+        // ===== STORAGE MANAGER =====
+        class StorageManager {
+            constructor() {
+                this.savedArticles = [];
+                this.initialize();
             }
-        }
 
-        // Render articles
-        function renderArticles() {
-            const container = document.getElementById('articlesContainer');
-            if (!container) return;
-            
-            let articlesToShow = [...liveArticles];
-            
-            // Apply filters
-            if (currentFilter !== "all") {
-                if (currentFilter === "breaking") {
-                    articlesToShow = breakingNews;
-                } else {
-                    articlesToShow = articlesToShow.filter(article => 
-                        article.tags.includes(currentFilter)
-                    );
-                }
-            }
-            
-            // Apply view sorting
-            if (currentView === "top") {
-                articlesToShow.sort((a, b) => b.impactScore - a.impactScore);
-            } else if (currentView === "trending") {
-                articlesToShow.sort((a, b) => {
-                    const aTrending = a.tags.some(tag => trendingTopics.has(tag));
-                    const bTrending = b.tags.some(tag => trendingTopics.has(tag));
-                    if (aTrending && !bTrending) return -1;
-                    if (!aTrending && bTrending) return 1;
-                    return b.impactScore - a.impactScore;
-                });
-            }
-            
-            if (articlesToShow.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i data-lucide="newspaper" style="width: 48px; height: 48px;"></i>
-                        <h3>No articles found</h3>
-                        <p>Try a different filter or refresh the feed</p>
-                    </div>
-                `;
-                lucide.createIcons();
-                return;
-            }
-            
-            // Generate articles HTML
-            const articlesHTML = articlesToShow.map(article => `
-                <article class="news-card ${article.isBreaking ? 'breaking' : ''}" data-id="${article.id}">
-                    <div class="card-header">
-                        <div class="card-source">
-                            <div class="source-icon ${article.sourceIcon}">
-                                ${getSourceAbbreviation(article.source)}
-                            </div>
-                            <span>${article.source}</span>
-                            <span>•</span>
-                            <span>${article.time}</span>
-                        </div>
-                        <div class="card-time">
-                            <i data-lucide="clock"></i> ${article.readTime}
-                        </div>
-                    </div>
-                    
-                    <h3 class="card-title">
-                        ${article.isBreaking ? '🚨 ' : ''}${article.title}
-                    </h3>
-                    
-                    <p class="card-summary">${article.summary}</p>
-                    
-                    <div class="card-tags">
-                        ${article.tags.map(tag => `
-                            <div class="tag ${tag} ${article.isBreaking && tag === 'breaking' ? 'breaking' : ''}">
-                                ${getTagDisplayName(tag)}
-                            </div>
-                        `).join('')}
-                        ${article.isBreaking ? '<div class="tag breaking">Breaking</div>' : ''}
-                    </div>
-                    
-                    <div class="card-footer">
-                        <div class="impact-score">
-                            <span class="impact-label">Impact Score:</span>
-                            <span class="impact-value ${article.impactClass}">${article.impactScore}</span>
-                        </div>
-                        <div class="card-actions">
-                            <button class="action-btn" title="Save" onclick="toggleSave(${article.id}, this)">
-                                <i data-lucide="${savedArticles.includes(article.id) ? 'bookmark-check' : 'bookmark'}"></i>
-                            </button>
-                            <button class="action-btn" title="Share" onclick="shareArticle(${article.id})">
-                                <i data-lucide="share-2"></i>
-                            </button>
-                            <button class="action-btn" title="Read" onclick="window.open('${article.url}', '_blank')">
-                                <i data-lucide="external-link"></i>
-                            </button>
-                        </div>
-                    </div>
-                </article>
-            `).join('');
-            
-            container.innerHTML = articlesHTML;
-            lucide.createIcons();
-        }
-
-        // Render trending topics
-        function renderTrendingTopics() {
-            const container = document.getElementById('trendingTopics');
-            if (!container) return;
-            
-            if (trendingTopics.size === 0) {
-                container.innerHTML = '<span style="color: var(--color-text-muted); font-size: 0.9rem;">No trending topics yet</span>';
-                return;
-            }
-            
-            const topicsHTML = Array.from(trendingTopics).map(topic => `
-                <div class="trending-topic" onclick="filterByTopic('${topic}')">
-                    #${getTagDisplayName(topic)}
-                </div>
-            `).join('');
-            
-            container.innerHTML = topicsHTML;
-        }
-
-        // Update feed statistics
-        function updateFeedStats() {
-            const lastUpdate = document.getElementById('lastUpdateTime');
-            const articleCount = document.getElementById('articleCount');
-            const liveStatus = document.getElementById('liveStatus');
-            
-            if (lastUpdate) {
-                lastUpdate.textContent = "Just now";
-            }
-            
-            if (articleCount) {
-                articleCount.textContent = `${liveArticles.length} articles`;
-            }
-            
-            if (liveStatus) {
-                liveStatus.textContent = "Live";
-            }
-        }
-
-        // Show loading state
-        function showLoadingState() {
-            const container = document.getElementById('articlesContainer');
-            if (!container) return;
-            
-            container.innerHTML = `
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <p>Fetching latest news from multiple sources...</p>
-                </div>
-            `;
-        }
-
-        // Start live updates
-        function startLiveUpdates() {
-            // Update news every 5 minutes
-            setInterval(async () => {
+            async initialize() {
                 try {
-                    await loadNews();
-                    showNotification("📰 Feed updated with latest news", "success");
+                    // Try to use localStorage with fallback
+                    const saved = localStorage.getItem('nexusSaved');
+                    this.savedArticles = saved ? JSON.parse(saved) : [];
                 } catch (error) {
-                    console.error("Auto-update error:", error);
+                    console.warn('Storage initialization failed:', error);
+                    this.savedArticles = [];
                 }
-            }, NEWS_CONFIG.UPDATE_INTERVAL);
-            
-            // Check for breaking news every minute
-            setInterval(() => {
-                detectBreakingNews();
-            }, NEWS_CONFIG.BREAKING_CHECK_INTERVAL);
-            
-            // Update timestamps every minute
-            setInterval(updateTimeStamps, 60000);
+            }
+
+            isSaved(articleId) {
+                return this.savedArticles.includes(articleId);
+            }
+
+            async saveArticle(articleId) {
+                if (!this.isSaved(articleId)) {
+                    this.savedArticles.push(articleId);
+                    await this.persist();
+                }
+            }
+
+            async removeArticle(articleId) {
+                const index = this.savedArticles.indexOf(articleId);
+                if (index > -1) {
+                    this.savedArticles.splice(index, 1);
+                    await this.persist();
+                }
+            }
+
+            async persist() {
+                try {
+                    localStorage.setItem('nexusSaved', JSON.stringify(this.savedArticles));
+                } catch (error) {
+                    console.warn('Failed to persist to storage:', error);
+                }
+            }
         }
 
-        // Update timestamps
-        function updateTimeStamps() {
-            const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            
-            const feedTime = document.querySelector('#feedHealth .heatmap-item:nth-child(3) .heatmap-value');
-            if (feedTime) feedTime.textContent = timeStr;
+        const storage = new StorageManager();
+
+        // ===== SMART CACHE =====
+        class SmartCache {
+            constructor() {
+                this.cache = new Map();
+                this.ttl = CONSTANTS.CACHE.ARTICLE_TTL;
+            }
+
+            get(key) {
+                const item = this.cache.get(key);
+                if (!item) return null;
+                
+                if (Date.now() - item.timestamp > this.ttl) {
+                    this.cache.delete(key);
+                    return null;
+                }
+                
+                return item.data;
+            }
+
+            set(key, data) {
+                this.cache.set(key, {
+                    data,
+                    timestamp: Date.now()
+                });
+                
+                // Simple LRU eviction
+                if (this.cache.size > CONSTANTS.CACHE.MAX_SIZE) {
+                    const firstKey = this.cache.keys().next().value;
+                    this.cache.delete(firstKey);
+                }
+            }
+
+            clear() {
+                this.cache.clear();
+            }
         }
 
-        // Setup event listeners
-        function setupEventListeners() {
-            // Filter chips
-            document.querySelectorAll('.filter-chip').forEach(chip => {
-                chip.addEventListener('click', function() {
-                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-                    this.classList.add('active');
-                    currentFilter = this.dataset.filter || "all";
-                    renderArticles();
-                });
-            });
+        const cache = new SmartCache();
+
+        // ===== UTILITY FUNCTIONS =====
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function throttle(func, limit) {
+            let inThrottle;
+            return function(...args) {
+                if (!inThrottle) {
+                    func.apply(this, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        }
+
+        // ===== NEWS CONFIGURATION =====
+        const NEWS_CONFIG = {
+            // Backend proxy endpoints (configure these in your actual deployment)
+            ENDPOINTS: {
+                news: '/api/news',
+                gnews: '/api/gnews',
+                rss: '/api/rss'
+            },
             
-            // View buttons
-            document.querySelectorAll('.view-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentView = this.dataset.view || "latest";
-                    renderArticles();
-                });
-            });
+            KEYWORDS: {
+                ai: ['AI', 'artificial intelligence', 'machine learning', 'deep learning', 'GPT', 'OpenAI', 'Microsoft Copilot', 'Google Gemini'],
+                energy: ['energy', 'power', 'electricity', 'solar', 'wind', 'nuclear', 'renewable', 'carbon', 'grid'],
+                policy: ['policy', 'regulation', 'law', 'legislation', 'government', 'EU', 'US', 'China', 'compliance'],
+                realestate: ['real estate', 'zoning', 'land', 'property', 'construction', 'development', 'facility'],
+                cooling: ['cooling', 'immersion', 'liquid', 'thermal', 'heat', 'PUE', 'water'],
+                security: ['security', 'cybersecurity', 'privacy', 'encryption', 'attack', 'breach', 'hack'],
+                breaking: ['breaking', 'urgent', 'alert', 'crisis', 'emergency', 'outage', 'attack']
+            },
             
-            // Refresh button
-            const refreshBtn = document.getElementById('refreshFeed');
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', async () => {
-                    const icon = refreshBtn.querySelector('i');
-                    icon.setAttribute('data-lucide', 'loader-2');
-                    lucide.createIcons();
-                    
+            UPDATE_INTERVAL: 300000, // 5 minutes
+            BREAKING_CHECK_INTERVAL: 60000 // 1 minute
+        };
+
+        // ===== NEWS SERVICE =====
+        class NewsService {
+            constructor() {
+                this.retryCount = 0;
+                this.maxRetries = CONSTANTS.API.MAX_RETRIES;
+            }
+
+            async fetchWithRetry(url, options = {}, retries = this.maxRetries) {
+                for (let i = 0; i < retries; i++) {
                     try {
-                        await loadNews();
-                        showNotification("✅ Feed refreshed successfully", "success");
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), CONSTANTS.API.TIMEOUT);
+                        
+                        const response = await fetch(url, {
+                            ...options,
+                            signal: controller.signal
+                        });
+                        
+                        clearTimeout(timeoutId);
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+                        
+                        return await response.json();
                     } catch (error) {
-                        showNotification("❌ Failed to refresh feed", "error");
-                    } finally {
-                        icon.setAttribute('data-lucide', 'refresh-cw');
-                        lucide.createIcons();
+                        if (i === retries - 1) throw error;
+                        await new Promise(resolve => setTimeout(resolve, CONSTANTS.API.RETRY_DELAY * (i + 1)));
                     }
-                });
+                }
             }
-            
-            // Search button
-            const searchBtn = document.getElementById('searchBtn');
-            if (searchBtn) {
-                searchBtn.addEventListener('click', () => {
-                    const query = prompt("Search articles:");
-                    if (query) {
-                        filterBySearch(query);
+
+            async fetchArticles() {
+                const cacheKey = 'articles_' + new Date().toISOString().split('T')[0];
+                const cached = cache.get(cacheKey);
+                if (cached) return cached;
+
+                try {
+                    // Try to fetch from backend proxy
+                    const articles = await this.fetchSampleData(); // Fallback to sample data
+                    cache.set(cacheKey, articles);
+                    return articles;
+                } catch (error) {
+                    console.error('Failed to fetch articles:', error);
+                    return this.fetchSampleData();
+                }
+            }
+
+            async fetchSampleData() {
+                // Enhanced sample data with real-time simulation
+                const sampleArticles = [
+                    {
+                        title: "Microsoft's Nuclear-Powered AI Data Centers Set New Industry Standard",
+                        summary: "Microsoft partners with nuclear energy providers to power next-gen AI data centers, addressing both energy demands and sustainability goals.",
+                        source: "MIT Technology Review",
+                        url: "#",
+                        publishedAt: new Date().toISOString(),
+                        content: "Microsoft has signed groundbreaking agreements with nuclear energy providers..."
+                    },
+                    {
+                        title: "Google Achieves Record 1.02 PUE with Immersion Cooling in Singapore",
+                        summary: "Google's immersion cooling trial shows significant energy savings, potentially revolutionizing data center cooling technology.",
+                        source: "Data Center Frontier",
+                        url: "#",
+                        publishedAt: new Date(Date.now() - 3600000).toISOString(),
+                        content: "Google has published results from its 18-month immersion cooling trial..."
+                    },
+                    {
+                        title: "BREAKING: Major Cloud Outage Affects Multiple Services Globally",
+                        summary: "A widespread outage in major cloud providers impacts services across North America and Europe.",
+                        source: "TechCrunch",
+                        url: "#",
+                        publishedAt: new Date(Date.now() - 1800000).toISOString(),
+                        content: "Multiple cloud providers are experiencing significant outages..."
+                    },
+                    {
+                        title: "EU Announces New Data Center Sustainability Regulations",
+                        summary: "European Union unveils comprehensive new regulations targeting data center energy efficiency and carbon emissions.",
+                        source: "Reuters",
+                        url: "#",
+                        publishedAt: new Date(Date.now() - 7200000).toISOString(),
+                        content: "The European Commission has proposed new regulations..."
+                    },
+                    {
+                        title: "AI Compute Demand Growing 10x Faster Than Renewable Energy",
+                        summary: "New study shows artificial intelligence compute requirements are outpacing renewable energy growth by a factor of ten.",
+                        source: "Bloomberg",
+                        url: "#",
+                        publishedAt: new Date(Date.now() - 10800000).toISOString(),
+                        content: "A new research report indicates that AI development..."
+                    },
+                    {
+                        title: "Amazon Announces $15B Investment in Sustainable Data Centers",
+                        summary: "Amazon Web Services commits to massive investment in renewable-powered data center infrastructure.",
+                        source: "Wall Street Journal",
+                        url: "#",
+                        publishedAt: new Date(Date.now() - 14400000).toISOString(),
+                        content: "Amazon has announced a $15 billion investment..."
+                    },
+                    {
+                        title: "New Liquid Cooling Technology Could Cut Data Center Energy by 40%",
+                        summary: "Breakthrough in liquid cooling technology promises significant energy savings for high-density computing.",
+                        source: "Wired",
+                        url: "#",
+                        publishedAt: new Date(Date.now() - 18000000).toISOString(),
+                        content: "Researchers have developed a new liquid cooling system..."
+                    },
+                    {
+                        title: "China Imposes New Restrictions on Data Center Construction",
+                        summary: "Chinese government announces new zoning and energy restrictions for data center development.",
+                        source: "Financial Times",
+                        url: "#",
+                        publishedAt: new Date(Date.now() - 21600000).toISOString(),
+                        content: "China has implemented new restrictions on data center construction..."
                     }
-                });
+                ];
+
+                return sampleArticles;
             }
-            
-            // Map points
-            document.querySelectorAll('.map-point').forEach(point => {
-                point.addEventListener('click', function() {
-                    const loc = this.classList[1];
-                    const messages = {
-                        virginia: "Virginia, USA: World's largest data center market",
-                        dublin: "Dublin, Ireland: Fastest-growing hyperscale market in EU",
-                        singapore: "Singapore: Asia-Pacific hub with green regulations",
-                        tokyo: "Tokyo: High-density market with energy challenges"
+
+            processArticles(articles) {
+                return articles.map((article, index) => {
+                    const tags = this.extractTags(article.title + ' ' + article.summary);
+                    const impactScore = this.calculateImpactScore(article, tags);
+                    
+                    return {
+                        id: index + 1,
+                        title: article.title,
+                        summary: article.summary,
+                        source: article.source,
+                        sourceIcon: this.getSourceIcon(article.source),
+                        time: this.formatTime(article.publishedAt),
+                        readTime: this.estimateReadTime(article.content),
+                        tags: tags.length > 0 ? tags : ['general'],
+                        impactScore: impactScore,
+                        impactClass: impactScore >= 8 ? 'high' : impactScore >= 6 ? 'medium' : 'low',
+                        url: article.url,
+                        publishedAt: article.publishedAt,
+                        isBreaking: article.title.toLowerCase().includes('breaking') || tags.includes('breaking'),
+                        uniqueId: Date.now() + Math.random()
                     };
-                    showNotification(messages[loc] || "Data center hotspot");
                 });
-            });
-        }
+            }
 
-        // ===== HELPER FUNCTIONS =====
-        
-        // Sample data for fallback
-        function fetchSampleData() {
-            return Promise.resolve([
-                {
-                    title: "Microsoft's Nuclear-Powered AI Data Centers Set New Industry Standard",
-                    summary: "Microsoft partners with nuclear energy providers to power next-gen AI data centers, addressing both energy demands and sustainability goals.",
-                    source: "MIT Technology Review",
-                    url: "https://www.technologyreview.com/2024/01/16/1086795/microsoft-nuclear-powered-data-center-ai/",
-                    publishedAt: new Date().toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "Google Achieves Record 1.02 PUE with Immersion Cooling in Singapore",
-                    summary: "Google's immersion cooling trial shows significant energy savings, potentially revolutionizing data center cooling technology.",
-                    source: "Data Center Frontier",
-                    url: "https://www.datacenterfrontier.com/energy/article/33029472/google-immersion-cooling-singapore-pue-102",
-                    publishedAt: new Date(Date.now() - 3600000).toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "EU Proposes Strict Data Center Zoning Laws Near Residential Areas",
-                    summary: "New European legislation could restrict data center construction, impacting hyperscaler expansion plans across the continent.",
-                    source: "Reuters",
-                    url: "https://www.reuters.com/technology/eu-proposes-data-center-zoning-laws-near-residential-areas-2024-01-16/",
-                    publishedAt: new Date(Date.now() - 7200000).toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "AI Compute Demand Outstrips Renewable Energy Growth, Study Finds",
-                    summary: "New research shows AI development is growing faster than renewable energy capacity, raising sustainability concerns.",
-                    source: "Bloomberg",
-                    url: "https://www.bloomberg.com/news/articles/2024-01-16/ai-compute-demand-outstrips-renewable-energy-growth",
-                    publishedAt: new Date(Date.now() - 10800000).toISOString(),
-                    content: "Full article content would go here..."
-                },
-                {
-                    title: "Amazon's Texas Data Center Expansion Faces Water Scarcity Challenges",
-                    summary: "Local regulators question water usage as Amazon plans major data center expansion in drought-prone Texas regions.",
-                    source: "TechCrunch",
-                    url: "https://techcrunch.com/2024/01/15/amazon-texas-data-center-water-scarcity/",
-                    publishedAt: new Date(Date.now() - 14400000).toISOString(),
-                    content: "Full article content would go here..."
+            extractTags(content) {
+                const tags = [];
+                const contentLower = content.toLowerCase();
+                
+                for (const [tag, keywords] of Object.entries(NEWS_CONFIG.KEYWORDS)) {
+                    if (keywords.some(keyword => contentLower.includes(keyword.toLowerCase()))) {
+                        if (tag !== 'breaking' || (tag === 'breaking' && contentLower.includes('breaking'))) {
+                            tags.push(tag);
+                        }
+                    }
                 }
-            ]);
-        }
+                
+                return tags;
+            }
 
-        function loadSampleData() {
-            liveArticles = [
-                {
-                    id: 1,
-                    title: "Microsoft's Nuclear-Powered AI Data Centers Set New Industry Standard",
-                    summary: "Microsoft partners with nuclear energy providers to power next-gen AI data centers, addressing both energy demands and sustainability goals.",
-                    source: "MIT Technology Review",
-                    sourceIcon: "mit",
-                    time: "Just now",
-                    readTime: "5 min read",
-                    tags: ["energy", "ai", "policy"],
-                    impactScore: 9.2,
-                    impactClass: "high",
-                    url: "https://www.technologyreview.com/2024/01/16/1086795/microsoft-nuclear-powered-data-center-ai/"
-                },
-                {
-                    id: 2,
-                    title: "Google Achieves Record 1.02 PUE with Immersion Cooling in Singapore",
-                    summary: "Google's immersion cooling trial shows significant energy savings, potentially revolutionizing data center cooling technology.",
-                    source: "Data Center Frontier",
-                    sourceIcon: "dcf",
-                    time: "1 hour ago",
-                    readTime: "4 min read",
-                    tags: ["energy", "cooling", "ai"],
-                    impactScore: 8.8,
-                    impactClass: "high",
-                    url: "https://www.datacenterfrontier.com/energy/article/33029472/google-immersion-cooling-singapore-pue-102"
-                },
-                {
-                    id: 3,
-                    title: "EU Proposes Strict Data Center Zoning Laws Near Residential Areas",
-                    summary: "New European legislation could restrict data center construction, impacting hyperscaler expansion plans across the continent.",
-                    source: "Reuters",
-                    sourceIcon: "reuters",
-                    time: "2 hours ago",
-                    readTime: "6 min read",
-                    tags: ["policy", "realestate"],
-                    impactScore: 7.5,
-                    impactClass: "medium",
-                    url: "https://www.reuters.com/technology/eu-proposes-data-center-zoning-laws-near-residential-areas-2024-01-16/"
-                },
-                {
-                    id: 4,
-                    title: "AI Compute Demand Outstrips Renewable Energy Growth, Study Finds",
-                    summary: "New research shows AI development is growing faster than renewable energy capacity, raising sustainability concerns.",
-                    source: "Bloomberg",
-                    sourceIcon: "bloomberg",
-                    time: "3 hours ago",
-                    readTime: "7 min read",
-                    tags: ["ai", "energy", "policy"],
-                    impactScore: 8.1,
-                    impactClass: "high",
-                    url: "https://www.bloomberg.com/news/articles/2024-01-16/ai-compute-demand-outstrips-renewable-energy-growth"
-                },
-                {
-                    id: 5,
-                    title: "BREAKING: Major Data Center Outage Affects Multiple Cloud Providers",
-                    summary: "A widespread outage in Virginia data centers impacts AWS, Azure, and Google Cloud services across North America.",
-                    source: "CNBC",
-                    sourceIcon: "cnn",
-                    time: "10 minutes ago",
-                    readTime: "3 min read",
-                    tags: ["breaking", "security", "energy"],
-                    impactScore: 9.5,
-                    impactClass: "high",
-                    url: "#",
-                    isBreaking: true
+            calculateImpactScore(article, tags) {
+                if (!article || !Array.isArray(tags)) {
+                    return CONSTANTS.SCORING.MIN_SCORE;
                 }
-            ];
-            
-            detectBreakingNews();
-            updateTrendingTopics();
-            renderArticles();
-            updateFeedStats();
-        }
-
-        // Helper functions
-        function getSourceIcon(source) {
-            const sourceMap = {
-                "MIT": "mit",
-                "Reuters": "reuters",
-                "Bloomberg": "bloomberg",
-                "TechCrunch": "techcrunch",
-                "Financial Times": "ft",
-                "Wall Street Journal": "wsj",
-                "New York Times": "nyt",
-                "Data Center Frontier": "dcf",
-                "CNBC": "cnn",
-                "BBC": "bbc",
-                "The Verge": "theverge",
-                "Wired": "wired"
-            };
-            
-            for (const [key, icon] of Object.entries(sourceMap)) {
-                if (source.includes(key)) return icon;
+                
+                let score = 5; // Base score
+                
+                // Credible source bonus
+                const credibleSources = ['Reuters', 'Bloomberg', 'Financial Times', 'Wall Street Journal', 'MIT', 'TechCrunch', 'Wired', 'Ars Technica'];
+                if (credibleSources.some(src => article.source?.includes(src))) {
+                    score += CONSTANTS.SCORING.CREDIBLE_SOURCE_BONUS;
+                }
+                
+                // Tag bonus (capped)
+                const tagBonus = Math.min(tags.length, CONSTANTS.SCORING.MAX_TAG_BONUS) * CONSTANTS.SCORING.TAG_BONUS_PER_TAG;
+                score += tagBonus;
+                
+                // Title length bonus
+                if (article.title?.length > CONSTANTS.SCORING.TITLE_LENGTH_BONUS_THRESHOLD) {
+                    score += CONSTANTS.SCORING.TITLE_LENGTH_BONUS;
+                }
+                
+                // Recency bonus
+                const publishedAt = article.publishedAt ? new Date(article.publishedAt) : null;
+                if (publishedAt) {
+                    const hoursAgo = (new Date() - publishedAt) / (1000 * 60 * 60);
+                    
+                    if (hoursAgo < 1) {
+                        score += CONSTANTS.SCORING.RECENCY_BONUS_1HR;
+                    } else if (hoursAgo < 24) {
+                        score += CONSTANTS.SCORING.RECENCY_BONUS_24HR;
+                    }
+                }
+                
+                // Breaking news bonus
+                if (tags.includes('breaking')) {
+                    score += CONSTANTS.SCORING.BREAKING_BONUS;
+                }
+                
+                // Synergy bonus (AI + Energy topics)
+                if (tags.includes('ai') && tags.includes('energy')) {
+                    score += CONSTANTS.SCORING.SYNERGY_BONUS;
+                }
+                
+                // Clamp score between MIN and MAX
+                return Math.min(
+                    CONSTANTS.SCORING.MAX_SCORE, 
+                    Math.max(CONSTANTS.SCORING.MIN_SCORE, parseFloat(score.toFixed(1)))
+                );
             }
-            
-            return "mit"; // Default icon
-        }
 
-        function getSourceAbbreviation(source) {
-            if (!source) return "??";
-            const words = source.split(' ');
-            if (words.length >= 2) {
-                return (words[0][0] + words[1][0]).toUpperCase();
+            getSourceIcon(source) {
+                const sourceMap = {
+                    'MIT': 'mit',
+                    'Reuters': 'reuters',
+                    'Bloomberg': 'bloomberg',
+                    'TechCrunch': 'techcrunch',
+                    'Financial Times': 'ft',
+                    'Wall Street Journal': 'wsj',
+                    'New York Times': 'nyt',
+                    'Data Center Frontier': 'dcf',
+                    'Wired': 'wired',
+                    'Ars Technica': 'arstechnica'
+                };
+                
+                for (const [key, icon] of Object.entries(sourceMap)) {
+                    if (source.includes(key)) return icon;
+                }
+                
+                return 'mit';
             }
-            return source.substring(0, 2).toUpperCase();
-        }
 
-        function formatTime(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-            
-            if (diffMins < 1) return "Just now";
-            if (diffMins < 60) return `${diffMins} min ago`;
-            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-            
-            return date.toLocaleDateString();
-        }
-
-        function estimateReadTime(content) {
-            if (!content) return "3 min";
-            const words = content.split(/\s+/).length;
-            const minutes = Math.ceil(words / 200);
-            return `${minutes} min`;
-        }
-
-        function getTagDisplayName(tag) {
-            const tagNames = {
-                'energy': 'Energy',
-                'ai': 'AI',
-                'policy': 'Policy',
-                'realestate': 'Real Estate',
-                'cooling': 'Cooling',
-                'security': 'Security',
-                'breaking': 'Breaking',
-                'general': 'General'
-            };
-            return tagNames[tag] || tag.charAt(0).toUpperCase() + tag.slice(1);
-        }
-
-        // Global functions
-        window.toggleSave = function(articleId, button) {
-            const index = savedArticles.indexOf(articleId);
-            const icon = button.querySelector('i');
-            
-            if (index === -1) {
-                savedArticles.push(articleId);
-                icon.setAttribute('data-lucide', 'bookmark-check');
-                button.style.background = '#00ff9d';
-                button.style.color = '#0a0a0f';
-                showNotification("Article saved to bookmarks", "success");
-            } else {
-                savedArticles.splice(index, 1);
-                icon.setAttribute('data-lucide', 'bookmark');
-                button.style.background = '';
-                button.style.color = '';
-                showNotification("Article removed from bookmarks", "info");
+            getSourceAbbreviation(source) {
+                if (!source) return '??';
+                const words = source.split(' ');
+                if (words.length >= 2) {
+                    return (words[0][0] + words[1][0]).toUpperCase();
+                }
+                return source.substring(0, 2).toUpperCase();
             }
-            
-            lucide.createIcons();
-            localStorage.setItem('nexusSaved', JSON.stringify(savedArticles));
-        };
 
-        window.shareArticle = function(articleId) {
-            const article = liveArticles.find(a => a.id === articleId);
-            if (!article) return;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: article.title,
-                    text: article.summary,
-                    url: article.url
-                });
-            } else {
-                navigator.clipboard.writeText(`${article.title}\n\n${article.summary}\n\nRead more: ${article.url}`);
-                showNotification("📋 Article copied to clipboard!", "success");
+            formatTime(dateString) {
+                try {
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMs / 3600000);
+                    const diffDays = Math.floor(diffMs / 86400000);
+                    
+                    if (diffMins < 1) return 'Just now';
+                    if (diffMins < 60) return `${diffMins} min ago`;
+                    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+                    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+                    
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                } catch (error) {
+                    return 'Recent';
+                }
             }
-        };
 
-        window.filterByTopic = function(topic) {
-            const chip = document.querySelector(`[data-filter="${topic}"]`);
-            if (chip) {
-                chip.click();
+            estimateReadTime(content) {
+                if (!content) return '3 min';
+                const words = content.split(/\s+/).length;
+                const minutes = Math.ceil(words / 200);
+                return `${minutes} min`;
             }
-        };
 
-        function filterBySearch(query) {
-            const filtered = liveArticles.filter(article => 
-                article.title.toLowerCase().includes(query.toLowerCase()) ||
-                article.summary.toLowerCase().includes(query.toLowerCase()) ||
-                article.tags.some(tag => tag.includes(query.toLowerCase()))
-            );
-            
-            const container = document.getElementById('articlesContainer');
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i data-lucide="search" style="width: 48px; height: 48px;"></i>
-                        <h3>No results for "${query}"</h3>
-                        <p>Try a different search term</p>
-                    </div>
+            getTagDisplayName(tag) {
+                const tagNames = {
+                    'energy': 'Energy',
+                    'ai': 'AI',
+                    'policy': 'Policy',
+                    'realestate': 'Real Estate',
+                    'cooling': 'Cooling',
+                    'security': 'Security',
+                    'breaking': 'Breaking',
+                    'general': 'General'
+                };
+                return tagNames[tag] || tag.charAt(0).toUpperCase() + tag.slice(1);
+            }
+        }
+
+        const newsService = new NewsService();
+
+        // ===== UI MANAGER =====
+        class UIManager {
+            constructor() {
+                this.currentFilter = 'all';
+                this.currentView = 'latest';
+                this.intervalIds = [];
+            }
+
+            showNotification(message, type = 'info') {
+                const existing = document.querySelector('.notification');
+                if (existing) existing.remove();
+                
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.setAttribute('role', 'alert');
+                notification.setAttribute('aria-live', 'polite');
+                
+                const icons = {
+                    success: 'check-circle',
+                    error: 'alert-circle',
+                    warning: 'alert-triangle',
+                    info: 'info',
+                    breaking: 'alert-octagon'
+                };
+                
+                notification.innerHTML = `
+                    <i data-lucide="${icons[type] || 'info'}" aria-hidden="true"></i>
+                    <span>${message}</span>
                 `;
+                
+                const bgColor = type === 'breaking' ? 'rgba(255, 71, 87, 0.1)' : 
+                               type === 'error' ? 'rgba(255, 71, 87, 0.1)' : 
+                               type === 'success' ? 'rgba(0, 255, 157, 0.1)' : 
+                               'rgba(0, 149, 255, 0.1)';
+                
+                const borderColor = type === 'breaking' ? '#ff4757' : 
+                                   type === 'error' ? '#ff4757' : 
+                                   type === 'success' ? '#00ff9d' : '#0095ff';
+                
+                Object.assign(notification.style, {
+                    background: bgColor,
+                    borderColor: borderColor,
+                    color: type === 'breaking' ? '#ff6b81' : 
+                           type === 'error' ? '#ff6b81' : 
+                           type === 'success' ? '#00ff9d' : '#0095ff'
+                });
+                
+                document.body.appendChild(notification);
                 lucide.createIcons();
-            } else {
-                // Temporarily show filtered results
-                const articlesHTML = filtered.map(article => `
-                    <article class="news-card" data-id="${article.id}">
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => notification.remove(), 300);
+                }, type === 'breaking' ? 8000 : 5000);
+            }
+
+            renderArticles(articles) {
+                const container = document.getElementById('articlesContainer');
+                if (!container) return;
+                
+                let articlesToShow = [...articles];
+                
+                // Apply filter
+                if (this.currentFilter !== 'all') {
+                    if (this.currentFilter === 'breaking') {
+                        articlesToShow = articlesToShow.filter(article => article.isBreaking);
+                    } else {
+                        articlesToShow = articlesToShow.filter(article => 
+                            article.tags.includes(this.currentFilter)
+                        );
+                    }
+                }
+                
+                // Apply view sort
+                if (this.currentView === 'top') {
+                    articlesToShow.sort((a, b) => b.impactScore - a.impactScore);
+                } else if (this.currentView === 'trending') {
+                    articlesToShow.sort((a, b) => {
+                        const aTrending = a.tags.some(tag => appState.get('trendingTopics').has(tag));
+                        const bTrending = b.tags.some(tag => appState.get('trendingTopics').has(tag));
+                        if (aTrending && !bTrending) return -1;
+                        if (!aTrending && bTrending) return 1;
+                        return b.impactScore - a.impactScore;
+                    });
+                }
+                
+                if (articlesToShow.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i data-lucide="newspaper" style="width: 48px; height: 48px;" aria-hidden="true"></i>
+                            <h3>No articles found</h3>
+                            <p>Try a different filter or refresh the feed</p>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                    return;
+                }
+                
+                const articlesHTML = articlesToShow.slice(0, CONSTANTS.UI.MAX_VISIBLE_ARTICLES).map(article => `
+                    <article class="news-card ${article.isBreaking ? 'breaking' : ''}" data-id="${article.id}" aria-labelledby="title-${article.id}">
                         <div class="card-header">
                             <div class="card-source">
-                                <div class="source-icon ${article.sourceIcon}">${getSourceAbbreviation(article.source)}</div>
+                                <div class="source-icon ${article.sourceIcon}" aria-hidden="true">
+                                    ${newsService.getSourceAbbreviation(article.source)}
+                                </div>
                                 <span>${article.source}</span>
-                                <span>•</span>
+                                <span aria-hidden="true">•</span>
                                 <span>${article.time}</span>
                             </div>
+                            <div class="card-time">
+                                <i data-lucide="clock" aria-hidden="true"></i> ${article.readTime}
+                            </div>
                         </div>
-                        <h3 class="card-title">${article.title}</h3>
+                        
+                        <h3 class="card-title" id="title-${article.id}">
+                            ${article.isBreaking ? '🚨 ' : ''}${article.title}
+                        </h3>
+                        
                         <p class="card-summary">${article.summary}</p>
+                        
                         <div class="card-tags">
-                            ${article.tags.map(tag => `<div class="tag ${tag}">${getTagDisplayName(tag)}</div>`).join('')}
+                            ${article.tags.map(tag => `
+                                <div class="tag ${tag} ${article.isBreaking && tag === 'breaking' ? 'breaking' : ''}">
+                                    ${newsService.getTagDisplayName(tag)}
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="impact-score">
+                                <span class="impact-label">Impact Score:</span>
+                                <span class="impact-value ${article.impactClass}">${article.impactScore.toFixed(1)}</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="action-btn" 
+                                        aria-label="${storage.isSaved(article.id) ? 'Remove from saved' : 'Save article'}"
+                                        title="${storage.isSaved(article.id) ? 'Remove from saved' : 'Save article'}"
+                                        onclick="app.toggleSave(${article.id}, this)"
+                                        onkeydown="if(event.key === 'Enter' || event.key === ' ') app.toggleSave(${article.id}, this)">
+                                    <i data-lucide="${storage.isSaved(article.id) ? 'bookmark-check' : 'bookmark'}" aria-hidden="true"></i>
+                                </button>
+                                <button class="action-btn" 
+                                        aria-label="Share article"
+                                        title="Share article"
+                                        onclick="app.shareArticle(${article.id})"
+                                        onkeydown="if(event.key === 'Enter' || event.key === ' ') app.shareArticle(${article.id})">
+                                    <i data-lucide="share-2" aria-hidden="true"></i>
+                                </button>
+                                <button class="action-btn" 
+                                        aria-label="Read full article"
+                                        title="Read full article"
+                                        onclick="window.open('${article.url}', '_blank')"
+                                        onkeydown="if(event.key === 'Enter' || event.key === ' ') window.open('${article.url}', '_blank')">
+                                    <i data-lucide="external-link" aria-hidden="true"></i>
+                                </button>
+                            </div>
                         </div>
                     </article>
                 `).join('');
                 
-                container.innerHTML = `
-                    <div style="margin-bottom: 1.5rem;">
-                        <h3 style="color: var(--color-electric-green);">Search Results for "${query}" (${filtered.length} found)</h3>
-                        <button onclick="renderArticles()" style="background: none; border: 1px solid var(--color-border); color: var(--color-text-secondary); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
-                            <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i> Back to all articles
-                        </button>
-                    </div>
-                    ${articlesHTML}
-                `;
+                container.innerHTML = articlesHTML;
                 lucide.createIcons();
+            }
+
+            renderSkeleton(count = 3) {
+                const container = document.getElementById('articlesContainer');
+                if (!container) return;
+                
+                const skeletonHTML = Array(count).fill(0).map(() => `
+                    <div class="news-card skeleton-card">
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text short"></div>
+                    </div>
+                `).join('');
+                
+                container.innerHTML = skeletonHTML;
+            }
+
+            renderHeatmap() {
+                const heatmapData = [
+                    { label: 'Energy Prices (EU)', value: '€142.5/MWh', type: 'energy' },
+                    { label: 'Data Center Vacancy (VA)', value: '2.1%', type: 'data' },
+                    { label: 'Land Value (Dublin)', value: '+18.7%', type: 'realestate' },
+                    { label: 'Carbon Intensity (SG)', value: '0.39 kg/kWh', type: 'energy' }
+                ];
+                
+                const container = document.getElementById('heatmapContainer');
+                if (!container) return;
+                
+                container.innerHTML = heatmapData.map(item => `
+                    <div class="heatmap-item">
+                        <div class="heatmap-label">
+                            <div class="heatmap-dot ${item.type}" aria-hidden="true"></div>
+                            <span>${item.label}</span>
+                        </div>
+                        <div class="heatmap-value" style="color: ${item.type === 'energy' ? '#00ff9d' : item.type === 'data' ? '#0095ff' : '#ffa500'}">
+                            ${item.value}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderPolicy() {
+                const policyData = [
+                    { label: 'EU AI Act', value: 'Enacted', status: 'enacted' },
+                    { label: 'US Data Privacy', value: 'In Committee', status: 'pending' },
+                    { label: 'China Cloud Regs', value: 'Delayed', status: 'delayed' },
+                    { label: 'SG Green DC Tax', value: 'Draft', status: 'draft' }
+                ];
+                
+                const container = document.getElementById('policyTracker');
+                if (!container) return;
+                
+                container.innerHTML = policyData.map(item => `
+                    <div class="heatmap-item">
+                        <div class="heatmap-label">
+                            <i data-lucide="${this.getPolicyIcon(item.status)}" aria-hidden="true"></i>
+                            <span>${item.label}</span>
+                        </div>
+                        <div class="heatmap-value" style="color: ${this.getPolicyColor(item.status)}">
+                            ${item.value}
+                        </div>
+                    </div>
+                `).join('');
+                
+                lucide.createIcons();
+            }
+
+            renderTrendingTopics(topics) {
+                const container = document.getElementById('trendingTopics');
+                if (!container) return;
+                
+                if (topics.size === 0) {
+                    container.innerHTML = '<span style="color: var(--color-text-muted); font-size: 0.9rem;">No trending topics yet</span>';
+                    return;
+                }
+                
+                const topicsHTML = Array.from(topics).map(topic => `
+                    <div class="trending-topic" 
+                         onclick="app.filterByTopic('${topic}')"
+                         onkeydown="if(event.key === 'Enter' || event.key === ' ') app.filterByTopic('${topic}')"
+                         role="button"
+                         tabindex="0">
+                        #${newsService.getTagDisplayName(topic)}
+                    </div>
+                `).join('');
+                
+                container.innerHTML = topicsHTML;
+            }
+
+            renderTLDR(article) {
+                const container = document.getElementById('tldrContainer');
+                if (!container || !article) return;
+                
+                container.innerHTML = `
+                    <div class="tldr-header">
+                        <i data-lucide="zap" aria-hidden="true"></i>
+                        <span>${article.title.substring(0, 40)}...</span>
+                    </div>
+                    <div class="tldr-content">
+                        <div class="tldr-item">
+                            <span class="tldr-bullet" aria-hidden="true">•</span>
+                            <span>${article.summary.substring(0, 100)}</span>
+                        </div>
+                        <div class="tldr-item">
+                            <span class="tldr-bullet" aria-hidden="true">•</span>
+                            <span>Impact: ${article.impactScore.toFixed(1)}/10</span>
+                        </div>
+                        <div class="tldr-item">
+                            <span class="tldr-bullet" aria-hidden="true">•</span>
+                            <span>Source: ${article.source}</span>
+                        </div>
+                    </div>
+                `;
+                
+                lucide.createIcons();
+            }
+
+            renderFeedHealth(articlesCount) {
+                const container = document.getElementById('feedHealth');
+                if (!container) return;
+                
+                const now = new Date();
+                const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                
+                container.innerHTML = `
+                    <div class="heatmap-item">
+                        <div class="heatmap-label">
+                            <i data-lucide="wifi" style="color: #00ff9d" aria-hidden="true"></i>
+                            <span>Feed Status</span>
+                        </div>
+                        <div class="heatmap-value" style="color: #00ff9d">Live</div>
+                    </div>
+                    <div class="heatmap-item">
+                        <div class="heatmap-label">
+                            <i data-lucide="database" style="color: #0095ff" aria-hidden="true"></i>
+                            <span>Articles</span>
+                        </div>
+                        <div class="heatmap-value" style="color: #0095ff">${articlesCount}</div>
+                    </div>
+                    <div class="heatmap-item">
+                        <div class="heatmap-label">
+                            <i data-lucide="refresh-cw" style="color: #ffa500" aria-hidden="true"></i>
+                            <span>Last Update</span>
+                        </div>
+                        <div class="heatmap-value" style="color: #ffa500">${timeStr}</div>
+                    </div>
+                `;
+                
+                lucide.createIcons();
+            }
+
+            updateFeedStats(articlesCount) {
+                const lastUpdate = document.getElementById('lastUpdateTime');
+                const articleCount = document.getElementById('articleCount');
+                const liveStatus = document.getElementById('liveStatus');
+                
+                if (lastUpdate) {
+                    const now = new Date();
+                    lastUpdate.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                }
+                
+                if (articleCount) {
+                    articleCount.textContent = `${articlesCount} articles`;
+                }
+                
+                if (liveStatus) {
+                    liveStatus.textContent = 'Live';
+                }
+            }
+
+            showBreakingNews(breakingCount) {
+                const banner = document.getElementById('breakingBanner');
+                const breakingText = document.getElementById('breakingText');
+                
+                if (breakingCount > 0) {
+                    banner.style.display = 'flex';
+                    breakingText.textContent = `${breakingCount} Breaking News ${breakingCount > 1 ? 'Stories' : 'Story'}`;
+                    this.showNotification('🚨 Breaking News Alert! Check the feed for updates.', 'breaking');
+                } else {
+                    banner.style.display = 'none';
+                }
+            }
+
+            getPolicyIcon(status) {
+                return {
+                    enacted: 'file-check',
+                    pending: 'clock',
+                    delayed: 'alert-circle',
+                    draft: 'file-text'
+                }[status] || 'file-text';
+            }
+
+            getPolicyColor(status) {
+                return {
+                    enacted: '#00ff9d',
+                    pending: '#ffa500',
+                    delayed: '#ff4757',
+                    draft: '#0095ff'
+                }[status] || '#ffffff';
+            }
+
+            setupEventListeners() {
+                // Filter chips
+                document.querySelectorAll('.filter-chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        document.querySelectorAll('.filter-chip').forEach(c => {
+                            c.classList.remove('active');
+                            c.setAttribute('aria-pressed', 'false');
+                        });
+                        chip.classList.add('active');
+                        chip.setAttribute('aria-pressed', 'true');
+                        this.currentFilter = chip.dataset.filter || 'all';
+                        this.renderArticles(appState.get('articles'));
+                    });
+                    
+                    chip.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            chip.click();
+                        }
+                    });
+                });
+                
+                // View options
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.view-btn').forEach(b => {
+                            b.classList.remove('active');
+                            b.setAttribute('aria-checked', 'false');
+                        });
+                        btn.classList.add('active');
+                        btn.setAttribute('aria-checked', 'true');
+                        this.currentView = btn.dataset.view || 'latest';
+                        this.renderArticles(appState.get('articles'));
+                    });
+                });
+                
+                // Refresh button
+                const refreshBtn = document.getElementById('refreshFeed');
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', () => app.refreshFeed());
+                }
+                
+                // Search button
+                const searchBtn = document.getElementById('searchBtn');
+                const searchModal = document.getElementById('searchModal');
+                const closeSearch = document.getElementById('closeSearch');
+                const searchInput = document.getElementById('searchInput');
+                
+                if (searchBtn) {
+                    searchBtn.addEventListener('click', () => {
+                        searchModal.classList.add('active');
+                        searchInput.focus();
+                    });
+                }
+                
+                if (closeSearch) {
+                    closeSearch.addEventListener('click', () => {
+                        searchModal.classList.remove('active');
+                    });
+                }
+                
+                // Debounced search
+                const debouncedSearch = debounce((query) => {
+                    this.handleSearch(query);
+                }, CONSTANTS.UI.SEARCH_DEBOUNCE);
+                
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        debouncedSearch(e.target.value);
+                    });
+                }
+                
+                // Map points
+                document.querySelectorAll('.map-point').forEach(point => {
+                    point.addEventListener('click', () => {
+                        const loc = point.classList[1];
+                        const messages = {
+                            virginia: "Virginia, USA: World's largest data center market",
+                            dublin: "Dublin, Ireland: Fastest-growing hyperscale market in EU",
+                            singapore: "Singapore: Asia-Pacific hub with green regulations",
+                            tokyo: "Tokyo: High-density market with energy challenges"
+                        };
+                        this.showNotification(messages[loc] || 'Data center hotspot', 'info');
+                    });
+                });
+                
+                // Close modal on escape
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && searchModal.classList.contains('active')) {
+                        searchModal.classList.remove('active');
+                    }
+                });
+            }
+
+            handleSearch(query) {
+                if (!query.trim()) return;
+                
+                const articles = appState.get('articles');
+                const filtered = articles.filter(article => 
+                    article.title.toLowerCase().includes(query.toLowerCase()) ||
+                    article.summary.toLowerCase().includes(query.toLowerCase()) ||
+                    article.tags.some(tag => tag.includes(query.toLowerCase()))
+                );
+                
+                const resultsContainer = document.getElementById('searchResults');
+                if (!resultsContainer) return;
+                
+                if (filtered.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i data-lucide="search" style="width: 48px; height: 48px;" aria-hidden="true"></i>
+                            <h3>No results for "${query}"</h3>
+                            <p>Try a different search term</p>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                } else {
+                    const articlesHTML = filtered.map(article => `
+                        <div class="news-card" style="margin-bottom: 1rem;">
+                            <div class="card-header">
+                                <div class="card-source">
+                                    <div class="source-icon ${article.sourceIcon}">${newsService.getSourceAbbreviation(article.source)}</div>
+                                    <span>${article.source}</span>
+                                    <span>•</span>
+                                    <span>${article.time}</span>
+                                </div>
+                            </div>
+                            <h3 class="card-title">${article.title}</h3>
+                            <p class="card-summary">${article.summary}</p>
+                            <div class="card-tags">
+                                ${article.tags.map(tag => `<div class="tag ${tag}">${newsService.getTagDisplayName(tag)}</div>`).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    resultsContainer.innerHTML = `
+                        <h3 style="color: var(--color-electric-green); margin-bottom: 1rem;">
+                            Search Results for "${query}" (${filtered.length} found)
+                        </h3>
+                        ${articlesHTML}
+                    `;
+                    lucide.createIcons();
+                }
+            }
+
+            startLiveUpdates() {
+                // Update articles every 5 minutes
+                const updateInterval = setInterval(() => {
+                    app.refreshFeed(false); // Silent refresh
+                }, NEWS_CONFIG.UPDATE_INTERVAL);
+                
+                // Check for breaking news every minute
+                const breakingInterval = setInterval(() => {
+                    const breakingCount = appState.get('articles').filter(a => a.isBreaking).length;
+                    this.showBreakingNews(breakingCount);
+                }, NEWS_CONFIG.BREAKING_CHECK_INTERVAL);
+                
+                this.intervalIds.push(updateInterval, breakingInterval);
+            }
+
+            cleanup() {
+                this.intervalIds.forEach(id => clearInterval(id));
+                this.intervalIds = [];
             }
         }
 
-        // Render heatmap (same as before)
-        function renderHeatmap() {
-            const heatmapData = [
-                { label: "Energy Prices (EU)", value: "€142.5/MWh", type: "energy" },
-                { label: "Data Center Vacancy (VA)", value: "2.1%", type: "data" },
-                { label: "Land Value (Dublin)", value: "+18.7%", type: "realestate" },
-                { label: "Carbon Intensity (SG)", value: "0.39 kg/kWh", type: "energy" }
-            ];
-            
-            const container = document.getElementById('heatmapContainer');
-            if (!container) return;
-            
-            container.innerHTML = heatmapData.map(item => `
-                <div class="heatmap-item">
-                    <div class="heatmap-label">
-                        <div class="heatmap-dot ${item.type}"></div>
-                        <span>${item.label}</span>
-                    </div>
-                    <div class="heatmap-value" style="color: ${item.type === 'energy' ? '#00ff9d' : item.type === 'data' ? '#0095ff' : '#ffa500'}">
-                        ${item.value}
-                    </div>
-                </div>
-            `).join('');
+        const ui = new UIManager();
+
+        // ===== APPLICATION CONTROLLER =====
+        class Application {
+            constructor() {
+                this.newsService = newsService;
+                this.ui = ui;
+                this.state = appState;
+                this.storage = storage;
+            }
+
+            async init() {
+                try {
+                    // Initialize storage
+                    await this.storage.initialize();
+                    
+                    // Show loading state
+                    this.ui.renderSkeleton();
+                    
+                    // Load initial data
+                    await this.loadNews();
+                    
+                    // Render UI components
+                    this.ui.renderHeatmap();
+                    this.ui.renderPolicy();
+                    this.ui.renderFeedHealth(this.state.get('articles').length);
+                    this.ui.updateFeedStats(this.state.get('articles').length);
+                    
+                    // Setup event listeners
+                    this.ui.setupEventListeners();
+                    
+                    // Start live updates
+                    this.ui.startLiveUpdates();
+                    
+                    // Show welcome notification
+                    this.ui.showNotification('🔄 Connected to live news feed. Updates every 5 minutes.', 'success');
+                    
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                    this.ui.showNotification('⚠️ Using enhanced sample data with real-time simulation.', 'warning');
+                    this.loadSampleData();
+                }
+            }
+
+            async loadNews() {
+                try {
+                    this.state.set('ui.loading', true);
+                    
+                    // Fetch articles
+                    const rawArticles = await this.newsService.fetchArticles();
+                    const processedArticles = this.newsService.processArticles(rawArticles);
+                    
+                    // Update state
+                    this.state.set('articles', processedArticles);
+                    
+                    // Update trending topics
+                    this.updateTrendingTopics(processedArticles);
+                    
+                    // Update breaking news
+                    const breakingNews = processedArticles.filter(a => a.isBreaking);
+                    this.state.set('breakingNews', breakingNews);
+                    this.ui.showBreakingNews(breakingNews.length);
+                    
+                    // Update TL;DR
+                    if (processedArticles.length > 0) {
+                        this.ui.renderTLDR(processedArticles[0]);
+                    }
+                    
+                    // Render articles
+                    this.ui.renderArticles(processedArticles);
+                    
+                    // Update stats
+                    this.ui.updateFeedStats(processedArticles.length);
+                    
+                    // Update trending topics display
+                    this.ui.renderTrendingTopics(this.state.get('trendingTopics'));
+                    
+                } catch (error) {
+                    console.error('Error loading news:', error);
+                    this.ui.showNotification('❌ Failed to load news. Using sample data.', 'error');
+                    this.loadSampleData();
+                } finally {
+                    this.state.set('ui.loading', false);
+                }
+            }
+
+            async refreshFeed(showNotification = true) {
+                const refreshBtn = document.getElementById('refreshFeed');
+                const icon = refreshBtn?.querySelector('i');
+                
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'loader-2');
+                    lucide.createIcons();
+                }
+                
+                try {
+                    await this.loadNews();
+                    if (showNotification) {
+                        this.ui.showNotification('✅ Feed refreshed successfully', 'success');
+                    }
+                } catch (error) {
+                    console.error('Refresh error:', error);
+                    this.ui.showNotification('❌ Failed to refresh feed', 'error');
+                } finally {
+                    if (icon) {
+                        icon.setAttribute('data-lucide', 'refresh-cw');
+                        lucide.createIcons();
+                    }
+                }
+            }
+
+            loadSampleData() {
+                const sampleArticles = this.newsService.fetchSampleData();
+                const processedArticles = this.newsService.processArticles(sampleArticles);
+                
+                this.state.set('articles', processedArticles);
+                this.updateTrendingTopics(processedArticles);
+                
+                const breakingNews = processedArticles.filter(a => a.isBreaking);
+                this.state.set('breakingNews', breakingNews);
+                this.ui.showBreakingNews(breakingNews.length);
+                
+                if (processedArticles.length > 0) {
+                    this.ui.renderTLDR(processedArticles[0]);
+                }
+                
+                this.ui.renderArticles(processedArticles);
+                this.ui.updateFeedStats(processedArticles.length);
+                this.ui.renderTrendingTopics(this.state.get('trendingTopics'));
+            }
+
+            updateTrendingTopics(articles) {
+                const tagCounts = {};
+                articles.forEach(article => {
+                    article.tags.forEach(tag => {
+                        if (tag !== 'breaking' && tag !== 'general') {
+                            tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                        }
+                    });
+                });
+                
+                const topTags = Object.entries(tagCounts)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 5)
+                    .map(([tag]) => tag);
+                
+                this.state.set('trendingTopics', new Set(topTags));
+            }
+
+            async toggleSave(articleId, button) {
+                try {
+                    const isSaved = this.storage.isSaved(articleId);
+                    
+                    if (isSaved) {
+                        await this.storage.removeArticle(articleId);
+                        if (button) {
+                            const icon = button.querySelector('i');
+                            icon.setAttribute('data-lucide', 'bookmark');
+                            button.style.background = '';
+                            button.style.color = '';
+                            lucide.createIcons();
+                        }
+                        this.ui.showNotification('Article removed from saved', 'info');
+                    } else {
+                        await this.storage.saveArticle(articleId);
+                        if (button) {
+                            const icon = button.querySelector('i');
+                            icon.setAttribute('data-lucide', 'bookmark-check');
+                            button.style.background = '#00ff9d';
+                            button.style.color = '#0a0a0f';
+                            lucide.createIcons();
+                        }
+                        this.ui.showNotification('Article saved to bookmarks', 'success');
+                    }
+                } catch (error) {
+                    console.error('Toggle save error:', error);
+                    this.ui.showNotification('Failed to save article', 'error');
+                }
+            }
+
+            async shareArticle(articleId) {
+                try {
+                    const article = this.state.get('articles').find(a => a.id === articleId);
+                    if (!article) return;
+                    
+                    if (navigator.share) {
+                        await navigator.share({
+                            title: article.title,
+                            text: article.summary,
+                            url: article.url
+                        });
+                    } else {
+                        await navigator.clipboard.writeText(`${article.title}\n\n${article.summary}\n\nRead more: ${article.url}`);
+                        this.ui.showNotification('📋 Article copied to clipboard!', 'success');
+                    }
+                } catch (error) {
+                    console.error('Share error:', error);
+                    if (error.name !== 'AbortError') {
+                        this.ui.showNotification('Failed to share article', 'error');
+                    }
+                }
+            }
+
+            filterByTopic(topic) {
+                const chip = document.querySelector(`[data-filter="${topic}"]`);
+                if (chip) {
+                    chip.click();
+                }
+            }
         }
 
-        // Render policy tracker
-        function renderPolicy() {
-            const policyData = [
-                { label: "EU AI Act", value: "Enacted", status: "enacted" },
-                { label: "US Data Privacy", value: "In Committee", status: "pending" },
-                { label: "China Cloud Regs", value: "Delayed", status: "delayed" },
-                { label: "SG Green DC Tax", value: "Draft", status: "draft" }
-            ];
-            
-            const container = document.getElementById('policyTracker');
-            if (!container) return;
-            
-            container.innerHTML = policyData.map(item => `
-                <div class="heatmap-item">
-                    <div class="heatmap-label">
-                        <i data-lucide="${getPolicyIcon(item.status)}" style="color: ${getPolicyColor(item.status)}"></i>
-                        <span>${item.label}</span>
-                    </div>
-                    <div class="heatmap-value" style="color: ${getPolicyColor(item.status)}">
-                        ${item.value}
-                    </div>
-                </div>
-            `).join('');
-            
-            lucide.createIcons();
-        }
+        // ===== INITIALIZE APPLICATION =====
+        const app = new Application();
 
-        // Render TLDR
-        function renderTLDR() {
-            const container = document.getElementById('tldrContainer');
-            if (!container || liveArticles.length === 0) return;
-            
-            const article = liveArticles[0];
-            container.innerHTML = `
-                <div class="tldr-header">
-                    <i data-lucide="zap"></i>
-                    <span>${article.title.substring(0, 40)}...</span>
-                </div>
-                <div class="tldr-content">
-                    <div class="tldr-item">
-                        <span class="tldr-bullet">•</span>
-                        <span>${article.summary.substring(0, 100)}</span>
-                    </div>
-                    <div class="tldr-item">
-                        <span class="tldr-bullet">•</span>
-                        <span>Impact: ${article.impactScore}/10</span>
-                    </div>
-                    <div class="tldr-item">
-                        <span class="tldr-bullet">•</span>
-                        <span>Source: ${article.source}</span>
-                    </div>
-                </div>
-            `;
-            
-            lucide.createIcons();
-        }
+        // Make app methods globally available
+        window.app = app;
+        window.toggleSave = (id, btn) => app.toggleSave(id, btn);
+        window.shareArticle = (id) => app.shareArticle(id);
+        window.filterByTopic = (topic) => app.filterByTopic(topic);
 
-        // Render feed health
-        function renderFeedHealth() {
-            const container = document.getElementById('feedHealth');
-            if (!container) return;
-            
-            const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            
-            container.innerHTML = `
-                <div class="heatmap-item">
-                    <div class="heatmap-label">
-                        <i data-lucide="wifi" style="color: #00ff9d"></i>
-                        <span>Feed Status</span>
-                    </div>
-                    <div class="heatmap-value" style="color: #00ff9d">Live</div>
-                </div>
-                <div class="heatmap-item">
-                    <div class="heatmap-label">
-                        <i data-lucide="database" style="color: #0095ff"></i>
-                        <span>Articles</span>
-                    </div>
-                    <div class="heatmap-value" style="color: #0095ff">${liveArticles.length}</div>
-                </div>
-                <div class="heatmap-item">
-                    <div class="heatmap-label">
-                        <i data-lucide="refresh-cw" style="color: #ffa500"></i>
-                        <span>Last Update</span>
-                    </div>
-                    <div class="heatmap-value" style="color: #ffa500">${timeStr}</div>
-                </div>
-            `;
-            
-            lucide.createIcons();
-        }
+        // Initialize on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => app.init());
 
-        function getPolicyIcon(status) {
-            return {
-                enacted: "file-check",
-                pending: "clock",
-                delayed: "alert-circle",
-                draft: "file-text"
-            }[status] || "file-text";
-        }
-
-        function getPolicyColor(status) {
-            return {
-                enacted: "#00ff9d",
-                pending: "#ffa500",
-                delayed: "#ff4757",
-                draft: "#0095ff"
-            }[status] || "#ffffff";
-        }
-
-        // Show notification
-        function showNotification(message, type = "info") {
-            // Remove existing notification
-            const existing = document.querySelector('.notification');
-            if (existing) existing.remove();
-            
-            // Create new notification
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            
-            const icons = {
-                success: "check-circle",
-                error: "alert-circle",
-                warning: "alert-triangle",
-                info: "info",
-                breaking: "alert-octagon"
-            };
-            
-            notification.innerHTML = `
-                <i data-lucide="${icons[type] || 'info'}" style="width: 16px; height: 16px; color: ${
-                    type === 'success' ? '#00ff9d' : 
-                    type === 'error' ? '#ff4757' : 
-                    type === 'breaking' ? '#ff4757' : '#0095ff'
-                }"></i>
-                <span>${message}</span>
-            `;
-            
-            // Style based on type
-            const bgColor = type === 'breaking' ? 'rgba(255, 71, 87, 0.1)' : 
-                           type === 'error' ? 'rgba(255, 71, 87, 0.1)' : 
-                           type === 'success' ? 'rgba(0, 255, 157, 0.1)' : 
-                           'rgba(0, 149, 255, 0.1)';
-            
-            const borderColor = type === 'breaking' ? '#ff4757' : 
-                               type === 'error' ? '#ff4757' : 
-                               type === 'success' ? '#00ff9d' : '#0095ff';
-            
-            Object.assign(notification.style, {
-                background: bgColor,
-                borderColor: borderColor,
-                color: type === 'breaking' ? '#ff6b81' : 
-                       type === 'error' ? '#ff6b81' : 
-                       type === 'success' ? '#00ff9d' : '#0095ff'
-            });
-            
-            document.body.appendChild(notification);
-            lucide.createIcons();
-            
-            // Auto-remove after 5 seconds (longer for breaking news)
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }, type === 'breaking' ? 8000 : 5000);
-        }
-
-        // Initialize everything
-        document.addEventListener('DOMContentLoaded', init);
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            ui.cleanup();
+        });
     </script>
 </body>
 </html>
