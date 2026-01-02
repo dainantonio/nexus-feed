@@ -4,12 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXUS INTELLIGENCE | AI × Data × Energy × Policy</title>
+    <!-- Performance: Preconnect to external domains -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <!-- Performance: Defer non-critical scripts -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
+    
     <style>
         /* ===== CORE VARIABLES ===== */
         :root {
@@ -48,6 +55,12 @@
             position: relative;
         }
 
+        /* Accessibility: Focus States */
+        :focus-visible {
+            outline: 2px solid var(--color-electric-green);
+            outline-offset: 2px;
+        }
+
         /* ===== MODERN SCROLLBAR ===== */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
@@ -65,12 +78,18 @@
             display: flex;
             align-items: center;
             font-family: 'JetBrains Mono', monospace;
+            contain: layout size; /* Performance: Isolate layout */
         }
         .ticker-wrap { width: 100%; overflow: hidden; position: relative; }
-        .ticker { display: flex; animation: ticker-scroll 60s linear infinite; white-space: nowrap; padding-left: 100%; }
+        .ticker { 
+            display: flex; 
+            animation: ticker-scroll 60s linear infinite; 
+            white-space: nowrap; 
+            padding-left: 100%;
+            will-change: transform; /* Performance: Hint to browser */
+        }
         .ticker:hover { animation-play-state: paused; }
         .ticker-item { padding: 0 3rem; color: var(--color-electric-green); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; cursor: default; }
-        .ticker-item i { width: 14px; height: 14px; }
         @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
         /* ===== CYBERPUNK EFFECTS ===== */
@@ -78,6 +97,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to bottom, transparent 50%, var(--scanline-color) 51%);
             background-size: 100% 4px; z-index: 9998; pointer-events: none; animation: scanlines 8s linear infinite;
+            will-change: background-position;
         }
         .cyberpunk-active .crt-flicker {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -101,6 +121,7 @@
             box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7);
             animation: markerPulse 2s infinite;
             border: 2px solid white;
+            will-change: transform, box-shadow;
         }
         .map-marker-pulse.ai { background: var(--color-data-blue); box-shadow: 0 0 0 0 rgba(0, 149, 255, 0.7); animation: markerPulseAI 2s infinite; }
         .map-marker-pulse.policy { background: var(--color-accent-purple); box-shadow: 0 0 0 0 rgba(138, 43, 226, 0.7); animation: markerPulsePolicy 2s infinite; }
@@ -202,14 +223,15 @@
         .filter-chip:hover { border-color: var(--color-text-primary); color: var(--color-text-primary); transform: translateY(-2px); }
         .filter-chip.active { background: var(--color-text-primary); color: var(--color-bg-dark); border-color: var(--color-text-primary); box-shadow: 0 4px 12px rgba(255,255,255,0.2); }
         .filter-chip.active i { color: var(--color-bg-dark); }
+        .filter-chip-count { font-size: 0.7rem; opacity: 0.7; margin-left: 4px; }
 
-        .left-sidebar, .right-sidebar { background: var(--color-bg-sidebar); padding: 2rem; overflow-y: auto; height: calc(100vh - 180px); position: sticky; top: 180px; }
+        .left-sidebar, .right-sidebar { background: var(--color-bg-sidebar); padding: 2rem; overflow-y: auto; height: calc(100vh - 180px); position: sticky; top: 180px; contain: content; }
         .left-sidebar { border-right: 1px solid var(--color-border); }
         .right-sidebar { border-left: 1px solid var(--color-border); }
         .sidebar-section { margin-bottom: 2.5rem; }
         .sidebar-section h3 { font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
 
-        .main-feed { padding: 2rem; overflow-y: auto; background: linear-gradient(180deg, var(--color-bg-dark) 0%, #08080c 100%); }
+        .main-feed { padding: 2rem; overflow-y: auto; background: linear-gradient(180deg, var(--color-bg-dark) 0%, #08080c 100%); contain: content; content-visibility: auto; }
         .feed-header { display: flex; justify-content: space-between; margin-bottom: 2rem; align-items: center; }
         .feed-controls { display: flex; gap: 10px; align-items: center; }
         .sort-select { background: rgba(255,255,255,0.05); color: var(--color-text-primary); border: 1px solid var(--color-border); padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; outline: none; cursor: pointer; }
@@ -227,6 +249,8 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
+            contain: content; /* Performance Optimization */
+            content-visibility: auto;
         }
         
         /* Category Stripe */
@@ -250,6 +274,7 @@
         .card-meta-line { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 1.2rem; font-family: 'JetBrains Mono', monospace; }
         .impact-score { color: var(--color-electric-green); font-weight: 700; background: rgba(0, 255, 157, 0.1); padding: 2px 6px; border-radius: 4px; }
         .impact-score.high { color: var(--color-alert-red); background: rgba(255, 71, 87, 0.15); }
+        .velocity-score { display: flex; align-items: center; gap: 4px; color: #ff9f43; font-weight: 600; }
 
         .card-summary { color: #ccc; margin-bottom: 1.5rem; font-size: 1rem; line-height: 1.7; font-weight: 400; opacity: 0.9; }
         
@@ -277,8 +302,12 @@
         
         @keyframes pulse-speak { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
+        /* Notification with Status Colors */
         .notification { position: fixed; top: 20px; right: 20px; background: var(--color-bg-card); padding: 15px 25px; border-radius: 12px; border-left: 4px solid var(--color-electric-green); z-index: 10001; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); display: flex; align-items: center; gap: 12px; font-weight: 600; border: 1px solid rgba(255,255,255,0.05); }
         .notification.visible { transform: translateX(0); }
+        .notification.error { border-left-color: var(--color-alert-red); }
+        .notification.info { border-left-color: var(--color-data-blue); }
+        .notification.success { border-left-color: var(--color-electric-green); }
         
         .breaking-banner { 
             background: linear-gradient(90deg, rgba(255, 71, 87, 0.9), rgba(255, 107, 129, 0.9)); 
@@ -295,12 +324,13 @@
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } }
 
         /* Widget Containers */
-        #miniMap { height: 320px; width: 100%; border-radius: 16px; z-index: 1; background: #1a1a20; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; }
+        #miniMap { height: 320px; width: 100%; border-radius: 16px; z-index: 1; background: #1a1a20; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; contain: strict; }
         .map-scan-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999;
             background: radial-gradient(circle, rgba(0,255,157,0.05) 0%, transparent 70%);
             animation: radarScan 4s infinite linear;
             opacity: 0;
+            will-change: transform;
         }
         @keyframes radarScan { 0% { transform: scale(0); opacity: 0.5; } 100% { transform: scale(2); opacity: 0; } }
 
@@ -334,9 +364,37 @@
         .sentiment-score { font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1; font-family: 'JetBrains Mono'; }
         .sentiment-text { font-size: 0.75rem; color: var(--color-text-muted); letter-spacing: 2px; margin-top: 5px; text-transform: uppercase; }
 
+        /* Empty State */
+        .empty-state {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 2rem; color: var(--color-text-muted); text-align: center;
+        }
+        .empty-state i { margin-bottom: 1rem; opacity: 0.5; }
+
+        /* Footer */
+        .app-footer {
+            grid-column: 1 / -1;
+            background: #0a0a0f;
+            border-top: 1px solid var(--color-border);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            z-index: 10;
+        }
+        .footer-status { display: flex; gap: 15px; align-items: center; }
+        .footer-status-item { display: flex; align-items: center; gap: 6px; }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-electric-green); box-shadow: 0 0 5px var(--color-electric-green); }
+        .footer-center { opacity: 0.5; letter-spacing: 1px; }
+        .footer-links { display: flex; gap: 20px; }
+        .footer-link { color: var(--color-text-secondary); text-decoration: none; transition: color 0.2s; }
+        .footer-link:hover { color: var(--color-electric-green); }
+
         @media (max-width: 1200px) { .app-container { grid-template-columns: 260px 1fr 300px; } }
         @media (max-width: 1024px) { .app-container { grid-template-columns: 240px 1fr; } .right-sidebar { display: none; } }
-        @media (max-width: 768px) { .app-container { grid-template-columns: 1fr; } .left-sidebar { display: none; } .filter-container { overflow-x: auto; flex-wrap: nowrap; } .news-card { padding: 1.2rem; } }
+        @media (max-width: 768px) { .app-container { grid-template-columns: 1fr; } .left-sidebar { display: none; } .filter-container { overflow-x: auto; flex-wrap: nowrap; } .news-card { padding: 1.2rem; } .app-footer { flex-direction: column; gap: 10px; padding: 1rem; text-align: center; } }
     </style>
 </head>
 <body>
@@ -356,8 +414,8 @@
             <div class="search-container">
                 <div class="search-header">
                     <i data-lucide="search" style="color: var(--color-electric-green);"></i>
-                    <input type="text" class="search-input" id="searchInput" placeholder="Search global intelligence stream...">
-                    <button class="action-btn" id="closeSearchBtn"><i data-lucide="x"></i></button>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search global intelligence stream..." aria-label="Search">
+                    <button class="action-btn" id="closeSearchBtn" aria-label="Close Search"><i data-lucide="x"></i></button>
                 </div>
                 <div class="search-results" id="searchResults">
                     <div style="padding: 40px; text-align: center; color: var(--color-text-muted);">
@@ -377,7 +435,7 @@
         <div class="modal-content">
             <div class="reader-container">
                 <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-                    <button class="action-btn" onclick="document.getElementById('readerModal').classList.remove('active')"><i data-lucide="x"></i></button>
+                    <button class="action-btn" onclick="document.getElementById('readerModal').classList.remove('active')" aria-label="Close Reader"><i data-lucide="x"></i></button>
                 </div>
                 <h1 id="readerTitle" class="reader-title">Article Title</h1>
                 <div class="reader-meta">
@@ -404,7 +462,7 @@
             <div class="settings-container">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
                     <h2><i data-lucide="keyboard" style="color: var(--color-electric-green); margin-right: 10px;"></i> Shortcuts</h2>
-                    <button class="action-btn" onclick="document.getElementById('helpModal').classList.remove('active')"><i data-lucide="x"></i></button>
+                    <button class="action-btn" onclick="document.getElementById('helpModal').classList.remove('active')" aria-label="Close Help"><i data-lucide="x"></i></button>
                 </div>
                 <div class="help-grid">
                     <div class="help-item"><span>Search</span> <span class="help-key">Cmd + K</span></div>
@@ -423,7 +481,7 @@
             <div class="settings-container">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
                     <h2><i data-lucide="settings" style="color: var(--color-electric-green); margin-right: 10px;"></i> System Config</h2>
-                    <button class="action-btn" id="closeSettingsBtn"><i data-lucide="x"></i></button>
+                    <button class="action-btn" id="closeSettingsBtn" aria-label="Close Settings"><i data-lucide="x"></i></button>
                 </div>
                 <div class="setting-group">
                     <h3><i data-lucide="eye"></i> Interface</h3>
@@ -487,11 +545,11 @@
                 </div>
             </div>
             <div class="header-actions">
-                <button class="action-btn" id="tldrToggleBtn" title="TL;DR Mode"><i data-lucide="list"></i></button>
+                <button class="action-btn" id="tldrToggleBtn" title="TL;DR Mode" aria-label="TLDR Mode"><i data-lucide="list"></i></button>
                 <div id="systemClock" style="font-family: 'JetBrains Mono'; font-size: 0.8rem; color: var(--color-electric-green); border: 1px solid rgba(0,255,157,0.2); padding: 8px 12px; border-radius: 8px; margin-right: 10px;">00:00:00 UTC</div>
-                <button class="action-btn" id="refreshBtn" title="Refresh Feed"><i data-lucide="refresh-cw"></i></button>
-                <button class="action-btn" id="triggerSearchBtn" title="Search (Cmd+K)"><i data-lucide="search"></i></button>
-                <button class="action-btn" id="triggerSettingsBtn" title="Settings"><i data-lucide="settings"></i></button>
+                <button class="action-btn" id="refreshBtn" title="Refresh Feed" aria-label="Refresh"><i data-lucide="refresh-cw"></i></button>
+                <button class="action-btn" id="triggerSearchBtn" title="Search (Cmd+K)" aria-label="Search"><i data-lucide="search"></i></button>
+                <button class="action-btn" id="triggerSettingsBtn" title="Settings" aria-label="Settings"><i data-lucide="settings"></i></button>
             </div>
         </header>
 
@@ -507,13 +565,13 @@
         </div>
 
         <div class="filter-container">
-            <div class="filter-chip active" data-filter="all"><i data-lucide="layers" size="14"></i> ALL NEXUS</div>
-            <div class="filter-chip" data-filter="ai"><i data-lucide="cpu" size="14"></i> AI & COMPUTE</div>
-            <div class="filter-chip" data-filter="energy"><i data-lucide="zap" size="14"></i> ENERGY</div>
-            <div class="filter-chip" data-filter="realestate"><i data-lucide="building" size="14"></i> REAL ESTATE</div>
-            <div class="filter-chip" data-filter="policy"><i data-lucide="scale" size="14"></i> POLICY</div>
-            <div class="filter-chip" data-filter="breaking"><i data-lucide="alert-circle" size="14"></i> BREAKING</div>
-            <div class="filter-chip" data-filter="saved"><i data-lucide="bookmark" size="14"></i> SAVED</div>
+            <div class="filter-chip active" data-filter="all"><i data-lucide="layers" size="14"></i> ALL NEXUS <span class="filter-chip-count"></span></div>
+            <div class="filter-chip" data-filter="ai"><i data-lucide="cpu" size="14"></i> AI <span class="filter-chip-count"></span></div>
+            <div class="filter-chip" data-filter="energy"><i data-lucide="zap" size="14"></i> ENERGY <span class="filter-chip-count"></span></div>
+            <div class="filter-chip" data-filter="realestate"><i data-lucide="building" size="14"></i> REAL ESTATE <span class="filter-chip-count"></span></div>
+            <div class="filter-chip" data-filter="policy"><i data-lucide="scale" size="14"></i> POLICY <span class="filter-chip-count"></span></div>
+            <div class="filter-chip" data-filter="breaking"><i data-lucide="alert-circle" size="14"></i> BREAKING <span class="filter-chip-count"></span></div>
+            <div class="filter-chip" data-filter="saved"><i data-lucide="bookmark" size="14"></i> SAVED <span class="filter-chip-count"></span></div>
         </div>
 
         <aside class="left-sidebar">
@@ -548,7 +606,7 @@
                     <span style="font-size:0.75rem; background:rgba(255,255,255,0.1); padding:4px 8px; border-radius:4px;"><span id="articleCount">0</span> NODES</span>
                 </div>
                 <div class="feed-controls">
-                    <select id="sortSelect" class="sort-select">
+                    <select id="sortSelect" class="sort-select" aria-label="Sort Articles">
                         <option value="latest">Latest</option>
                         <option value="impact">Highest Impact</option>
                     </select>
@@ -610,11 +668,26 @@
                 </div>
             </div>
         </aside>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <div class="footer-status">
+                <div class="footer-status-item"><div class="status-dot"></div><span>SECURE TLS v1.3</span></div>
+                <div class="footer-status-item"><span>LATENCY: <span id="footerLatency">12ms</span></span></div>
+            </div>
+            <div class="footer-center">NEXUS INTELLIGENCE v4.0.2 (BETA) | © 2026</div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">API DOCS</a>
+                <a href="#" class="footer-link">SYSTEM LOGS</a>
+                <a href="#" class="footer-link">PRIVACY</a>
+                <a href="#" class="footer-link">TERMS</a>
+            </div>
+        </footer>
     </div>
 
     <script>
-        lucide.createIcons();
-
+        // Lucide is deferred, so we wait for DOMContentLoaded + check for it
+        
         // ===== APP STATE =====
         const appState = {
             articles: [],
@@ -627,7 +700,12 @@
             simInterval: null,
             clockInterval: null,
             tldrMode: false,
-            briefCollapsed: false
+            briefCollapsed: false,
+            cache: {
+                data: null,
+                timestamp: 0,
+                duration: 5 * 60 * 1000 // 5 minutes cache
+            }
         };
 
         // ===== MOCK DATA =====
@@ -713,6 +791,7 @@
             ];
             const proxy = "https://api.rss2json.com/v1/api.json?rss_url=";
             let articles = [];
+            
             const promises = rssFeeds.map(async url => {
                 try {
                     const res = await fetch(proxy + encodeURIComponent(url));
@@ -747,12 +826,33 @@
             return 'ai';
         }
 
-        // ===== DATA FETCHING =====
+        // ===== DATA FETCHING with CACHE =====
         async function fetchRealNews() {
+            // Check Cache
+            const now = Date.now();
+            if (appState.cache.data && (now - appState.cache.timestamp < appState.cache.duration)) {
+                console.log("Serving from Session Cache");
+                return appState.cache.data;
+            }
+
             let newsData = [];
+            // Placeholder for real APIs
             if (appState.settings.gnewsApiKey) { /* GNews Placeholder */ }
-            if (newsData.length === 0) { const rss = await fetchRSS(); if(rss.length>0) return rss; }
-            return generateMockData();
+            
+            // RSS Logic
+            if (newsData.length === 0) { 
+                const rss = await fetchRSS(); 
+                if(rss.length > 0) newsData = rss; 
+            }
+            
+            // Mock Fallback
+            if (newsData.length === 0) newsData = generateMockData();
+
+            // Update Cache
+            appState.cache.data = newsData;
+            appState.cache.timestamp = now;
+            
+            return newsData;
         }
 
         // ===== SIMULATION =====
@@ -766,7 +866,7 @@
                 mock.title = "[LIVE INCOMING] " + mock.title;
                 appState.articles.unshift(mock);
                 refreshUIComponents();
-                showNotification("INCOMING INTEL RECEIVED");
+                showNotification("INCOMING INTEL RECEIVED", "info");
             }, 45000); 
         }
 
@@ -775,30 +875,98 @@
             appState.clockInterval = setInterval(() => {
                 const now = new Date();
                 document.getElementById('systemClock').innerText = now.toISOString().split('T')[1].split('.')[0] + " UTC";
+                
+                // Update Latency
+                const latency = Math.floor(Math.random() * 20) + 10;
+                const latEl = document.getElementById('footerLatency');
+                if(latEl) latEl.innerText = `${latency}ms`;
             }, 1000);
         }
 
         // ===== INIT =====
         function init() {
-            applySettings(); initCharts(); initMap(); refreshData(); setupEventListeners(); startLiveSimulation(); startClock();
+            // Wait for deferred scripts if needed
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', onReady);
+            } else {
+                onReady();
+            }
+        }
+        
+        function onReady() {
+             // Init Lucide if available, else retry shortly
+             if(window.lucide) {
+                 window.lucide.createIcons();
+             } else {
+                 setTimeout(() => window.lucide && window.lucide.createIcons(), 500);
+             }
+             
+             applySettings(); 
+             initCharts(); 
+             initMap(); 
+             refreshData(); 
+             setupEventListeners(); 
+             startLiveSimulation(); 
+             startClock();
+        }
+
+        // Utility: Debounce Function for Performance
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => { clearTimeout(timeout); func(...args); };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function calculateReadTime(text) {
+            const wpm = 225;
+            const words = text.trim().split(/\s+/).length;
+            return Math.ceil(words / wpm);
         }
 
         async function refreshData() {
             const refreshBtn = document.getElementById('refreshBtn');
-            if(refreshBtn) refreshBtn.querySelector('svg').classList.add('fa-spin'); 
+            const icon = refreshBtn?.querySelector('svg') || refreshBtn?.querySelector('i');
+            if(icon) icon.classList.add('fa-spin'); // Fallback class if lucide not ready
             
-            renderSkeletonLoader(); 
-            appState.articles = await fetchRealNews();
-            appState.articles.sort((a, b) => b.timeObj - a.timeObj);
-            appState.articles.forEach(art => { if(appState.savedArticles.includes(art.id)) art.bookmarked = true; });
+            // Only update DOM if necessary
+            if (appState.articles.length === 0) renderSkeletonLoader(); 
+            
+            const newArticles = await fetchRealNews();
+            
+            // Basic Diff Check (Optimization)
+            if (newArticles.length !== appState.articles.length || newArticles[0]?.id !== appState.articles[0]?.id) {
+                appState.articles = newArticles;
+                appState.articles.sort((a, b) => b.timeObj - a.timeObj);
+                appState.articles.forEach(art => { if(appState.savedArticles.includes(art.id)) art.bookmarked = true; });
+                refreshUIComponents();
+            } else {
+                console.log("Data up to date, skipping re-render.");
+            }
 
-            refreshUIComponents();
-            if(refreshBtn) refreshBtn.querySelector('svg').classList.remove('fa-spin');
-            showNotification("Data Stream Synced");
+            if(icon) icon.classList.remove('fa-spin');
+            showNotification("Data Stream Synced", "success");
         }
 
         function refreshUIComponents() {
-            renderFeed(); checkBreakingNews(); updateQuickSaved(); updateMapMarkers(); updateCharts(); updateAnalytics(); updateTLDRWidget();
+            renderFeed(); checkBreakingNews(); updateQuickSaved(); updateMapMarkers(); updateCharts(); updateAnalytics(); updateTLDRWidget(); updateFilterCounts();
+            if(window.lucide) window.lucide.createIcons();
+        }
+
+        function updateFilterCounts() {
+            const counts = { all: appState.articles.length, ai: 0, energy: 0, realestate: 0, policy: 0, breaking: 0, saved: appState.savedArticles.length };
+            appState.articles.forEach(a => {
+                if(counts[a.tag] !== undefined) counts[a.tag]++;
+                if(a.impact === 'high') counts.breaking++;
+            });
+            
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                const type = chip.dataset.filter;
+                const countSpan = chip.querySelector('.filter-chip-count');
+                if(countSpan && counts[type] !== undefined) countSpan.innerText = `(${counts[type]})`;
+            });
         }
 
         function renderSkeletonLoader() {
@@ -815,10 +983,10 @@
             const chevron = document.getElementById('briefChevron');
             if (appState.briefCollapsed) {
                 container.classList.add('collapsed');
-                chevron.style.transform = 'rotate(180deg)';
+                if(chevron) chevron.style.transform = 'rotate(180deg)';
             } else {
                 container.classList.remove('collapsed');
-                chevron.style.transform = 'rotate(0deg)';
+                if(chevron) chevron.style.transform = 'rotate(0deg)';
             }
         }
 
@@ -838,31 +1006,35 @@
         }
 
         function initCharts() {
-            // Enhanced Multi-Color Radial Bar
+            // Enhanced Multi-Color Semi-Circle Gauge
             const sentimentOpts = {
-                chart: { type: 'radialBar', height: 220, background: 'transparent', animations: { enabled: true, easing: 'easeinout', speed: 800 } },
-                series: [75],
+                chart: { type: 'radialBar', height: 260, background: 'transparent', animations: { enabled: true, easing: 'easeinout', speed: 800 } },
+                series: [0],
                 colors: ['#00ff9d'],
                 plotOptions: {
                     radialBar: {
-                        startAngle: -135, endAngle: 135,
-                        hollow: { margin: 15, size: '60%', background: 'transparent' },
-                        track: { background: '#2a2a3a', strokeWidth: '100%', margin: 0 },
-                        dataLabels: { show: false } 
+                        startAngle: -90, endAngle: 90,
+                        hollow: { margin: 0, size: '65%', background: 'transparent' },
+                        track: { background: '#2a2a3a', strokeWidth: '100%', margin: 5 },
+                        dataLabels: { 
+                            show: false 
+                        }
                     }
                 },
-                stroke: { lineCap: 'round' },
                 fill: {
                     type: 'gradient',
                     gradient: {
                         shade: 'dark', type: 'horizontal', shadeIntensity: 0.5,
-                        gradientToColors: ['#0095ff'], inverseColors: true,
+                        gradientToColors: ['#ff4757'], inverseColors: false,
                         opacityFrom: 1, opacityTo: 1, stops: [0, 100]
                     }
-                }
+                },
+                stroke: { lineCap: 'butt' }
             };
-            appState.charts.sentiment = new ApexCharts(document.querySelector("#sentimentRadialChart"), sentimentOpts);
-            appState.charts.sentiment.render();
+            if(document.querySelector("#sentimentRadialChart")) {
+                 appState.charts.sentiment = new ApexCharts(document.querySelector("#sentimentRadialChart"), sentimentOpts);
+                 appState.charts.sentiment.render();
+            }
 
             const impactOpts = {
                 chart: { type: 'donut', height: 220, background: 'transparent' },
@@ -874,11 +1046,14 @@
                 dataLabels: { enabled: false },
                 stroke: { width: 0 }
             };
-            appState.charts.impact = new ApexCharts(document.querySelector("#impactChart"), impactOpts);
-            appState.charts.impact.render();
+            if(document.querySelector("#impactChart")) {
+                appState.charts.impact = new ApexCharts(document.querySelector("#impactChart"), impactOpts);
+                appState.charts.impact.render();
+            }
         }
 
         function updateCharts() {
+            if(!appState.charts.impact || !appState.charts.sentiment) return;
             const impacts = { high: 0, medium: 0, low: 0 };
             appState.articles.forEach(a => {
                 const imp = a.impact ? a.impact.toLowerCase() : 'low';
@@ -898,8 +1073,8 @@
             document.getElementById('trendingContainer').innerHTML = sortedTags.map(t => `<span class="tag" style="background: rgba(255,255,255,0.05); border: 1px solid var(--color-border); font-size: 0.65rem;">#${t.toUpperCase()}</span>`).join('');
 
             // Sentiment Calculation
-            const positive = ['surge', 'record', 'breakthrough', 'success', 'growth', 'fund', 'invests', 'launches'];
-            const negative = ['strain', 'delays', 'congestion', 'crisis', 'ban', 'lawsuit', 'warning'];
+            const positive = ['surge', 'record', 'breakthrough', 'success', 'growth', 'fund', 'invests', 'launches', 'advances', 'gain'];
+            const negative = ['strain', 'delays', 'congestion', 'crisis', 'ban', 'lawsuit', 'warning', 'drop', 'outage'];
             let totalScore = 50;
             appState.articles.forEach(a => {
                 const text = (a.title + ' ' + a.summary).toLowerCase();
@@ -908,20 +1083,18 @@
             });
             totalScore = Math.max(0, Math.min(100, totalScore));
             
-            appState.charts.sentiment.updateSeries([totalScore]);
+            if(appState.charts.sentiment) appState.charts.sentiment.updateSeries([totalScore]);
             const valEl = document.getElementById('sentimentValue');
             const txtEl = document.getElementById('sentimentText');
-            valEl.innerText = totalScore;
+            if(valEl) valEl.innerText = totalScore;
             
+            // Dynamic Color Logic for Gauge Text
             if(totalScore > 60) {
-                txtEl.innerText = "BULLISH"; txtEl.style.color = "#00ff9d";
-                appState.charts.sentiment.updateOptions({ colors: ['#00ff9d'], fill: { gradient: { gradientToColors: ['#00ccff'] } } });
+                if(txtEl) { txtEl.innerText = "BULLISH"; txtEl.style.color = "#00ff9d"; }
             } else if (totalScore < 40) {
-                txtEl.innerText = "BEARISH"; txtEl.style.color = "#ff4757";
-                appState.charts.sentiment.updateOptions({ colors: ['#ff4757'], fill: { gradient: { gradientToColors: ['#ff9f43'] } } });
+                if(txtEl) { txtEl.innerText = "BEARISH"; txtEl.style.color = "#ff4757"; }
             } else {
-                txtEl.innerText = "NEUTRAL"; txtEl.style.color = "#0095ff";
-                appState.charts.sentiment.updateOptions({ colors: ['#0095ff'], fill: { gradient: { gradientToColors: ['#8a2be2'] } } });
+                if(txtEl) { txtEl.innerText = "NEUTRAL"; txtEl.style.color = "#ffa502"; }
             }
         }
 
@@ -965,6 +1138,12 @@
             document.getElementById('feedTitle').innerText = "TOP INTELLIGENCE BRIEF";
             const topArticles = [...appState.articles].sort((a,b) => b.impactScore - a.impactScore).slice(0, 10);
             
+            if (topArticles.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i data-lucide="inbox" size="48"></i><div>No intelligence data available.</div></div>';
+                if(window.lucide) window.lucide.createIcons();
+                return;
+            }
+
             container.innerHTML = topArticles.map((a, i) => `
                 <div class="tldr-card" onclick="window.open('${a.url}', '_blank')">
                     <div class="tldr-number">${i+1}.</div>
@@ -974,12 +1153,14 @@
                     </div>
                 </div>
             `).join('');
+            if(window.lucide) window.lucide.createIcons();
         }
 
         function renderFeed() {
             if(appState.tldrMode) return renderTLDRFeed();
             document.getElementById('feedTitle').innerText = "LIVE INTELLIGENCE";
             const container = document.getElementById('articlesContainer');
+            
             container.innerHTML = '';
 
             let filtered = appState.articles;
@@ -994,9 +1175,12 @@
             document.getElementById('articleCount').innerText = filtered.length;
 
             if (filtered.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--color-text-muted);">No intelligence data found for this filter.</div>`;
+                container.innerHTML = `<div class="empty-state"><i data-lucide="search" size="48"></i><div>No intelligence data found for this filter.</div></div>`;
+                if(window.lucide) window.lucide.createIcons();
                 return;
             }
+
+            const fragment = document.createDocumentFragment();
 
             filtered.forEach(art => {
                 const card = document.createElement('div');
@@ -1016,11 +1200,12 @@
                         <span class="impact-score ${art.impact === 'high' ? 'high' : ''}">Impact: ${art.impactScore}</span>
                         <span>•</span>
                         <span>Relevance: 98%</span>
+                        ${art.impactScore > 8 ? '<span style="margin-left:10px;" class="velocity-score"><i data-lucide="trending-up" size="12"></i> High Velocity</span>' : ''}
                     </div>
                     <p class="card-summary">${art.summary}</p>
                     
                     <div class="ai-analysis-container">
-                        <button class="ai-analysis-btn" onclick="toggleAnalysis('${art.id}')">
+                        <button class="ai-analysis-btn" onclick="toggleAnalysis('${art.id}')" aria-label="Toggle Neural Analysis">
                             <i data-lucide="brain"></i> NEURAL ANALYSIS
                         </button>
                         <div id="ai-${art.id}" class="ai-content">
@@ -1032,17 +1217,19 @@
                         <div class="card-tags">
                             <span class="tag ${art.tag}"><i data-lucide="${getTagIcon(art.tag)}" size="12"></i> ${art.tag.toUpperCase()}</span>
                             ${art.impact === 'high' ? '<span class="tag" style="background:rgba(255, 71, 87, 0.1); color:#ff4757; border: 1px solid rgba(255,71,87,0.2);"><i data-lucide="alert-triangle" size="12"></i> HIGH IMPACT</span>' : ''}
+                            <span style="font-size:0.7rem; color:var(--color-text-muted); margin-left:5px;">~${calculateReadTime(art.summary)} min read</span>
                         </div>
                         <div class="card-actions-right">
-                            <button class="card-action-btn share-btn" onclick="shareArticle('${art.url}')" title="Copy Link"><i data-lucide="share-2" size="16"></i></button>
-                            <button class="card-action-btn speak-btn" onclick="speakText('${art.summary.replace(/'/g, "\\'")}', this)" title="Read Briefing"><i data-lucide="volume-2" size="16"></i></button>
-                            <button class="card-action-btn bookmark-btn ${appState.savedArticles.includes(art.id) ? 'bookmarked' : ''}" onclick="toggleBookmark('${art.id}')"><i data-lucide="bookmark" size="16"></i></button>
+                            <button class="card-action-btn share-btn" onclick="shareArticle('${art.url}')" title="Copy Link" aria-label="Copy Link"><i data-lucide="share-2" size="16"></i></button>
+                            <button class="card-action-btn speak-btn" onclick="speakText('${art.summary.replace(/'/g, "\\'")}', this)" title="Read Briefing" aria-label="Speak Summary"><i data-lucide="volume-2" size="16"></i></button>
+                            <button class="card-action-btn bookmark-btn ${appState.savedArticles.includes(art.id) ? 'bookmarked' : ''}" onclick="toggleBookmark('${art.id}')" aria-label="Bookmark"><i data-lucide="bookmark" size="16"></i></button>
                         </div>
                     </div>
                 `;
-                container.appendChild(card);
+                fragment.appendChild(card);
             });
-            lucide.createIcons();
+            container.appendChild(fragment);
+            if(window.lucide) window.lucide.createIcons();
         }
 
         function getTagIcon(tag) {
@@ -1076,17 +1263,17 @@
                 utterance.onend = () => btn.classList.remove('speaking');
                 btn.classList.add('speaking');
                 window.speechSynthesis.speak(utterance);
-            } else { showNotification("TTS Not Supported"); }
+            } else { showNotification("TTS Not Supported", "error"); }
         }
 
         function shareArticle(url) {
-            navigator.clipboard.writeText(url).then(() => { showNotification("Link Copied"); }).catch(err => console.error(err));
+            navigator.clipboard.writeText(url).then(() => { showNotification("Link Copied", "success"); }).catch(err => console.error(err));
         }
 
         window.toggleBookmark = function(id) {
             const index = appState.savedArticles.indexOf(id);
-            if (index === -1) { appState.savedArticles.push(id); showNotification("Article Saved"); } 
-            else { appState.savedArticles.splice(index, 1); showNotification("Article Removed"); }
+            if (index === -1) { appState.savedArticles.push(id); showNotification("Article Saved", "success"); } 
+            else { appState.savedArticles.splice(index, 1); showNotification("Article Removed", "info"); }
             localStorage.setItem('nexus_saved', JSON.stringify(appState.savedArticles));
             refreshUIComponents();
         };
@@ -1114,6 +1301,8 @@
 
         function initMap() {
             if(appState.map) return;
+            const mapEl = document.getElementById('miniMap');
+            if(!mapEl) return;
             appState.map = L.map('miniMap', { center: [30, -10], zoom: 1.5, zoomControl: false, attributionControl: false });
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, subdomains: 'abcd' }).addTo(appState.map);
         }
@@ -1165,12 +1354,13 @@
             localStorage.setItem('nexus_settings', JSON.stringify(appState.settings));
             applySettings(); refreshData(); startLiveSimulation(); 
             document.getElementById('settingsModal').classList.remove('active');
-            showNotification("Configuration Saved");
+            showNotification("Configuration Saved", "success");
         }
 
-        function showNotification(text) {
+        function showNotification(text, type = 'info') {
             const el = document.getElementById('notificationArea');
             document.getElementById('notificationText').innerText = text;
+            el.className = `notification ${type}`; // Reset classes
             el.classList.add('visible');
             setTimeout(() => el.classList.remove('visible'), 3000);
         }
@@ -1189,7 +1379,7 @@
             const blob = new Blob([content], { type: 'text/plain' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url; a.download = `NEXUS_Brief_${Date.now()}.txt`; a.click();
-            showNotification("Brief Downloaded");
+            showNotification("Brief Downloaded", "success");
         });
 
         function setupEventListeners() {
@@ -1223,7 +1413,7 @@
             document.querySelectorAll('.modal-overlay').forEach(m => { m.addEventListener('click', e => { if(e.target === m) m.classList.remove('active'); }); });
         }
 
-        document.addEventListener('DOMContentLoaded', init);
+        init();
     </script>
 </body>
 </html>
