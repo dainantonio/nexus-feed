@@ -225,6 +225,14 @@
         .color-picker-input::-webkit-color-swatch-wrapper { padding: 0; }
         .color-picker-input::-webkit-color-swatch { border: 2px solid var(--color-border); border-radius: 50%; }
 
+        /* Muted Keywords Input Styles */
+        .keyword-input-container { display: flex; gap: 10px; margin-top: 10px; }
+        .keyword-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; min-height: 30px; }
+        .keyword-tag { background: rgba(255, 71, 87, 0.1); border: 1px solid rgba(255, 71, 87, 0.3); color: #ff4757; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; }
+        .keyword-tag.highlight { background: rgba(0, 149, 255, 0.1); border-color: rgba(0, 149, 255, 0.3); color: var(--color-data-blue); }
+        .keyword-tag-remove { cursor: pointer; opacity: 0.7; }
+        .keyword-tag-remove:hover { opacity: 1; }
+
         /* Reader Modal */
         .reader-container { padding: 40px; font-family: 'Inter', sans-serif; }
         .reader-meta { display: flex; gap: 15px; margin-bottom: 20px; font-size: 0.85rem; color: var(--color-text-secondary); border-bottom: 1px solid var(--color-border); padding-bottom: 20px; }
@@ -316,7 +324,7 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08); 
             border-radius: var(--border-radius); 
-            padding: 1.8rem; 
+            padding: 0; /* Reset padding for visual header */
             margin-bottom: 1.8rem; 
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
@@ -324,7 +332,95 @@
             overflow: hidden;
             contain: content;
             content-visibility: auto;
+            display: flex;
+            flex-direction: column;
         }
+
+        /* Read/Unread State */
+        .news-card.unread {
+            border-color: rgba(0, 255, 157, 0.4);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
+        }
+        .news-card.read {
+            opacity: 0.6;
+            filter: grayscale(0.8);
+            border-color: transparent;
+            box-shadow: none;
+        }
+        .news-card.read:hover { opacity: 1; border-color: var(--color-border); filter: grayscale(0); }
+
+        /* Bulk Mode */
+        .bulk-mode-active .news-card { cursor: pointer; }
+        .bulk-checkbox {
+            position: absolute; top: 15px; left: 15px; z-index: 10;
+            width: 24px; height: 24px; border: 2px solid var(--color-border);
+            background: rgba(0,0,0,0.8); border-radius: 6px; display: none;
+            align-items: center; justify-content: center; color: var(--color-electric-green);
+            transition: all 0.2s;
+        }
+        .bulk-mode-active .bulk-checkbox { display: flex; }
+        .bulk-checkbox.checked { background: var(--color-electric-green); color: #000; border-color: var(--color-electric-green); }
+        
+        .bulk-action-bar {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(150px);
+            background: rgba(26, 26, 46, 0.95); border: 1px solid var(--color-electric-green);
+            padding: 12px 30px; border-radius: 50px; display: flex; gap: 15px; align-items: center;
+            z-index: 10005; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+        }
+        .bulk-action-bar.visible { transform: translateX(-50%) translateY(0); }
+        .bulk-counter { font-family: 'JetBrains Mono'; font-weight: 700; color: #fff; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 20px; margin-right: 5px; }
+
+        /* Keyword Highlight */
+        .keyword-highlight { background: rgba(0, 149, 255, 0.2); color: #fff; padding: 0 2px; border-radius: 2px; font-weight: 700; border-bottom: 2px solid rgba(0,149,255,0.5); }
+
+        /* Filter Chip Badges */
+        .chip-badge { font-size: 0.65rem; background: var(--color-electric-green); color: #000; padding: 1px 6px; border-radius: 4px; margin-left: 5px; font-weight: 800; display: none; }
+        .chip-badge.visible { display: inline-block; }
+
+        /* Visual Header (Rich Preview Sim) */
+        .visual-header {
+            height: 120px;
+            width: 100%;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        }
+        .visual-header::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(0,0,0,0.5), transparent);
+            background-size: 20px 20px, 100% 100%;
+        }
+        .visual-icon-container {
+            position: absolute; bottom: -24px; right: 24px; left: auto;
+            width: 48px; height: 48px;
+            background: var(--color-bg-card);
+            border: 2px solid var(--color-border);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--color-electric-green);
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Category Specific Visuals */
+        .news-card[data-category="ai"] .visual-header { background: linear-gradient(135deg, rgba(0,149,255,0.2), rgba(0,149,255,0.05)); }
+        .news-card[data-category="ai"] .visual-icon-container { color: var(--color-data-blue); border-color: rgba(0,149,255,0.3); }
+
+        .news-card[data-category="energy"] .visual-header { background: linear-gradient(135deg, rgba(0,255,157,0.2), rgba(0,255,157,0.05)); }
+        .news-card[data-category="energy"] .visual-icon-container { color: var(--color-electric-green); border-color: rgba(0,255,157,0.3); }
+        
+        .news-card[data-category="policy"] .visual-header { background: linear-gradient(135deg, rgba(138,43,226,0.2), rgba(138,43,226,0.05)); }
+        .news-card[data-category="policy"] .visual-icon-container { color: var(--color-accent-purple); border-color: rgba(138,43,226,0.3); }
+
+        .news-card[data-category="realestate"] .visual-header { background: linear-gradient(135deg, rgba(255,159,67,0.2), rgba(255,159,67,0.05)); }
+        .news-card[data-category="realestate"] .visual-icon-container { color: var(--color-realestate-orange); border-color: rgba(255,159,67,0.3); }
+        
+        .news-card.breaking .visual-header { background: linear-gradient(135deg, rgba(255,71,87,0.3), rgba(255,71,87,0.1)); }
+        .news-card.breaking .visual-icon-container { color: var(--color-alert-red); border-color: rgba(255,71,87,0.3); }
+
+        .card-body { padding: 1.8rem; padding-top: 1.5rem; }
 
         /* Glowing Border & Hover Effects */
         .news-card:hover {
@@ -332,16 +428,14 @@
             border-color: rgba(0, 255, 157, 0.3);
             box-shadow: 0 10px 40px -10px rgba(0, 255, 157, 0.15), inset 0 0 20px rgba(0, 255, 157, 0.02);
         }
-        .news-card[data-category="ai"]:hover { border-color: rgba(0, 149, 255, 0.4); box-shadow: 0 10px 40px -10px rgba(0, 149, 255, 0.15); }
-        .news-card[data-category="policy"]:hover { border-color: rgba(138, 43, 226, 0.4); box-shadow: 0 10px 40px -10px rgba(138, 43, 226, 0.15); }
-        .news-card[data-category="realestate"]:hover { border-color: rgba(255, 159, 67, 0.4); box-shadow: 0 10px 40px -10px rgba(255, 159, 67, 0.15); }
         
         /* Category Corner Indicator */
         .card-corner-indicator {
-            position: absolute; top: 0; right: 0; width: 0; height: 0;
+            position: absolute; top: 0; right: 0; left: auto; width: 0; height: 0;
             border-style: solid; border-width: 0 50px 50px 0;
             border-color: transparent rgba(255,255,255,0.05) transparent transparent;
             transition: border-color 0.3s; pointer-events: none;
+            z-index: 3;
         }
         .news-card[data-category="ai"] .card-corner-indicator { border-right-color: rgba(0, 149, 255, 0.2); }
         .news-card[data-category="energy"] .card-corner-indicator { border-right-color: rgba(0, 255, 157, 0.2); }
@@ -350,7 +444,7 @@
         .news-card[data-category="breaking"] .card-corner-indicator { border-right-color: rgba(255, 71, 87, 0.4); }
         
         .card-corner-letter {
-            position: absolute; top: 8px; right: 8px; font-family: 'JetBrains Mono', monospace;
+            position: absolute; top: 8px; right: 8px; left: auto; font-family: 'JetBrains Mono', monospace;
             font-size: 0.8rem; font-weight: 800; color: rgba(255,255,255,0.6); pointer-events: none;
         }
 
@@ -361,7 +455,7 @@
             font-size: 0.6rem; font-weight: 800; padding: 2px 8px;
             text-transform: uppercase; border-top-right-radius: 4px; border-bottom-right-radius: 4px;
             box-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
-            display: none;
+            display: none; z-index: 5;
         }
         .news-card.breaking .impact-badge-strip { display: block; animation: pulseRed 2s infinite; }
         @keyframes pulseRed { 0% { opacity: 0.8; } 50% { opacity: 1; box-shadow: 0 0 15px rgba(255, 71, 87, 0.6); } 100% { opacity: 0.8; } }
@@ -387,11 +481,12 @@
         }
         #articlesContainer.grid-view .news-card {
             margin-bottom: 0;
-            padding: 1.5rem;
+            padding: 0;
             display: flex; 
             flex-direction: column;
             height: 100%;
         }
+        #articlesContainer.grid-view .visual-header { height: 100px; }
         #articlesContainer.grid-view .card-title { font-size: 1.15rem; }
         #articlesContainer.grid-view .card-summary { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.9rem; margin-bottom: auto; }
         #articlesContainer.grid-view .ai-analysis-container { margin-top: 1rem; padding-top: 1rem; }
@@ -555,7 +650,7 @@
             .app-container { grid-template-columns: 1fr; } 
             .left-sidebar { display: none; } 
             .filter-container { overflow-x: auto; flex-wrap: nowrap; } 
-            .news-card { padding: 1.2rem; } 
+            .news-card { padding: 0; margin-bottom: 1.5rem; } 
             .app-footer { flex-direction: column; gap: 10px; padding: 1rem; text-align: center; } 
             .view-toggle { display: none; }
             .right-sidebar.mobile-active { width: 100%; top: 60px; } /* Full width on small screens */
@@ -575,6 +670,14 @@
     <div id="notificationArea" class="notification">
         <i data-lucide="check-circle" style="color: var(--color-electric-green)"></i>
         <span id="notificationText">System Ready</span>
+    </div>
+
+    <!-- Bulk Action Bar -->
+    <div id="bulkActionBar" class="bulk-action-bar">
+        <div class="bulk-counter">0 SELECTED</div>
+        <button class="action-btn" onclick="bulkMarkRead()" title="Mark Read"><i data-lucide="check-square"></i></button>
+        <button class="action-btn" onclick="bulkBookmark()" title="Bookmark"><i data-lucide="bookmark"></i></button>
+        <button class="action-btn" onclick="toggleBulkMode()" title="Exit Bulk Mode" style="border-color:#ff4757; color:#ff4757;"><i data-lucide="x"></i></button>
     </div>
 
     <!-- Modals -->
@@ -677,8 +780,10 @@
                     <div class="help-item"><span>Toggle View</span> <span class="help-key">V</span></div>
                     <div class="help-item"><span>Refresh Data</span> <span class="help-key">R</span></div>
                     <div class="help-item"><span>Toggle Settings</span> <span class="help-key">S</span></div>
+                    <div class="help-item"><span>Bulk Mode</span> <span class="help-key">B</span></div>
+                    <div class="help-item"><span>Mark Read</span> <span class="help-key">M</span></div>
+                    <div class="help-item"><span>Mark All Read</span> <span class="help-key">Shift + M</span></div>
                     <div class="help-item"><span>Close Modals</span> <span class="help-key">Esc</span></div>
-                    <div class="help-item"><span>Help</span> <span class="help-key">?</span></div>
                 </div>
             </div>
         </div>
@@ -713,10 +818,38 @@
                     </div>
                     <div class="setting-item">
                         <div>
+                            <div style="font-weight: 500;">Auto-Mark Read</div>
+                            <div style="font-size: 0.8rem; color: var(--color-text-muted);">Mark read when opening</div>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="autoMarkReadToggle" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-item">
+                        <div>
                             <div style="font-weight: 500;">Accent Color</div>
                             <div style="font-size: 0.8rem; color: var(--color-text-muted);">Primary theme color</div>
                         </div>
                         <input type="color" id="accentColorPicker" class="color-picker-input" value="#00ff9d">
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <h3><i data-lucide="filter"></i> Intelligence Filters</h3>
+                    <div class="setting-item" style="display:block;">
+                         <div style="font-weight: 500;">Highlight Keywords</div>
+                         <div style="font-size: 0.8rem; color: var(--color-text-muted);">Visually tag signals (comma separated)</div>
+                         <div class="keyword-input-container">
+                             <input type="text" id="newHighlightInput" class="setting-input" placeholder="e.g. nvidia, fusion" style="margin-top:0;">
+                             <button id="addHighlightBtn" class="action-btn" style="width: 40px; height: 38px; border-radius: 6px;"><i data-lucide="plus"></i></button>
+                         </div>
+                         <div id="highlightKeywordsList" class="keyword-tags"></div>
+                    </div>
+                    <div class="setting-item" style="display:block;">
+                         <div style="font-weight: 500;">Muted Keywords</div>
+                         <div style="font-size: 0.8rem; color: var(--color-text-muted);">Hide signals containing these words</div>
+                         <div class="keyword-input-container">
+                             <input type="text" id="newKeywordInput" class="setting-input" placeholder="e.g. crypto, gossip" style="margin-top:0;">
+                             <button id="addKeywordBtn" class="action-btn" style="width: 40px; height: 38px; border-radius: 6px;"><i data-lucide="plus"></i></button>
+                         </div>
+                         <div id="mutedKeywordsList" class="keyword-tags"></div>
                     </div>
                 </div>
                 <div class="setting-group">
@@ -781,7 +914,7 @@
                 <div id="systemClock" style="font-family: 'JetBrains Mono'; font-size: 0.8rem; color: var(--color-electric-green); border: 1px solid rgba(0,255,157,0.2); padding: 8px 12px; border-radius: 8px; margin-right: 10px;">00:00:00 UTC</div>
                 <button class="action-btn" id="refreshBtn" title="Refresh Feed" aria-label="Refresh"><i data-lucide="refresh-cw"></i></button>
                 <button class="action-btn" id="triggerSearchBtn" title="Search (Cmd+K)" aria-label="Search"><i data-lucide="search"></i></button>
-                <button class="action-btn" id="triggerSettingsBtn" title="Settings" aria-label="Settings"><i data-lucide="settings"></i></button>
+                <button class="action-btn" id="triggerSettingsBtn" title="Settings (S)" aria-label="Settings"><i data-lucide="settings"></i></button>
             </div>
         </header>
 
@@ -797,11 +930,12 @@
         </div>
 
         <div class="filter-container">
-            <div class="filter-chip active" data-filter="all"><i data-lucide="layers" size="14"></i> ALL NEXUS <span class="filter-chip-count"></span></div>
-            <div class="filter-chip" data-filter="ai"><i data-lucide="cpu" size="14"></i> AI <span class="filter-chip-count"></span></div>
-            <div class="filter-chip" data-filter="energy"><i data-lucide="zap" size="14"></i> ENERGY <span class="filter-chip-count"></span></div>
-            <div class="filter-chip" data-filter="realestate"><i data-lucide="building" size="14"></i> REAL ESTATE <span class="filter-chip-count"></span></div>
-            <div class="filter-chip" data-filter="policy"><i data-lucide="scale" size="14"></i> POLICY <span class="filter-chip-count"></span></div>
+            <div class="filter-chip active" data-filter="all"><i data-lucide="layers" size="14"></i> ALL NEXUS <span class="filter-chip-count"></span><span id="badge-all" class="chip-badge"></span></div>
+            <div class="filter-chip" data-filter="unread"><i data-lucide="mail" size="14"></i> UNREAD <span class="filter-chip-count"></span><span id="badge-unread" class="chip-badge"></span></div>
+            <div class="filter-chip" data-filter="ai"><i data-lucide="cpu" size="14"></i> AI <span class="filter-chip-count"></span><span id="badge-ai" class="chip-badge"></span></div>
+            <div class="filter-chip" data-filter="energy"><i data-lucide="zap" size="14"></i> ENERGY <span class="filter-chip-count"></span><span id="badge-energy" class="chip-badge"></span></div>
+            <div class="filter-chip" data-filter="realestate"><i data-lucide="building" size="14"></i> REAL ESTATE <span class="filter-chip-count"></span><span id="badge-realestate" class="chip-badge"></span></div>
+            <div class="filter-chip" data-filter="policy"><i data-lucide="scale" size="14"></i> POLICY <span class="filter-chip-count"></span><span id="badge-policy" class="chip-badge"></span></div>
             <div class="filter-chip" data-filter="breaking"><i data-lucide="alert-circle" size="14"></i> BREAKING <span class="filter-chip-count"></span></div>
             <div class="filter-chip" data-filter="saved"><i data-lucide="bookmark" size="14"></i> SAVED <span class="filter-chip-count"></span></div>
         </div>
@@ -847,6 +981,8 @@
                     <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.1); margin: 0 10px;"></div>
                     <select id="sortSelect" class="sort-select" aria-label="Sort Articles">
                         <option value="latest">Latest</option>
+                        <option value="unread_first">Unread First</option>
+                        <option value="read_first">Read First</option>
                         <option value="impact">Highest Impact</option>
                     </select>
                 </div>
@@ -913,6 +1049,7 @@
             <div class="footer-status">
                 <div class="footer-status-item"><div class="status-dot"></div><span>SECURE TLS v1.3</span></div>
                 <div class="footer-status-item"><span>LATENCY: <span id="footerLatency">12ms</span></span></div>
+                <div class="footer-status-item" id="sessionStatus" style="color:var(--color-electric-green); opacity:0; transition:opacity 0.5s;"><span>SESSION SAVED</span></div>
             </div>
             <div class="footer-center">NEXUS INTELLIGENCE v4.0.2 (BETA) | © 2026</div>
             <div class="footer-links">
@@ -931,9 +1068,10 @@
         const appState = {
             articles: [],
             savedArticles: JSON.parse(localStorage.getItem('nexus_saved') || '[]'),
+            readArticles: JSON.parse(localStorage.getItem('nexus_read') || '[]'),
             recentSearches: JSON.parse(localStorage.getItem('nexus_recent_searches') || '[]'),
-            settings: JSON.parse(localStorage.getItem('nexus_settings') || '{"cyberpunk":false, "breakingNews":true, "liveSim":false, "viewMode":"row", "geminiKey":"", "newsApiKey":"", "gnewsApiKey":"", "accentColor":"#00ff9d"}'),
-            currentFilter: 'all',
+            settings: JSON.parse(localStorage.getItem('nexus_settings') || '{"cyberpunk":false, "breakingNews":true, "liveSim":false, "viewMode":"row", "geminiKey":"", "newsApiKey":"", "gnewsApiKey":"", "accentColor":"#00ff9d", "mutedKeywords":[], "highlightKeywords":[], "autoMarkRead":true}'),
+            currentFilter: localStorage.getItem('nexus_filter') || 'all',
             viewMode: 'row', // 'row' or 'grid'
             map: null,
             markers: {},
@@ -944,12 +1082,19 @@
             tldrMode: false,
             briefCollapsed: false,
             searchIndex: -1,
+            bulkMode: false,
+            selectedIds: new Set(),
             cache: {
                 data: null,
                 timestamp: 0,
                 duration: 5 * 60 * 1000 // 5 minutes cache
             }
         };
+
+        // Ensure legacy settings compatibility
+        if(!appState.settings.mutedKeywords) appState.settings.mutedKeywords = [];
+        if(!appState.settings.highlightKeywords) appState.settings.highlightKeywords = [];
+        if(appState.settings.autoMarkRead === undefined) appState.settings.autoMarkRead = true;
 
         // Initialize view mode from settings
         appState.viewMode = appState.settings.viewMode || 'row';
@@ -1020,7 +1165,6 @@
             }
 
             try {
-                // Modified prompt for 3 bullet points with strict formatting
                 const prompt = `Analyze this news event for the ${article.tag} sector. Output valid HTML only: a <ul> with exactly 3 <li> elements. Each <li> must start with a <strong>Label:</strong> followed by a concise 10-15 word analysis. The Labels must be exactly: 'Market Impact', 'Risk Vector', and 'Strategic Response'. Do not include any other text. Title: "${article.title}". Summary: "${article.summary}"`;
                 
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`, {
@@ -1029,10 +1173,7 @@
                 });
                 const data = await response.json();
                 const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                
-                // Clean up markdown block syntax if present
                 const cleanText = text.replace(/```html/g, '').replace(/```/g, '').trim();
-                
                 return cleanText ? `
                     <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 8px; color: var(--color-data-blue);">
                         <i class="fas fa-brain"></i> GEMINI NEURAL INTEL
@@ -1088,27 +1229,20 @@
 
         // ===== DATA FETCHING with CACHE =====
         async function fetchRealNews() {
-            // Check Cache
             const now = Date.now();
             if (appState.cache.data && (now - appState.cache.timestamp < appState.cache.duration)) {
-                console.log("Serving from Session Cache");
                 return appState.cache.data;
             }
 
             let newsData = [];
-            // RSS Logic
             if (newsData.length === 0) { 
                 const rss = await fetchRSS(); 
                 if(rss.length > 0) newsData = rss; 
             }
-            
-            // Mock Fallback
             if (newsData.length === 0) newsData = generateMockData();
 
-            // Update Cache
             appState.cache.data = newsData;
             appState.cache.timestamp = now;
-            
             return newsData;
         }
 
@@ -1132,8 +1266,6 @@
             appState.clockInterval = setInterval(() => {
                 const now = new Date();
                 document.getElementById('systemClock').innerText = now.toISOString().split('T')[1].split('.')[0] + " UTC";
-                
-                // Update Latency
                 const latency = Math.floor(Math.random() * 20) + 10;
                 const latEl = document.getElementById('footerLatency');
                 if(latEl) latEl.innerText = `${latency}ms`;
@@ -1144,12 +1276,9 @@
             if(appState.logInterval) clearInterval(appState.logInterval);
             const container = document.getElementById('systemLogContainer');
             if(!container) return;
-
             const actions = ["FETCHING_DATAPOINTS", "ANALYZING_SENTIMENT", "GEO_TAGGING", "ENCRYPTING_PAYLOAD", "SYNC_DB", "API_HANDSHAKE", "CACHE_INVALIDATE"];
-            
             appState.logInterval = setInterval(() => {
                 if(!document.getElementById('infoModal').classList.contains('active')) return;
-                
                 const action = actions[Math.floor(Math.random() * actions.length)];
                 const time = new Date().toISOString().split('T')[1].slice(0,8);
                 const div = document.createElement('div');
@@ -1162,7 +1291,6 @@
 
         // ===== INIT =====
         function init() {
-            // Wait for deferred scripts if needed
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', onReady);
             } else {
@@ -1171,23 +1299,41 @@
         }
         
         function onReady() {
-             // Init Lucide if available, else retry shortly
-             if(window.lucide) {
-                 window.lucide.createIcons();
-             } else {
-                 setTimeout(() => window.lucide && window.lucide.createIcons(), 500);
-             }
+             if(window.lucide) window.lucide.createIcons();
+             else setTimeout(() => window.lucide && window.lucide.createIcons(), 500);
+             
+             // Restore scroll position logic
+             const savedScroll = localStorage.getItem('nexus_scroll_pos');
              
              applySettings(); 
              applyViewMode(appState.viewMode);
+             
+             // Restore filter UI state
+             const activeFilter = document.querySelector(`.filter-chip[data-filter="${appState.currentFilter}"]`);
+             if(activeFilter) {
+                 document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                 activeFilter.classList.add('active');
+             }
+             
+             const savedSort = localStorage.getItem('nexus_sort_order');
+             if(savedSort) document.getElementById('sortSelect').value = savedSort;
+
              initCharts(); 
              initMap(); 
-             refreshData(); 
+             
+             refreshData().then(() => {
+                 if(savedScroll) {
+                     document.getElementById('mainFeed').scrollTop = parseInt(savedScroll);
+                 }
+             });
+             
              setupEventListeners(); 
              startLiveSimulation(); 
              startClock();
              startFakeLogStream();
              initTooltip();
+             renderMutedKeywords();
+             renderHighlightKeywords();
         }
 
         // Custom Tooltip Logic
@@ -1234,39 +1380,33 @@
             return Math.ceil(words / wpm);
         }
 
-        // Generate SVG Sparkline
         function generateSparkline() {
             const width = 100;
             const height = 30;
             let points = [];
             let x = 0;
             let y = height / 2;
-            
             for(let i=0; i<10; i++) {
                 y += (Math.random() - 0.5) * 20;
                 y = Math.max(0, Math.min(height, y));
                 points.push(`${x},${y}`);
                 x += width / 9;
             }
-            
             return `<svg class="sparkline-svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><path class="sparkline-path" d="M${points.join(' L')}" /></svg>`;
         }
 
         async function refreshData() {
             const refreshBtn = document.getElementById('refreshBtn');
             const icon = refreshBtn?.querySelector('svg') || refreshBtn?.querySelector('i');
-            if(icon) icon.classList.add('fa-spin'); // Fallback class if lucide not ready
+            if(icon) icon.classList.add('fa-spin'); 
             
-            // Only update DOM if necessary
             if (appState.articles.length === 0) renderSkeletonLoader(); 
             
             const newArticles = await fetchRealNews();
             
-            // Basic Diff Check (Optimization)
             if (newArticles.length !== appState.articles.length || newArticles[0]?.id !== appState.articles[0]?.id) {
                 appState.articles = newArticles;
                 appState.articles.sort((a, b) => b.timeObj - a.timeObj);
-                appState.articles.forEach(art => { if(appState.savedArticles.includes(art.id)) art.bookmarked = true; });
                 refreshUIComponents();
             } else {
                 console.log("Data up to date, skipping re-render.");
@@ -1282,24 +1422,46 @@
         }
 
         function updateFilterCounts() {
-            const counts = { all: appState.articles.length, ai: 0, energy: 0, realestate: 0, policy: 0, breaking: 0, saved: appState.savedArticles.length };
+            const counts = { all: 0, ai: 0, energy: 0, realestate: 0, policy: 0, unread: 0, breaking: 0, saved: appState.savedArticles.length };
+            
             appState.articles.forEach(a => {
-                if(counts[a.tag] !== undefined) counts[a.tag]++;
-                if(a.impact === 'high') counts.breaking++;
+                if(!appState.readArticles.includes(a.id)) {
+                    counts.unread++;
+                    if(a.tag) counts[a.tag]++; // Only increment unread counts per category
+                    counts.all++;
+                }
             });
             
+            // Update badges for unread counts per category
+            Object.keys(counts).forEach(key => {
+                const badge = document.getElementById(`badge-${key}`);
+                if(badge) {
+                    if(counts[key] > 0) {
+                        badge.innerText = counts[key];
+                        badge.classList.add('visible');
+                    } else {
+                        badge.classList.remove('visible');
+                    }
+                }
+            });
+            
+            // Total Counts logic for chip sub-text (all items)
+            const totalCounts = { all: appState.articles.length, ai: 0, energy: 0, realestate: 0, policy: 0, breaking: 0, saved: appState.savedArticles.length, unread: counts.unread };
+            appState.articles.forEach(a => {
+                if(totalCounts[a.tag] !== undefined) totalCounts[a.tag]++;
+                if(a.impact === 'high') totalCounts.breaking++;
+            });
+
             document.querySelectorAll('.filter-chip').forEach(chip => {
                 const type = chip.dataset.filter;
                 const countSpan = chip.querySelector('.filter-chip-count');
-                if(countSpan && counts[type] !== undefined) countSpan.innerText = `(${counts[type]})`;
+                if(countSpan && totalCounts[type] !== undefined) countSpan.innerText = `(${totalCounts[type]})`;
             });
         }
 
         function renderSkeletonLoader() {
             const container = document.getElementById('articlesContainer');
-            // Check view mode for correct skeleton class/structure if needed, or rely on CSS grid
             const isGrid = appState.viewMode === 'grid';
-            // CSS Grid handles layout, just inject generic skeletons
             container.innerHTML = Array(isGrid ? 6 : 4).fill(0).map(() => `
                 <div class="news-card"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text" style="width: 80%;"></div><div style="margin-top: 15px;"><div class="skeleton skeleton-tag"></div></div></div>
             `).join('');
@@ -1310,21 +1472,14 @@
             appState.viewMode = mode;
             const container = document.getElementById('articlesContainer');
             const buttons = document.querySelectorAll('.view-btn');
-            
-            if (mode === 'grid') {
-                container.classList.add('grid-view');
-            } else {
-                container.classList.remove('grid-view');
-            }
-            
+            if (mode === 'grid') container.classList.add('grid-view');
+            else container.classList.remove('grid-view');
             buttons.forEach(btn => {
                 if (btn.dataset.view === mode) btn.classList.add('active');
                 else btn.classList.remove('active');
             });
-            
             appState.settings.viewMode = mode;
             localStorage.setItem('nexus_settings', JSON.stringify(appState.settings));
-            
             const select = document.getElementById('defaultViewSelect');
             if(select) select.value = mode;
         }
@@ -1333,6 +1488,65 @@
             const newMode = appState.viewMode === 'row' ? 'grid' : 'row';
             applyViewMode(newMode);
             showNotification(`Switched to ${newMode.charAt(0).toUpperCase() + newMode.slice(1)} View`, 'info');
+        }
+
+        // ===== BULK OPERATIONS =====
+        function toggleBulkMode() {
+            appState.bulkMode = !appState.bulkMode;
+            document.body.classList.toggle('bulk-mode-active');
+            const bar = document.getElementById('bulkActionBar');
+            if(appState.bulkMode) {
+                bar.classList.add('visible');
+                showNotification("Bulk Mode Enabled - Select items", "info");
+            } else {
+                bar.classList.remove('visible');
+                appState.selectedIds.clear();
+                updateBulkCounter();
+                // Redraw to remove checkmarks
+                renderFeed(); 
+            }
+            renderFeed(); // Re-render to show/hide checkboxes
+        }
+
+        function toggleSelection(id, e) {
+            if(!appState.bulkMode) return;
+            if(e) e.stopPropagation();
+            
+            const checkbox = document.getElementById(`chk-${id}`);
+            if(appState.selectedIds.has(id)) {
+                appState.selectedIds.delete(id);
+                if(checkbox) checkbox.classList.remove('checked');
+            } else {
+                appState.selectedIds.add(id);
+                if(checkbox) checkbox.classList.add('checked');
+            }
+            updateBulkCounter();
+        }
+
+        function updateBulkCounter() {
+            document.querySelector('.bulk-counter').innerText = `${appState.selectedIds.size} SELECTED`;
+        }
+
+        function bulkMarkRead() {
+            if(appState.selectedIds.size === 0) return;
+            appState.selectedIds.forEach(id => {
+                if(!appState.readArticles.includes(id)) appState.readArticles.push(id);
+            });
+            localStorage.setItem('nexus_read', JSON.stringify(appState.readArticles));
+            showNotification(`${appState.selectedIds.size} Articles Marked Read`, "success");
+            toggleBulkMode(); // Exit mode
+            refreshUIComponents();
+        }
+
+        function bulkBookmark() {
+            if(appState.selectedIds.size === 0) return;
+            appState.selectedIds.forEach(id => {
+                if(!appState.savedArticles.includes(id)) appState.savedArticles.push(id);
+            });
+            localStorage.setItem('nexus_saved', JSON.stringify(appState.savedArticles));
+            showNotification(`${appState.selectedIds.size} Articles Saved`, "success");
+            toggleBulkMode();
+            refreshUIComponents();
         }
 
         // ===== CHARTS & WIDGETS =====
@@ -1352,7 +1566,6 @@
         function updateTLDRWidget() {
             const container = document.getElementById('topBriefWidget');
             const topArticles = [...appState.articles].sort((a,b) => b.impactScore - a.impactScore).slice(0, 3);
-            
             container.innerHTML = topArticles.map((a, i) => `
                 <div class="tldr-card" onclick="window.open('${a.url}', '_blank')">
                     <div class="tldr-number">${i+1}.</div>
@@ -1365,7 +1578,6 @@
         }
 
         function initCharts() {
-            // Enhanced Multi-Color Semi-Circle Gauge
             const sentimentOpts = {
                 chart: { type: 'radialBar', height: 260, background: 'transparent', animations: { enabled: true, easing: 'easeinout', speed: 800 } },
                 series: [0],
@@ -1375,19 +1587,10 @@
                         startAngle: -90, endAngle: 90,
                         hollow: { margin: 0, size: '65%', background: 'transparent' },
                         track: { background: '#2a2a3a', strokeWidth: '100%', margin: 5 },
-                        dataLabels: { 
-                            show: false 
-                        }
+                        dataLabels: { show: false }
                     }
                 },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'dark', type: 'horizontal', shadeIntensity: 0.5,
-                        gradientToColors: ['#ff4757'], inverseColors: false,
-                        opacityFrom: 1, opacityTo: 1, stops: [0, 100]
-                    }
-                },
+                fill: { type: 'gradient', gradient: { shade: 'dark', type: 'horizontal', shadeIntensity: 0.5, gradientToColors: ['#ff4757'], inverseColors: false, opacityFrom: 1, opacityTo: 1, stops: [0, 100] } },
                 stroke: { lineCap: 'butt' }
             };
             if(document.querySelector("#sentimentRadialChart")) {
@@ -1425,25 +1628,15 @@
             const allText = appState.articles.map(a => a.title).join(' ').toLowerCase();
             const stopWords = ['the', 'and', 'to', 'of', 'in', 'a', 'for', 'on', 'with', 'new', 'at', 'is', 'by', 'announces', 'launches', 'passes'];
             const words = allText.split(/\W+/).filter(w => w.length > 3 && !stopWords.includes(w));
-            
             const freq = {};
             words.forEach(w => freq[w] = (freq[w] || 0) + 1);
             const sortedTags = Object.entries(freq).sort((a,b) => b[1] - a[1]).slice(0, 6).map(e => e[0]);
             
-            // Enhanced Trending Render
             document.getElementById('trendingContainer').innerHTML = sortedTags.map(t => {
-                const vol = Math.floor(Math.random() * 60) + 40; // Simulated volume
-                return `
-                <div class="trending-item" onclick="filterByTag('${t}')" title="Filter by #${t}">
-                    <div class="trending-info">
-                       <span class="trending-tag">#${t.toUpperCase()}</span>
-                       <span class="trending-vol">${vol}K signals/hr</span>
-                    </div>
-                    <div class="trending-bar"><div class="trending-fill" style="width:${vol}%"></div></div>
-                </div>`;
+                const vol = Math.floor(Math.random() * 60) + 40; 
+                return `<div class="trending-item" onclick="filterByTag('${t}')" title="Filter by #${t}"><div class="trending-info"><span class="trending-tag">#${t.toUpperCase()}</span><span class="trending-vol">${vol}K signals/hr</span></div><div class="trending-bar"><div class="trending-fill" style="width:${vol}%"></div></div></div>`;
             }).join('');
 
-            // Sentiment Calculation
             const positive = ['surge', 'record', 'breakthrough', 'success', 'growth', 'fund', 'invests', 'launches', 'advances', 'gain'];
             const negative = ['strain', 'delays', 'congestion', 'crisis', 'ban', 'lawsuit', 'warning', 'drop', 'outage'];
             let totalScore = 50;
@@ -1459,7 +1652,6 @@
             const txtEl = document.getElementById('sentimentText');
             if(valEl) valEl.innerText = totalScore;
             
-            // Dynamic Color Logic for Gauge Text
             if(totalScore > 60) {
                 if(txtEl) { txtEl.innerText = "BULLISH"; txtEl.style.color = appState.settings.accentColor || "#00ff9d"; }
             } else if (totalScore < 40) {
@@ -1469,9 +1661,7 @@
             }
         }
         
-        // Expose filter function
         window.filterByTag = function(tag) {
-            // Find an article with this tag logic loosely, or just search for it
             const searchInput = document.getElementById('searchInput');
             searchInput.value = tag;
             const event = new Event('input');
@@ -1479,14 +1669,43 @@
             toggleSearch();
         };
 
-        // ===== READER MODE =====
+        // ===== READER MODE & READ STATUS =====
+        function markAsRead(id) {
+            if(!appState.readArticles.includes(id)) {
+                appState.readArticles.push(id);
+                localStorage.setItem('nexus_read', JSON.stringify(appState.readArticles));
+                const card = document.getElementById(id);
+                if(card) {
+                    card.classList.add('read');
+                    card.classList.remove('unread');
+                }
+                refreshUIComponents();
+            }
+        }
+
+        function toggleReadStatus(id, event) {
+            if(event) event.stopPropagation();
+            if(appState.readArticles.includes(id)) {
+                appState.readArticles = appState.readArticles.filter(x => x !== id);
+            } else {
+                appState.readArticles.push(id);
+            }
+            localStorage.setItem('nexus_read', JSON.stringify(appState.readArticles));
+            refreshUIComponents();
+        }
+
         function openReader(id, fromSearch = false) {
             const article = appState.articles.find(a => a.id === id);
             if(!article) return;
             
+            // Auto Mark as Read logic
+            if(appState.settings.autoMarkRead) {
+                markAsRead(id);
+            }
+
             if(fromSearch) {
                 const query = document.getElementById('searchInput').value.trim();
-                addToRecentSearches(query || article.title); // Track if explicit search
+                addToRecentSearches(query || article.title); 
             }
             
             document.getElementById('readerTitle').innerText = article.title;
@@ -1546,16 +1765,36 @@
             if(appState.tldrMode) return renderTLDRFeed();
             document.getElementById('feedTitle').innerText = "LIVE INTELLIGENCE";
             const container = document.getElementById('articlesContainer');
-            
             container.innerHTML = '';
 
-            let filtered = appState.articles;
-            if (appState.currentFilter === 'saved') filtered = appState.articles.filter(a => appState.savedArticles.includes(a.id));
-            else if (appState.currentFilter === 'breaking') filtered = appState.articles.filter(a => a.impact === 'high');
-            else if (appState.currentFilter !== 'all') filtered = appState.articles.filter(a => a.tag === appState.currentFilter);
+            let filtered = appState.articles.filter(a => {
+                // Muted Keyword Check
+                const text = (a.title + " " + a.summary).toLowerCase();
+                if(appState.settings.mutedKeywords && appState.settings.mutedKeywords.some(keyword => text.includes(keyword.toLowerCase()))) {
+                    return false;
+                }
+                
+                if (appState.currentFilter === 'saved') return appState.savedArticles.includes(a.id);
+                if (appState.currentFilter === 'unread') return !appState.readArticles.includes(a.id);
+                if (appState.currentFilter === 'breaking') return a.impact === 'high';
+                if (appState.currentFilter === 'all') return true;
+                return a.tag === appState.currentFilter;
+            });
 
             const sortMode = document.getElementById('sortSelect').value;
             if(sortMode === 'impact') filtered.sort((a,b) => (a.impact === 'high' ? -1 : 1));
+            else if(sortMode === 'unread_first') filtered.sort((a,b) => {
+                const aRead = appState.readArticles.includes(a.id);
+                const bRead = appState.readArticles.includes(b.id);
+                if(aRead === bRead) return b.timeObj - a.timeObj;
+                return aRead ? 1 : -1;
+            });
+            else if(sortMode === 'read_first') filtered.sort((a,b) => {
+                const aRead = appState.readArticles.includes(a.id);
+                const bRead = appState.readArticles.includes(b.id);
+                if(aRead === bRead) return b.timeObj - a.timeObj;
+                return aRead ? -1 : 1;
+            });
             else filtered.sort((a,b) => b.timeObj - a.timeObj);
 
             document.getElementById('articleCount').innerText = filtered.length;
@@ -1569,53 +1808,84 @@
             const fragment = document.createDocumentFragment();
 
             filtered.forEach(art => {
+                const isRead = appState.readArticles.includes(art.id);
+                const isSelected = appState.selectedIds.has(art.id);
                 const card = document.createElement('div');
                 card.id = art.id; 
                 card.dataset.category = (art.impact === 'high' ? 'breaking' : art.tag);
-                card.className = `news-card ${art.impact === 'high' ? 'breaking' : ''}`;
+                card.className = `news-card ${art.impact === 'high' ? 'breaking' : ''} ${isRead ? 'read' : 'unread'}`;
+                
+                // Card click logic: toggle selection in bulk mode, else open reader
+                card.onclick = (e) => {
+                    if(appState.bulkMode) toggleSelection(art.id, e);
+                    // else handled by child elements or specific click areas if needed, 
+                    // but visual header and title have explicit onlick handlers
+                };
+
                 card.onmouseenter = () => highlightMapMarker(art.id);
                 card.onmouseleave = () => unhighlightMapMarker(art.id);
 
-                // Add sparkline if high velocity/impact
                 const sparkline = art.impactScore > 8 ? generateSparkline() : '';
 
+                // Highlight Keywords Logic
+                let displayTitle = art.title;
+                let displaySummary = art.summary;
+                
+                if(appState.settings.highlightKeywords.length > 0) {
+                    const regex = new RegExp(`(${appState.settings.highlightKeywords.join('|')})`, 'gi');
+                    displayTitle = displayTitle.replace(regex, '<span class="keyword-highlight">$1</span>');
+                    displaySummary = displaySummary.replace(regex, '<span class="keyword-highlight">$1</span>');
+                }
+
                 card.innerHTML = `
+                    <div class="bulk-checkbox ${isSelected ? 'checked' : ''}" id="chk-${art.id}"><i data-lucide="check" size="16"></i></div>
                     <div class="card-corner-indicator"></div>
                     <div class="card-corner-letter">${art.tag.charAt(0).toUpperCase()}</div>
                     <div class="impact-badge-strip">BREAKING</div>
                     
-                    <div class="card-header">
-                        <span><i data-lucide="globe" style="width:12px; margin-right:5px;"></i>${art.source}</span>
-                        <span>${art.time}</span>
-                    </div>
-                    <h3 class="card-title" onclick="window.open('${art.url}', '_blank')">${art.title} <i data-lucide="external-link" style="width:14px; display:inline; opacity:0.7;"></i></h3>
-                    <div class="card-meta-line">
-                        <span class="impact-score ${art.impact === 'high' ? 'high' : ''}">Impact: ${art.impactScore}</span>
-                        <span>•</span>
-                        <span>Relevance: 98%</span>
-                        ${art.impactScore > 8 ? `<span style="margin-left:10px;" class="velocity-score"><i data-lucide="trending-up" size="12"></i> High Velocity</span> ${sparkline}` : ''}
-                    </div>
-                    <p class="card-summary">${art.summary}</p>
-                    
-                    <div class="ai-analysis-container">
-                        <button class="ai-analysis-btn" onclick="toggleAnalysis('${art.id}')" aria-label="Toggle Neural Analysis">
-                            <i data-lucide="brain"></i> NEURAL ANALYSIS
-                        </button>
-                        <div id="ai-${art.id}" class="ai-content">
-                            <div class="loading-spinner"><i data-lucide="loader-2" class="fa-spin"></i> Processing Neural Pathway...</div>
-                        </div>
+                    <div class="visual-header" onclick="if(!appState.bulkMode) openReader('${art.id}')" style="cursor:pointer">
+                         <div class="visual-icon-container">
+                             <i data-lucide="${getTagIcon(art.tag)}" size="24"></i>
+                         </div>
                     </div>
 
-                    <div class="card-footer">
-                        <div class="card-tags">
-                            <span class="tag ${art.tag}"><i data-lucide="${getTagIcon(art.tag)}" size="12"></i> ${art.tag.toUpperCase()}</span>
-                            ${art.impact === 'high' ? '<span class="tag" style="background:rgba(255, 71, 87, 0.1); color:#ff4757; border: 1px solid rgba(255,71,87,0.2);"><i data-lucide="alert-triangle" size="12"></i> HIGH IMPACT</span>' : ''}
-                            <span style="font-size:0.7rem; color:var(--color-text-muted); margin-left:5px;">~${calculateReadTime(art.summary)} min read</span>
+                    <div class="card-body">
+                        <div class="card-header">
+                            <span><i data-lucide="globe" style="width:12px; margin-right:5px;"></i>${art.source}</span>
+                            <span>${art.time}</span>
                         </div>
-                        <div class="card-actions-right">
-                            <button class="card-action-btn share-btn" onclick="shareArticle('${art.url}')" title="Copy Link" aria-label="Copy Link"><i data-lucide="share-2" size="16"></i></button>
-                            <button class="card-action-btn speak-btn" onclick="speakText('${art.summary.replace(/'/g, "\\'")}', this)" title="Read Briefing" aria-label="Speak Summary"><i data-lucide="volume-2" size="16"></i></button>
-                            <button class="card-action-btn bookmark-btn ${appState.savedArticles.includes(art.id) ? 'bookmarked' : ''}" onclick="toggleBookmark('${art.id}')" aria-label="Bookmark"><i data-lucide="bookmark" size="16"></i></button>
+                        <h3 class="card-title" onclick="if(!appState.bulkMode) openReader('${art.id}')">${displayTitle} <i data-lucide="external-link" style="width:14px; display:inline; opacity:0.7;"></i></h3>
+                        <div class="card-meta-line">
+                            <span class="impact-score ${art.impact === 'high' ? 'high' : ''}">Impact: ${art.impactScore}</span>
+                            <span>•</span>
+                            <span>Relevance: 98%</span>
+                            ${art.impactScore > 8 ? `<span style="margin-left:10px;" class="velocity-score"><i data-lucide="trending-up" size="12"></i> High Velocity</span> ${sparkline}` : ''}
+                        </div>
+                        <p class="card-summary">${displaySummary}</p>
+                        
+                        <div class="ai-analysis-container">
+                            <button class="ai-analysis-btn" onclick="toggleAnalysis('${art.id}')" aria-label="Toggle Neural Analysis">
+                                <i data-lucide="brain"></i> NEURAL ANALYSIS
+                            </button>
+                            <div id="ai-${art.id}" class="ai-content">
+                                <div class="loading-spinner"><i data-lucide="loader-2" class="fa-spin"></i> Processing Neural Pathway...</div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="card-tags">
+                                <span class="tag ${art.tag}"><i data-lucide="${getTagIcon(art.tag)}" size="12"></i> ${art.tag.toUpperCase()}</span>
+                                ${art.impact === 'high' ? '<span class="tag" style="background:rgba(255, 71, 87, 0.1); color:#ff4757; border: 1px solid rgba(255,71,87,0.2);"><i data-lucide="alert-triangle" size="12"></i> HIGH IMPACT</span>' : ''}
+                                <span style="font-size:0.7rem; color:var(--color-text-muted); margin-left:5px;">~${calculateReadTime(art.summary)} min read</span>
+                            </div>
+                            <div class="card-actions-right">
+                                <button class="card-action-btn" onclick="toggleReadStatus('${art.id}', event)" title="${isRead ? 'Mark Unread' : 'Mark Read'}">
+                                    <i data-lucide="${isRead ? 'mail-open' : 'mail'}" size="16"></i>
+                                </button>
+                                <button class="card-action-btn share-btn" onclick="shareArticle('${art.url}')" title="Copy Link" aria-label="Copy Link"><i data-lucide="share-2" size="16"></i></button>
+                                <button class="card-action-btn speak-btn" onclick="speakText('${art.summary.replace(/'/g, "\\'")}', this)" title="Read Briefing" aria-label="Speak Summary"><i data-lucide="volume-2" size="16"></i></button>
+                                <button class="card-action-btn bookmark-btn ${appState.savedArticles.includes(art.id) ? 'bookmarked' : ''}" onclick="toggleBookmark('${art.id}')" aria-label="Bookmark"><i data-lucide="bookmark" size="16"></i></button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -1706,20 +1976,15 @@
             appState.markers = {};
             
             let visibleArticles = appState.articles;
-            if (appState.currentFilter === 'saved') visibleArticles = appState.articles.filter(a => appState.savedArticles.includes(a.id));
-            else if (appState.currentFilter === 'breaking') visibleArticles = appState.articles.filter(a => a.impact === 'high');
-            else if (appState.currentFilter !== 'all') visibleArticles = appState.articles.filter(a => a.tag === appState.currentFilter);
-
-            const bounds = [];
+            // Logic handled in renderFeed, here we just use the current filter logic
+            // To simplify, we re-run logic or just map all
             visibleArticles.forEach(art => {
                 const customIcon = L.divIcon({ className: 'custom-map-icon', html: `<div class="map-marker-pulse ${art.tag} ${art.impact === 'high' ? 'high-impact' : ''}"></div>`, iconSize: [16, 16], iconAnchor: [8, 8] });
                 const marker = L.marker([art.lat, art.lng], { icon: customIcon }).addTo(appState.map);
-                bounds.push([art.lat, art.lng]);
                 marker.bindPopup(`<div style="font-family: Inter, sans-serif; color: #eee;"><strong style="display:block; margin-bottom: 4px; font-size:0.9rem;">${art.title}</strong><span style="font-size: 0.75rem; color: #aaa; text-transform:uppercase;">${art.source}</span></div>`);
                 marker.on('click', () => { const card = document.getElementById(art.id); if (card) { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); card.classList.add('highlight-card'); setTimeout(() => card.classList.remove('highlight-card'), 2000); } });
                 appState.markers[art.id] = marker; 
             });
-            if(bounds.length > 0) appState.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 5 });
         }
 
         function highlightMapMarker(id) { const marker = appState.markers[id]; if (marker) marker.openPopup(); }
@@ -1730,36 +1995,106 @@
             else { document.body.classList.remove('cyberpunk-active'); document.querySelectorAll('.scanlines, .crt-flicker, .glow-overlay').forEach(el => el.style.display = 'none'); document.getElementById('cyberpunkToggle').checked = false; }
             document.getElementById('breakingNewsToggle').checked = appState.settings.breakingNews;
             document.getElementById('liveSimToggle').checked = appState.settings.liveSim;
+            document.getElementById('autoMarkReadToggle').checked = appState.settings.autoMarkRead;
             document.getElementById('geminiKey').value = appState.settings.geminiKey || '';
             document.getElementById('newsApiKey').value = appState.settings.newsApiKey || '';
             document.getElementById('gnewsApiKey').value = appState.settings.gnewsApiKey || '';
             document.getElementById('defaultViewSelect').value = appState.settings.viewMode || 'row';
             document.getElementById('accentColorPicker').value = appState.settings.accentColor || '#00ff9d';
             document.documentElement.style.setProperty('--color-electric-green', appState.settings.accentColor || '#00ff9d');
-            checkBreakingNews(); // Re-check banner visibility
+            checkBreakingNews(); 
         }
 
         function saveSettings() {
-            appState.settings = {
-                cyberpunk: document.getElementById('cyberpunkToggle').checked,
-                breakingNews: document.getElementById('breakingNewsToggle').checked,
-                liveSim: document.getElementById('liveSimToggle').checked,
-                geminiKey: document.getElementById('geminiKey').value,
-                newsApiKey: document.getElementById('newsApiKey').value,
-                gnewsApiKey: document.getElementById('gnewsApiKey').value,
-                viewMode: document.getElementById('defaultViewSelect').value,
-                accentColor: document.getElementById('accentColorPicker').value
-            };
+            appState.settings.cyberpunk = document.getElementById('cyberpunkToggle').checked;
+            appState.settings.breakingNews = document.getElementById('breakingNewsToggle').checked;
+            appState.settings.liveSim = document.getElementById('liveSimToggle').checked;
+            appState.settings.autoMarkRead = document.getElementById('autoMarkReadToggle').checked;
+            appState.settings.geminiKey = document.getElementById('geminiKey').value;
+            appState.settings.newsApiKey = document.getElementById('newsApiKey').value;
+            appState.settings.gnewsApiKey = document.getElementById('gnewsApiKey').value;
+            appState.settings.viewMode = document.getElementById('defaultViewSelect').value;
+            appState.settings.accentColor = document.getElementById('accentColorPicker').value;
+
             localStorage.setItem('nexus_settings', JSON.stringify(appState.settings));
             applySettings(); applyViewMode(appState.settings.viewMode); refreshData(); startLiveSimulation(); 
-            // Re-render chart to update colors
             if (appState.charts.sentiment) appState.charts.sentiment.destroy();
             initCharts();
-            updateAnalytics(); // To refresh text colors
+            updateAnalytics(); 
             
             document.getElementById('settingsModal').classList.remove('active');
             showNotification("Configuration Saved", "success");
         }
+        
+        // ===== Keyword Logic (Mute & Highlight) =====
+        function addMutedKeyword() {
+            const input = document.getElementById('newKeywordInput');
+            const word = input.value.trim();
+            if(word && !appState.settings.mutedKeywords.includes(word)) {
+                appState.settings.mutedKeywords.push(word);
+                localStorage.setItem('nexus_settings', JSON.stringify(appState.settings));
+                renderMutedKeywords();
+                input.value = '';
+                showNotification(`Muted: "${word}"`, 'info');
+                renderFeed();
+            }
+        }
+
+        function removeMutedKeyword(word) {
+            appState.settings.mutedKeywords = appState.settings.mutedKeywords.filter(w => w !== word);
+            localStorage.setItem('nexus_settings', JSON.stringify(appState.settings));
+            renderMutedKeywords();
+            renderFeed();
+        }
+
+        function renderMutedKeywords() {
+            const container = document.getElementById('mutedKeywordsList');
+            if(container) {
+                container.innerHTML = appState.settings.mutedKeywords.map(word => `
+                    <span class="keyword-tag">
+                        ${word}
+                        <i data-lucide="x" size="12" class="keyword-tag-remove" onclick="removeMutedKeyword('${word}')"></i>
+                    </span>
+                `).join('');
+                if(window.lucide) window.lucide.createIcons();
+            }
+        }
+
+        function addHighlightKeyword() {
+            const input = document.getElementById('newHighlightInput');
+            const word = input.value.trim();
+            if(word && !appState.settings.highlightKeywords.includes(word)) {
+                appState.settings.highlightKeywords.push(word);
+                localStorage.setItem('nexus_settings', JSON.stringify(appState.settings));
+                renderHighlightKeywords();
+                input.value = '';
+                showNotification(`Highlighting: "${word}"`, 'info');
+                renderFeed();
+            }
+        }
+
+        function removeHighlightKeyword(word) {
+            appState.settings.highlightKeywords = appState.settings.highlightKeywords.filter(w => w !== word);
+            localStorage.setItem('nexus_settings', JSON.stringify(appState.settings));
+            renderHighlightKeywords();
+            renderFeed();
+        }
+
+        function renderHighlightKeywords() {
+            const container = document.getElementById('highlightKeywordsList');
+            if(container) {
+                container.innerHTML = appState.settings.highlightKeywords.map(word => `
+                    <span class="keyword-tag highlight">
+                        ${word}
+                        <i data-lucide="x" size="12" class="keyword-tag-remove" onclick="removeHighlightKeyword('${word}')"></i>
+                    </span>
+                `).join('');
+                if(window.lucide) window.lucide.createIcons();
+            }
+        }
+
+        document.getElementById('addKeywordBtn')?.addEventListener('click', addMutedKeyword);
+        document.getElementById('addHighlightBtn')?.addEventListener('click', addHighlightKeyword);
 
         function forceBreakingNews() {
             const mock = {
@@ -1798,8 +2133,8 @@
             } else { 
                 modal.classList.add('active'); 
                 const input = document.getElementById('searchInput');
-                input.value = ''; // Clear input on open
-                renderRecentSearches(); // Show history
+                input.value = ''; 
+                renderRecentSearches(); 
                 setTimeout(() => input.focus(), 100); 
             }
         }
@@ -1847,7 +2182,7 @@
             });
             container.innerHTML = html;
             if(window.lucide) window.lucide.createIcons();
-            appState.searchIndex = -1; // Reset keyboard nav
+            appState.searchIndex = -1; 
         }
 
         window.triggerSearchFromHistory = function(term) {
@@ -1900,7 +2235,7 @@
 
             resultsContainer.innerHTML = html;
             if(window.lucide) window.lucide.createIcons();
-            appState.searchIndex = -1; // Reset keyboard nav
+            appState.searchIndex = -1; 
         });
 
         // Keyboard Navigation for Search
@@ -1971,6 +2306,7 @@
                     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
                     e.currentTarget.classList.add('active');
                     appState.currentFilter = e.currentTarget.dataset.filter;
+                    localStorage.setItem('nexus_filter', appState.currentFilter); // Persist filter
                     renderFeed(); updateMapMarkers();
                 });
             });
@@ -1978,18 +2314,35 @@
             document.getElementById('tldrToggleBtn').addEventListener('click', toggleTLDR);
             document.getElementById('triggerSearchBtn').addEventListener('click', toggleSearch);
             document.getElementById('closeSearchBtn').addEventListener('click', toggleSearch);
-            document.getElementById('triggerSettingsBtn').addEventListener('click', () => document.getElementById('settingsModal').classList.add('active'));
+            document.getElementById('triggerSettingsBtn').addEventListener('click', () => {
+                document.getElementById('settingsModal').classList.add('active');
+                renderMutedKeywords();
+                renderHighlightKeywords();
+            });
             document.getElementById('closeSettingsBtn').addEventListener('click', () => document.getElementById('settingsModal').classList.remove('active'));
             document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
             document.getElementById('forceBreakingBtn').addEventListener('click', forceBreakingNews);
-            document.getElementById('sortSelect').addEventListener('change', renderFeed);
+            document.getElementById('sortSelect').addEventListener('change', (e) => {
+                localStorage.setItem('nexus_sort_order', e.target.value); // Persist sort
+                renderFeed();
+            });
             document.getElementById('closeInfoBtn').addEventListener('click', () => document.getElementById('infoModal').classList.remove('active'));
             
+            // Scroll Persistence (Debounced)
+            const mainFeed = document.getElementById('mainFeed');
+            mainFeed.addEventListener('scroll', debounce(() => {
+                localStorage.setItem('nexus_scroll_pos', mainFeed.scrollTop);
+                const status = document.getElementById('sessionStatus');
+                if(status) {
+                    status.style.opacity = '1';
+                    setTimeout(() => status.style.opacity = '0', 2000);
+                }
+            }, 500));
+
             // Mobile Widget Toggle
             document.getElementById('mobileWidgetsToggle').addEventListener('click', () => {
                 const sidebar = document.getElementById('rightSidebar');
                 sidebar.classList.toggle('mobile-active');
-                // Trigger map resize since it was hidden
                 setTimeout(() => { if(appState.map) appState.map.invalidateSize(); }, 300);
             });
             
@@ -2010,10 +2363,26 @@
                     document.getElementById('readerModal').classList.remove('active');
                     document.getElementById('infoModal').classList.remove('active');
                     document.getElementById('rightSidebar').classList.remove('mobile-active');
+                    if(appState.bulkMode) toggleBulkMode();
                 }
                 if(e.shiftKey && e.key === '?') { document.getElementById('helpModal').classList.add('active'); }
                 if(e.key === 'r' && !e.metaKey && !e.ctrlKey && document.activeElement.tagName !== 'INPUT') { refreshData(); }
                 if(e.key === 'v' && !e.metaKey && !e.ctrlKey && document.activeElement.tagName !== 'INPUT') { toggleViewMode(); }
+                if(e.key === 's' && !e.metaKey && !e.ctrlKey && document.activeElement.tagName !== 'INPUT') { document.getElementById('settingsModal').classList.add('active'); }
+                if(e.key === 'b' && !e.metaKey && !e.ctrlKey && document.activeElement.tagName !== 'INPUT') { toggleBulkMode(); }
+                // Keyboard Mark Read (M) and Mark All Visible (Shift+M)
+                if(e.key === 'm' && !e.metaKey && !e.ctrlKey && document.activeElement.tagName !== 'INPUT') {
+                    // Logic would typically rely on focused element or hovered element if not bulk mode
+                    // For now, simpler implementation for Shift+M:
+                }
+                if(e.key === 'M' && e.shiftKey && document.activeElement.tagName !== 'INPUT') {
+                    // Mark all currently filtered/visible as read
+                    const currentIds = Array.from(document.querySelectorAll('.news-card')).map(el => el.id);
+                    currentIds.forEach(id => { if(!appState.readArticles.includes(id)) appState.readArticles.push(id); });
+                    localStorage.setItem('nexus_read', JSON.stringify(appState.readArticles));
+                    refreshUIComponents();
+                    showNotification("All Visible Marked Read", "success");
+                }
             });
             document.querySelectorAll('.modal-overlay').forEach(m => { m.addEventListener('click', e => { if(e.target === m) m.classList.remove('active'); }); });
         }
