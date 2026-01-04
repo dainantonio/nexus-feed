@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS INTELLIGENCE | AI × Data × Energy × Policy</title>
+    <title>NEXUS INTEL | AI × Data × Energy × Policy</title>
     <!-- Performance: Preconnect to external domains -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://unpkg.com">
@@ -756,7 +756,7 @@
                     </div>
                     <div id="tab-privacy" class="info-section">
                         <h3 style="margin-bottom:15px; color:white;">Data Privacy Protocol</h3>
-                        <p style="color:#aaa; line-height:1.6; font-size:0.9rem;">Nexus Intelligence operates on a zero-retention policy for user search queries. All geospatial data is anonymized before aggregation. We adhere to GDPR and CCPA compliance standards for all data vectors.</p>
+                        <p style="color:#aaa; line-height:1.6; font-size:0.9rem;">Nexus Intel operates on a zero-retention policy for user search queries. All geospatial data is anonymized before aggregation. We adhere to GDPR and CCPA compliance standards for all data vectors.</p>
                     </div>
                     <div id="tab-terms" class="info-section">
                         <h3 style="margin-bottom:15px; color:white;">Terms of Service</h3>
@@ -904,7 +904,7 @@
             <div class="logo-container">
                 <div class="logo-icon"><i data-lucide="aperture" style="color: #0a0a0f;"></i></div>
                 <div>
-                    <h1 style="font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px;">NEXUS INTELLIGENCE</h1>
+                    <h1 style="font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px;">NEXUS INTEL</h1>
                     <div style="font-size: 0.65rem; color: var(--color-text-muted); letter-spacing: 1.5px; font-weight: 600;">AI × DATA × ENERGY × POLICY</div>
                 </div>
             </div>
@@ -1051,7 +1051,7 @@
                 <div class="footer-status-item"><span>LATENCY: <span id="footerLatency">12ms</span></span></div>
                 <div class="footer-status-item" id="sessionStatus" style="color:var(--color-electric-green); opacity:0; transition:opacity 0.5s;"><span>SESSION SAVED</span></div>
             </div>
-            <div class="footer-center">NEXUS INTELLIGENCE v4.0.2 (BETA) | © 2026</div>
+            <div class="footer-center">NEXUS INTEL v4.0.2 (BETA) | © 2026</div>
             <div class="footer-links">
                 <span class="footer-link" onclick="openInfoModal('api')">API DOCS</span>
                 <span class="footer-link" onclick="openInfoModal('logs')">SYSTEM LOGS</span>
@@ -2275,7 +2275,7 @@
         document.getElementById('downloadBriefBtn').addEventListener('click', () => {
             const saved = appState.articles.filter(a => appState.savedArticles.includes(a.id));
             if(saved.length === 0) return;
-            let content = `NEXUS INTELLIGENCE BRIEF\nGenerated: ${new Date().toLocaleString()}\n\n`;
+            let content = `NEXUS INTEL BRIEF\nGenerated: ${new Date().toLocaleString()}\n\n`;
             saved.forEach((a, i) => { content += `${i+1}. ${a.title}\nSource: ${a.source} | ${a.time}\nSummary: ${a.summary}\nLink: ${a.url}\n\n`; });
             const blob = new Blob([content], { type: 'text/plain' });
             const url = window.URL.createObjectURL(blob);
