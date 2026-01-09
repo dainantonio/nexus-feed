@@ -2458,24 +2458,74 @@
             async getQuote(symbol) {
                 try {
                     const res = await fetch(`${this.baseUrl}/quote?symbol=${symbol}&token=${state.apiKeys.finnhub}`);
-                    return await res.json();
-                } catch (e) { return null; }
+                    const data = await res.json();
+                    if(data.c) return data;
+                } catch (e) { }
+                
+                // Fallback for simulation
+                return { c: 100 + Math.random()*50, d: 2.5, dp: 1.5, h: 160, l: 140, o: 145, pc: 148 };
             },
 
             async getProfile(symbol) {
                 try {
                     const res = await fetch(`${this.baseUrl}/stock/profile2?symbol=${symbol}&token=${state.apiKeys.finnhub}`);
-                    return await res.json();
-                } catch (e) { return null; }
+                    const data = await res.json();
+                    if(data && data.name) return data;
+                } catch (e) { }
+
+                // Fallback for simulation
+                return { 
+                    name: `${symbol} Corp (Simulated)`, 
+                    finnhubIndustry: 'Technology', 
+                    marketCapitalization: 1000000, 
+                    shareOutstanding: 500, 
+                    logo: `https://logo.clearbit.com/${symbol.toLowerCase()}.com` 
+                };
             },
 
             async getCandles(symbol) {
                 const to = Math.floor(Date.now() / 1000);
                 const from = to - (30 * 24 * 60 * 60); 
+                let data = null;
+
                 try {
                     const res = await fetch(`${this.baseUrl}/stock/candle?symbol=${symbol}&resolution=D&from=${from}&to=${to}&token=${state.apiKeys.finnhub}`);
-                    return await res.json();
-                } catch (e) { return null; }
+                    data = await res.json();
+                } catch (e) { console.error('Candle fetch failed', e); }
+
+                // Fallback if data is missing or status is not 'ok'
+                if (!data || data.s !== 'ok') {
+                    notify(`Live chart data unavailable for ${symbol}. Switching to Simulation.`, 'warning');
+                    return this.generateSimulatedCandles(to, 30); // Generate 30 days of data
+                }
+
+                return data;
+            },
+
+            generateSimulatedCandles(endTime, days) {
+                const c = [], h = [], l = [], o = [], t = [];
+                let price = 150 + Math.random() * 50; // Start price
+                
+                for (let i = days; i > 0; i--) {
+                    const time = endTime - (i * 24 * 60 * 60);
+                    const volatility = price * 0.05; // 5% volatility
+                    const change = (Math.random() - 0.5) * volatility;
+                    
+                    const open = price;
+                    const close = price + change;
+                    const high = Math.max(open, close) + Math.random() * volatility * 0.5;
+                    const low = Math.min(open, close) - Math.random() * volatility * 0.5;
+                    
+                    o.push(parseFloat(open.toFixed(2)));
+                    c.push(parseFloat(close.toFixed(2)));
+                    h.push(parseFloat(high.toFixed(2)));
+                    l.push(parseFloat(low.toFixed(2)));
+                    t.push(time);
+                    
+                    price = close;
+                }
+
+                return { s: 'ok', c, h, l, o, t };
             },
 
             // --- NEWS ENGINE V4 (Enhanced Categories) ---
@@ -3383,7 +3433,7 @@ ${body}`;
                     },
                     stroke: { width: 3, curve: 'smooth' },
                     tooltip: { 
-                        theme: 'dark',
+                        theme: 'dark', 
                         style: {
                             fontFamily: 'JetBrains Mono'
                         }
