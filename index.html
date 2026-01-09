@@ -3,56 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS INTEL | v3.5 AI</title>
+    <title>NEXUS INTEL | v4.1 AI</title>
     
     <!-- External Dependencies -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Scripts -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <style>
-        /* ===== CORE VARIABLES ===== */
+        /* ===== CORE VARIABLES (High-Fidelity Cyberpunk) ===== */
         :root {
             --bg-dark: #050507;
-            --bg-panel: #0e0e12;
-            --bg-card: #15151b;
-            --border-color: #2a2a35;
+            --bg-panel: rgba(14, 14, 18, 0.95);
+            --bg-card: rgba(21, 21, 27, 0.85);
+            --border-color: rgba(42, 42, 53, 0.6);
             
             --neon-green: #00ff9d;
             --neon-blue: #00f0ff;
             --neon-red: #ff2a6d;
             --neon-purple: #bc13fe;
             --neon-amber: #ffb800;
+            --neon-cyan: #00f7ff;
             
-            --text-main: #ffffff;
-            --text-muted: #888899;
+            --text-main: rgba(255, 255, 255, 0.95);
+            --text-muted: rgba(136, 136, 153, 0.8);
             
             --font-main: 'Inter', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
             
-            --scanline-opacity: 0.05;
-            --glow-strength: 0px;
+            --glass-bg: rgba(30, 30, 40, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+            
+            --scanline-opacity: 0.03;
+            --glow-strength: 0 0 20px;
         }
 
         /* ===== CYBERPUNK MODE OVERRIDES ===== */
         body.cyberpunk-mode {
             --bg-dark: #000000;
-            --bg-panel: #050505;
-            --border-color: #333333;
-            --scanline-opacity: 0.15;
-            --glow-strength: 0 0 10px;
+            --bg-panel: rgba(5, 5, 5, 0.95);
+            --border-color: rgba(51, 51, 51, 0.7);
+            --scanline-opacity: 0.08;
+            --glow-strength: 0 0 15px;
         }
         
-        body.cyberpunk-mode .text-green { text-shadow: 0 0 5px var(--neon-green); }
-        body.cyberpunk-mode .text-blue { text-shadow: 0 0 5px var(--neon-blue); }
-        body.cyberpunk-mode .text-purple { text-shadow: 0 0 5px var(--neon-purple); }
+        body.cyberpunk-mode .text-green { 
+            text-shadow: 0 0 8px var(--neon-green), 0 0 16px rgba(0, 255, 157, 0.3); 
+        }
+        body.cyberpunk-mode .text-blue { 
+            text-shadow: 0 0 8px var(--neon-blue), 0 0 16px rgba(0, 240, 255, 0.3); 
+        }
+        body.cyberpunk-mode .text-purple { 
+            text-shadow: 0 0 8px var(--neon-purple), 0 0 16px rgba(188, 19, 254, 0.3); 
+        }
 
         /* ===== RESET & BASE ===== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+        }
         
         body {
             background-color: var(--bg-dark);
@@ -63,20 +78,47 @@
             display: flex;
             flex-direction: column;
             transition: background 0.3s;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 157, 0.03) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.03) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(188, 19, 254, 0.02) 0%, transparent 30%);
         }
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+        ::-webkit-scrollbar { 
+            width: 6px; 
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track { 
+            background: rgba(255, 255, 255, 0.02); 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(180deg, var(--neon-green), var(--neon-blue));
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover { 
+            background: linear-gradient(180deg, var(--neon-amber), var(--neon-purple));
+        }
 
         /* ===== UTILITIES ===== */
-        .mono { font-family: var(--font-mono); }
+        .mono { 
+            font-family: var(--font-mono); 
+            letter-spacing: -0.02em;
+        }
         .text-green { color: var(--neon-green); }
         .text-red { color: var(--neon-red); }
         .text-blue { color: var(--neon-blue); }
         .text-purple { color: var(--neon-purple); }
         .text-amber { color: var(--neon-amber); }
+        .text-cyan { color: var(--neon-cyan); }
+        
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
         
         .flex { display: flex; }
         .flex-col { flex-direction: column; }
@@ -90,10 +132,10 @@
         .app-grid {
             display: grid;
             grid-template-columns: 280px 1fr 340px;
-            grid-template-rows: auto 1fr;
-            height: 100%;
+            grid-template-rows: 1fr;
+            height: calc(100vh - 105px);
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* ZEN MODE STYLES */
@@ -104,26 +146,64 @@
             display: none;
         }
         body.zen-mode .feed-container {
-            padding: 2rem 15%; /* Center focus */
+            padding: 2rem 15%;
         }
         @media (max-width: 1024px) {
             body.zen-mode .feed-container { padding: 2rem 5%; }
         }
 
-        @media (max-width: 1200px) { .app-grid { grid-template-columns: 240px 1fr 0; } }
-        @media (max-width: 768px) { .app-grid { grid-template-columns: 0 1fr 0; } }
+        @media (max-width: 1200px) { 
+            .app-grid { 
+                grid-template-columns: 240px 1fr 0; 
+            } 
+            .sidebar-right { 
+                display: none; 
+            }
+        }
+        @media (max-width: 768px) { 
+            .app-grid { 
+                grid-template-columns: 0 1fr 0; 
+                height: calc(100vh - 140px);
+            } 
+        }
 
-        /* ===== HEADER ===== */
+        /* ===== HEADER (With Audio Visualizer) ===== */
         .header {
-            grid-column: 1 / -1;
-            background: rgba(14, 14, 18, 0.95);
+            background: rgba(14, 14, 18, 0.88);
             border-bottom: 1px solid var(--border-color);
             padding: 0.75rem 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(20px) saturate(200%);
+            -webkit-backdrop-filter: blur(20px) saturate(200%);
             z-index: 50;
+            position: relative;
+            overflow: hidden;
+            height: 60px;
+            min-height: 60px;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--neon-green), 
+                var(--neon-blue), 
+                var(--neon-purple), 
+                transparent
+            );
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .logo {
@@ -133,29 +213,43 @@
             font-weight: 800;
             font-size: 1.25rem;
             letter-spacing: -0.05em;
+            min-width: 200px;
         }
         
         .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--neon-green);
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
             color: #000;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 6px;
-            box-shadow: var(--glow-strength) var(--neon-green);
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
+            transition: all 0.3s;
+        }
+
+        .logo-icon:hover {
+            transform: rotate(15deg);
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.8);
         }
 
         .search-bar {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 6px 12px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 8px 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             width: 300px;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
         }
 
         .search-bar input {
@@ -166,61 +260,134 @@
             outline: none;
             width: 100%;
             text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
         }
 
         .header-controls {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
+            flex-wrap: nowrap;
+            min-width: 300px;
+            justify-content: flex-end;
         }
 
         .icon-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
             color: var(--text-muted);
-            width: 32px; height: 32px;
-            border-radius: 4px;
+            width: 36px; 
+            height: 36px;
+            border-radius: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
         }
         
-        .icon-btn:hover, .icon-btn.active { border-color: var(--neon-green); color: var(--neon-green); }
+        .icon-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .icon-btn:hover::before {
+            left: 100%;
+        }
+        
+        .icon-btn:hover, .icon-btn.active { 
+            border-color: var(--neon-green); 
+            color: var(--neon-green); 
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Audio Visualizer in Header */
+        .audio-visualizer {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 20px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .visualizer-bar {
+            width: 3px;
+            background: linear-gradient(to top, var(--neon-green), var(--neon-cyan));
+            border-radius: 2px;
+            transition: height 0.1s ease;
+            animation: visualizerPulse 1.5s ease-in-out infinite;
+            animation-delay: calc(var(--i) * 0.1s);
+        }
+
+        @keyframes visualizerPulse {
+            0%, 100% { height: 5px; opacity: 0.5; }
+            50% { height: 15px; opacity: 1; }
+        }
 
         /* ===== TICKER ===== */
         .ticker-container {
-            grid-column: 1 / -1;
-            background: var(--bg-panel);
+            background: rgba(14, 14, 18, 0.9);
             border-bottom: 1px solid var(--border-color);
-            height: 36px;
+            height: 45px;
+            min-height: 45px;
             overflow: hidden;
             display: flex;
             align-items: center;
             position: relative;
+            backdrop-filter: blur(10px);
+        }
+        
+        .ticker-container::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 60px;
+            background: linear-gradient(90deg, transparent, var(--bg-panel));
+            z-index: 1;
         }
         
         .ticker-track {
             display: flex;
-            animation: scroll 60s linear infinite;
+            animation: scroll 80s linear infinite;
             white-space: nowrap;
+            padding-left: 100%;
         }
         
         .ticker-item {
             padding: 0 1.5rem;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             border-right: 1px solid rgba(255,255,255,0.05);
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            font-family: var(--font-mono);
+            flex-shrink: 0;
         }
         
-        .ticker-item:hover { background: rgba(255,255,255,0.05); }
+        .ticker-item:hover { 
+            background: rgba(255,255,255,0.05); 
+        }
 
-        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        @keyframes scroll { 
+            0% { transform: translateX(0); } 
+            100% { transform: translateX(-100%); } 
+        }
 
         /* ===== SIDEBARS ===== */
         .sidebar {
@@ -231,6 +398,8 @@
             display: flex;
             flex-direction: column;
             gap: 2rem;
+            backdrop-filter: blur(10px);
+            height: 100%;
         }
         
         .sidebar-right {
@@ -242,24 +411,39 @@
             font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             font-weight: 700;
+            font-family: var(--font-mono);
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         /* ===== CHART CONTAINER ===== */
         .chart-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
+            border-radius: 12px;
+            padding: 1.25rem;
             position: relative;
-            box-shadow: var(--glow-strength) rgba(0,0,0,0.5);
+            box-shadow: var(--glass-shadow);
             display: flex;
             flex-direction: column;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+        
+        .chart-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
         }
         
         .chart-header {
@@ -267,31 +451,38 @@
             justify-content: space-between;
             align-items: flex-end;
             margin-bottom: 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
             padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         .chart-controls {
             display: flex;
-            gap: 5px;
+            gap: 8px;
             margin-top: 5px;
+            flex-wrap: wrap;
         }
 
         .chart-btn {
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
         .chart-btn:hover, .chart-btn.active {
             background: rgba(0,255,157,0.1);
             color: var(--neon-green);
             border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
         }
 
         #mainChart {
@@ -305,8 +496,19 @@
             font-size: 0.8rem;
         }
 
-        .symbol-title { font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
-        .current-price { font-size: 1.5rem; font-weight: 700; color: var(--neon-green); font-family: var(--font-mono); }
+        .symbol-title { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            color: var(--text-main); 
+            letter-spacing: -0.03em;
+        }
+        .current-price { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            color: var(--neon-green); 
+            font-family: var(--font-mono); 
+            letter-spacing: -0.02em;
+        }
 
         /* ===== MAIN FEED & TOP BRIEF ===== */
         .feed-container {
@@ -315,20 +517,22 @@
             background: radial-gradient(circle at top right, rgba(0,255,157,0.03), transparent 40%);
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
 
         /* Top Brief Styles */
         .brief-panel {
-            background: rgba(255, 184, 0, 0.05);
-            border: 1px solid rgba(255, 184, 0, 0.2);
-            border-radius: 8px;
+            background: rgba(255, 184, 0, 0.07);
+            border: 1px solid rgba(255, 184, 0, 0.15);
+            border-radius: 12px;
             margin-bottom: 1.5rem;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
         }
         
         .brief-panel-header {
-            padding: 12px 16px;
+            padding: 14px 18px;
             background: rgba(255, 184, 0, 0.1);
             border-bottom: 1px solid rgba(255, 184, 0, 0.1);
             display: flex;
@@ -336,20 +540,24 @@
             align-items: center;
             cursor: pointer;
             font-family: var(--font-mono);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--neon-amber);
             font-weight: 700;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
         }
         
-        .brief-panel-header:hover { background: rgba(255, 184, 0, 0.15); }
+        .brief-panel-header:hover { 
+            background: rgba(255, 184, 0, 0.15); 
+        }
 
         .brief-panel-content {
-            padding: 16px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
             max-height: 500px;
-            transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease, opacity 0.4s ease;
             opacity: 1;
         }
         
@@ -361,89 +569,190 @@
             overflow: hidden;
         }
         
-        .brief-panel.collapsed .brief-panel-header { border-bottom: none; }
+        .brief-panel.collapsed .brief-panel-header { 
+            border-bottom: none; 
+        }
 
         .tldr-item {
             display: flex;
-            gap: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            gap: 14px;
+            padding: 14px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid transparent;
         }
-        .tldr-item:last-child { border-bottom: none; padding-bottom: 0; }
         
-        .tldr-rank { font-size: 1.1rem; font-weight: 800; color: rgba(255,255,255,0.2); font-family: var(--font-mono); }
-        .tldr-text h4 { font-size: 0.9rem; margin-bottom: 4px; color: #eee; cursor: pointer; }
-        .tldr-text h4:hover { color: var(--neon-amber); }
-        .tldr-meta { font-size: 0.7rem; color: var(--text-muted); }
+        .tldr-item:hover {
+            border-color: rgba(255, 184, 0, 0.3);
+            background: rgba(255, 184, 0, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 184, 0, 0.1);
+        }
+        
+        .tldr-item:last-child { 
+            margin-bottom: 0; 
+        }
+        
+        .tldr-rank { 
+            font-size: 1.2rem; 
+            font-weight: 800; 
+            color: rgba(255,255,255,0.2); 
+            font-family: var(--font-mono); 
+            min-width: 40px;
+            flex-shrink: 0;
+        }
+        
+        .tldr-text h4 { 
+            font-size: 0.95rem; 
+            margin-bottom: 6px; 
+            color: #eee; 
+            cursor: pointer; 
+            font-weight: 600;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        
+        .tldr-text h4:hover { 
+            color: var(--neon-amber); 
+        }
+        
+        .tldr-meta { 
+            font-size: 0.75rem; 
+            color: var(--text-muted); 
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
 
         .synth-btn {
-            background: rgba(255,184,0,0.1);
+            background: rgba(255,184,0,0.15);
             border: 1px solid var(--neon-amber);
             color: var(--neon-amber);
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            padding: 6px 14px;
+            border-radius: 6px;
             cursor: pointer;
-            margin-right: 10px;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            transition: all 0.3s;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
-        .synth-btn:hover { background: var(--neon-amber); color: #000; }
+        
+        .synth-btn:hover { 
+            background: var(--neon-amber); 
+            color: #000; 
+            box-shadow: 0 0 20px rgba(255, 184, 0, 0.4);
+            transform: translateY(-2px);
+        }
 
         /* Feed Controls */
         .feed-header-row {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .feed-tabs {
             display: flex;
-            gap: 10px;
+            gap: 16px; 
             overflow-x: auto;
             align-items: center;
+            padding: 20px 4px; /* Increased top/bottom padding to prevent ANY clipping */
+            margin-bottom: 0.5rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .feed-tabs::-webkit-scrollbar {
+            display: none;
         }
 
         .feed-tab {
             background: rgba(255,255,255,0.05);
             border: 1px solid transparent;
-            padding: 8px 16px;
-            border-radius: 4px;
+            padding: 8px 16px; /* Reduced padding slightly */
+            border-radius: 8px;
             color: var(--text-muted);
             font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            font-family: var(--font-mono);
+            letter-spacing: 0.05em;
+            flex-shrink: 0;
         }
         
-        .feed-tab:hover { color: #fff; background: rgba(255,255,255,0.1); }
-        .feed-tab.active { background: rgba(0,255,157,0.1); color: var(--neon-green); border-color: var(--neon-green); }
+        .feed-tab:hover { 
+            color: #fff; 
+            background: rgba(255,255,255,0.1); 
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        .feed-tab.active { 
+            background: rgba(0,255,157,0.1); 
+            color: var(--neon-green); 
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+        }
 
         .refresh-btn {
             margin-left: auto;
             background: rgba(0,0,0,0.3);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            width: 32px; height: 32px;
-            min-width: 32px;
-            border-radius: 4px;
-            display: flex; align-items: center; justify-content: center;
+            width: 36px; 
+            height: 36px;
+            min-width: 36px;
+            border-radius: 6px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
             cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
         }
-        .refresh-btn:hover { color: var(--neon-green); border-color: var(--neon-green); }
+        
+        .refresh-btn:hover { 
+            color: var(--neon-green); 
+            border-color: var(--neon-green); 
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+            transform: rotate(180deg);
+        }
 
         .view-toggle {
             display: flex;
-            gap: 5px;
+            gap: 8px;
             margin-left: 10px;
             border-left: 1px solid var(--border-color);
             padding-left: 10px;
+            flex-shrink: 0;
         }
 
         /* GRID VIEW OVERRIDES */
+        #newsFeed {
+            width: 100%;
+            box-sizing: border-box;
+            display: block; /* Default to block */
+        }
+
         #newsFeed.grid-view {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
         }
         
@@ -452,200 +761,782 @@
             margin-bottom: 0;
         }
 
-        /* ===== NEWS CARD REDESIGN ===== */
+        /* ===== NEWS CARD REDESIGN (High-Fidelity) ===== */
         .news-card {
-            background: rgba(30, 30, 35, 0.7);
+            background: linear-gradient(145deg, rgba(30, 30, 35, 0.8), rgba(20, 20, 25, 0.9));
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-left-width: 4px; /* Integrated color bar */
-            border-radius: 12px; /* Rounded corners */
-            padding: 1.5rem;
-            margin-bottom: 1.25rem;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-left-width: 5px;
+            border-radius: 16px;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(15px) saturate(180%);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .news-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
         }
 
         .news-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
-            border-top-color: rgba(255,255,255,0.2);
-            border-right-color: rgba(255,255,255,0.2);
-            border-bottom-color: rgba(255,255,255,0.2);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 255, 157, 0.1);
+            border-color: rgba(255,255,255,0.15);
         }
 
         /* Sentiment Variants */
         .news-card.bullish {
             border-left-color: var(--neon-green);
-            background: linear-gradient(145deg, rgba(0, 255, 157, 0.03) 0%, rgba(30, 30, 35, 0.8) 100%);
+            background: linear-gradient(145deg, rgba(0, 255, 157, 0.05) 0%, rgba(30, 30, 35, 0.85) 100%);
         }
         .news-card.bullish:hover {
-            box-shadow: 0 12px 24px rgba(0, 255, 157, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 255, 157, 0.15);
         }
 
         .news-card.bearish {
             border-left-color: var(--neon-red);
-            background: linear-gradient(145deg, rgba(255, 42, 109, 0.03) 0%, rgba(30, 30, 35, 0.8) 100%);
+            background: linear-gradient(145deg, rgba(255, 42, 109, 0.05) 0%, rgba(30, 30, 35, 0.85) 100%);
         }
         .news-card.bearish:hover {
-            box-shadow: 0 12px 24px rgba(255, 42, 109, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(255, 42, 109, 0.15);
         }
 
         .news-card.neutral {
             border-left-color: var(--border-color);
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.01) 0%, rgba(30, 30, 35, 0.8) 100%);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.02) 0%, rgba(30, 30, 35, 0.85) 100%);
         }
 
-        /* Typography updates for better readability on new cards */
+        /* Typography updates */
         .news-headline { 
-            font-size: 1.1rem; 
+            font-size: 1.15rem; 
             font-weight: 700; 
-            line-height: 1.4; 
-            margin-bottom: 0.75rem; 
+            line-height: 1.5; 
+            margin-bottom: 1rem; 
             color: #fff; 
             cursor: pointer; 
-            letter-spacing: -0.02em;
+            letter-spacing: -0.01em;
+            font-family: var(--font-main);
+            word-break: break-word;
         }
-        .news-headline:hover { color: var(--neon-green); }
+        .news-headline:hover { 
+            color: var(--neon-green); 
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+        }
         
         .news-summary { 
-            font-size: 0.9rem; 
-            color: #999; 
-            line-height: 1.6; 
-            margin-bottom: 12px; 
-            font-weight: 300;
+            font-size: 0.95rem; 
+            color: rgba(200, 200, 200, 0.9); 
+            line-height: 1.7; 
+            margin-bottom: 1.25rem; 
+            font-weight: 400;
+            word-break: break-word;
         }
 
         .ai-summary-box {
-            background: rgba(188, 19, 254, 0.05);
-            border-left: 2px solid var(--neon-purple);
-            padding: 12px;
-            margin-top: 12px;
-            font-size: 0.85rem;
+            background: linear-gradient(90deg, rgba(188, 19, 254, 0.05), rgba(0, 240, 255, 0.05));
+            border-left: 3px solid var(--neon-purple);
+            padding: 1.25rem;
+            margin-top: 1.25rem;
+            font-size: 0.9rem;
             color: #d0d0d0;
             display: none;
-            border-radius: 0 4px 4px 0;
-            animation: fadeIn 0.3s ease;
+            border-radius: 8px;
+            animation: fadeIn 0.4s ease;
+            font-family: var(--font-mono);
+            line-height: 1.6;
+            word-break: break-word;
         }
         
-        .ai-summary-box.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .ai-summary-box.active { 
+            display: block; 
+        }
+        
+        @keyframes fadeIn { 
+            from { 
+                opacity: 0; 
+                transform: translateY(-8px); 
+            } 
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            } 
+        }
 
         .analyze-btn {
-            background: transparent; border: 1px solid var(--neon-purple); color: var(--neon-purple);
-            padding: 4px 10px; font-size: 0.7rem; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
-        }
-        .analyze-btn:hover { background: var(--neon-purple); color: #fff; }
-
-        /* ===== MODAL ===== */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 2000;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            background: transparent; 
+            border: 1px solid var(--neon-purple); 
+            color: var(--neon-purple);
+            padding: 8px 16px; 
+            font-size: 0.75rem; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
         
-        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .analyze-btn:hover { 
+            background: var(--neon-purple); 
+            color: #000; 
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Voice Play Button */
+        .voice-play-btn {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 8px 16px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
+            margin-left: 8px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        
+        .voice-play-btn:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .voice-play-btn.playing {
+            background: var(--neon-red);
+            border-color: var(--neon-red);
+            color: #000;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 42, 109, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 42, 109, 0); }
+        }
+
+        /* ===== MODALS ===== */
+        .modal-overlay {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            z-index: 2000;
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 0.4s;
+        }
+        
+        .modal-overlay.open { 
+            opacity: 1; 
+            pointer-events: auto; 
+        }
         
         .modal {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            width: 500px;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            max-height: 80vh;
+            width: 520px;
+            max-width: 90vw;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 50px rgba(0,255,157,0.1);
+            max-height: 85vh;
             overflow-y: auto;
+            backdrop-filter: blur(20px);
         }
         
         .modal-section-title {
-            font-size: 0.7rem; color: var(--neon-green); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;
+            font-size: 0.75rem; 
+            color: var(--neon-green); 
+            text-transform: uppercase; 
+            margin-bottom: 1rem; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            padding-bottom: 0.75rem;
+            font-family: var(--font-mono);
+            letter-spacing: 0.1em;
+            font-weight: 700;
         }
 
-        .form-group { margin-bottom: 15px; }
-        .form-label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; display: block; }
+        .form-group { 
+            margin-bottom: 1.25rem; 
+        }
+        
+        .form-label { 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+            margin-bottom: 0.5rem; 
+            display: block; 
+            font-family: var(--font-mono);
+        }
+        
         .form-input {
-            width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color);
-            padding: 8px; color: #fff; border-radius: 4px; font-family: var(--font-mono);
+            width: 100%; 
+            background: rgba(0,0,0,0.3); 
+            border: 1px solid var(--border-color);
+            padding: 12px; 
+            color: #fff; 
+            border-radius: 8px; 
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
+            outline: none;
+        }
+
+        /* ===== TOGGLE SWITCH (Consolidated) ===== */
+        .toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            flex-grow: 1;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-color);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--neon-green);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
         }
 
         /* ===== ORACLE CHAT STYLES ===== */
         .chat-container {
-            display: flex; flex-direction: column; height: 400px;
+            display: flex; 
+            flex-direction: column; 
+            height: 400px;
         }
-        .chat-history {
-            flex-grow: 1; overflow-y: auto; padding: 10px; 
-            border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; background: rgba(0,0,0,0.3); border-radius: 4px;
-        }
-        .chat-message { margin-bottom: 10px; font-size: 0.85rem; line-height: 1.4; display: flex; flex-direction: column; }
-        .chat-message.user { align-items: flex-end; }
-        .chat-message.ai { align-items: flex-start; color: var(--neon-green); }
-        .chat-bubble { padding: 8px 12px; border-radius: 6px; max-width: 80%; }
-        .chat-message.user .chat-bubble { background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.3); color: #fff; }
-        .chat-message.ai .chat-bubble { background: rgba(0,255,157,0.05); border: 1px solid rgba(0,255,157,0.2); font-family: var(--font-mono); }
         
-        .chat-input-area { display: flex; gap: 10px; }
-        .chat-input-area input { flex-grow: 1; }
+        .chat-history {
+            flex-grow: 1; 
+            overflow-y: auto; 
+            padding: 1rem; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            margin-bottom: 1rem; 
+            background: rgba(0,0,0,0.3); 
+            border-radius: 12px;
+        }
+        
+        .chat-message { 
+            margin-bottom: 1rem; 
+            font-size: 0.9rem; 
+            line-height: 1.5; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        .chat-message.user { 
+            align-items: flex-end; 
+        }
+        
+        .chat-message.ai { 
+            align-items: flex-start; 
+            color: var(--neon-green); 
+        }
+        
+        .chat-bubble { 
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            max-width: 85%; 
+            backdrop-filter: blur(10px);
+        }
+        
+        .chat-message.user .chat-bubble { 
+            background: rgba(0,240,255,0.15); 
+            border: 1px solid rgba(0,240,255,0.3); 
+            color: #fff; 
+        }
+        
+        .chat-message.ai .chat-bubble { 
+            background: rgba(0,255,157,0.1); 
+            border: 1px solid rgba(0,255,157,0.2); 
+            font-family: var(--font-mono); 
+        }
+        
+        .chat-input-area { 
+            display: flex; 
+            gap: 12px; 
+        }
+        
+        .chat-input-area input { 
+            flex-grow: 1; 
+        }
 
         /* ===== DECORATION ===== */
         .scanline {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.5) 51%);
-            background-size: 100% 4px;
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.3) 51%);
+            background-size: 100% 6px;
             pointer-events: none;
             z-index: 999;
             opacity: var(--scanline-opacity);
+            animation: scanlineMove 20s linear infinite;
+        }
+
+        @keyframes scanlineMove {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
         }
 
         /* ===== PROFILE CARD ===== */
         .profile-card {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255,255,255,0.03);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 15px;
+            border-radius: 12px;
+            padding: 1.25rem;
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 1rem;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
         }
 
         .profile-logo {
-            width: 40px; height: 40px;
-            border-radius: 50%;
+            width: 48px; 
+            height: 48px;
+            border-radius: 10px;
             background: #fff;
             object-fit: contain;
-            padding: 2px;
+            padding: 4px;
+            border: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
         }
 
         .profile-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 10px;
+            margin-top: 12px;
         }
 
-        .p-stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
-        .p-stat-val { font-size: 0.8rem; font-weight: 600; font-family: var(--font-mono); }
+        .p-stat-label { 
+            font-size: 0.7rem; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            font-family: var(--font-mono);
+            letter-spacing: 0.05em;
+        }
+        
+        .p-stat-val { 
+            font-size: 0.85rem; 
+            font-weight: 600; 
+            font-family: var(--font-mono); 
+            color: var(--neon-green);
+        }
         
         /* ===== TOAST NOTIFICATIONS ===== */
         #toast-container {
-            position: fixed; bottom: 20px; right: 20px; z-index: 3000;
-            display: flex; flex-direction: column; gap: 10px;
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            z-index: 3000;
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px;
         }
         
         .toast {
-            background: var(--bg-card); border: 1px solid var(--neon-green);
-            padding: 12px 20px; border-radius: 4px; color: #fff; font-family: var(--font-mono); font-size: 0.8rem;
-            display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            animation: slideIn 0.3s ease forwards;
+            background: var(--bg-card); 
+            border: 1px solid var(--neon-green);
+            padding: 1rem 1.5rem; 
+            border-radius: 8px; 
+            color: #fff; 
+            font-family: var(--font-mono); 
+            font-size: 0.85rem;
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            backdrop-filter: blur(10px);
+            max-width: 350px;
         }
         
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideIn { 
+            from { 
+                transform: translateX(100%); 
+                opacity: 0; 
+            } 
+            to { 
+                transform: translateX(0); 
+                opacity: 1; 
+            } 
+        }
+
+        /* ===== VOICE CONTROLS ===== */
+        .voice-controls {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .voice-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan));
+            border: none;
+            color: #000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px var(--neon-blue), 0 0 60px rgba(0, 240, 255, 0.3);
+            transition: all 0.3s;
+            font-size: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .voice-btn::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            z-index: -1;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .voice-btn.listening {
+            background: linear-gradient(135deg, var(--neon-red), #ff6b9d);
+            box-shadow: 0 0 40px var(--neon-red), 0 0 80px rgba(255, 42, 109, 0.4);
+            animation: pulseScale 1.5s infinite;
+        }
+
+        @keyframes pulseScale {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 0 40px var(--neon-red), 0 0 80px rgba(255, 42, 109, 0.4);
+            }
+            50% { 
+                transform: scale(1.1); 
+                box-shadow: 0 0 60px var(--neon-red), 0 0 120px rgba(255, 42, 109, 0.6);
+            }
+        }
+
+        .voice-command-display {
+            position: relative;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--neon-blue);
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            max-width: 320px;
+            min-width: 240px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 30px rgba(0, 240, 255, 0.2);
+        }
+
+        .voice-command-display.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .voice-command-text {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: var(--neon-cyan);
+            font-weight: 600;
+        }
+
+        .voice-command-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .voice-command-list {
+            position: fixed;
+            top: 105px;
+            right: 24px;
+            background: rgba(14, 14, 18, 0.95);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 16px;
+            max-width: 320px;
+            max-height: 480px;
+            overflow-y: auto;
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+            z-index: 1000;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .voice-command-list.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .voice-command-list h4 {
+            color: var(--neon-green);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .voice-command-item {
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            padding: 8px 10px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.05);
+            border-left: 3px solid var(--neon-blue);
+            font-family: var(--font-mono);
+            transition: all 0.3s;
+        }
         
+        .voice-command-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(4px);
+        }
+
+        .voice-hotkey {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+        }
+
+        /* ===== EMAIL NEWSLETTER MODAL ===== */
+        .email-composer {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .email-preview {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .email-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        /* ===== EXECUTIVE BRIEFING (LESS CONSPICUOUS) ===== */
+        .executive-briefing-btn {
+            background: rgba(255, 255, 255, 0.05); /* Transparent background */
+            border: 1px solid var(--border-color); /* Subtle border */
+            color: var(--text-muted); /* Muted text */
+            font-family: var(--font-mono);
+            font-weight: 600;
+            padding: 8px 12px; /* Reduced padding */
+            border-radius: 6px; /* Slightly tighter radius */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem; /* Smaller font */
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        
+        .executive-briefing-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--neon-purple);
+            color: var(--neon-purple);
+            transform: translateY(-1px);
+        }
+        
+        .executive-briefing-btn.playing {
+            background: rgba(255, 42, 109, 0.1); /* Subtle red bg when playing */
+            border-color: var(--neon-red);
+            color: var(--neon-red);
+            animation: pulse-border 2s infinite;
+        }
+        
+        @keyframes pulse-border {
+            0%, 100% { border-color: var(--neon-red); box-shadow: 0 0 10px rgba(255, 42, 109, 0.2); }
+            50% { border-color: rgba(255, 42, 109, 0.5); box-shadow: 0 0 20px rgba(255, 42, 109, 0.4); }
+        }
+
+        /* ===== RESPONSIVE FIXES ===== */
+        @media (max-width: 1024px) {
+            .header-controls {
+                min-width: auto;
+            }
+            .search-bar {
+                width: 200px;
+            }
+            .executive-briefing-btn {
+                padding: 6px 10px;
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-wrap: wrap;
+                height: auto;
+                min-height: auto;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            .logo {
+                min-width: auto;
+            }
+            .search-bar {
+                width: 100%;
+                order: 3;
+            }
+            .header-controls {
+                min-width: auto;
+                width: 100%;
+                justify-content: space-between;
+            }
+            .executive-briefing-btn {
+                display: none;
+            }
+            .ticker-container {
+                height: 35px;
+                min-height: 35px;
+            }
+            .feed-tabs {
+                padding-bottom: 8px;
+            }
+            .voice-controls {
+                bottom: 10px;
+                left: 10px;
+            }
+            .voice-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal {
+                padding: 1.5rem;
+            }
+            .email-controls {
+                flex-direction: column;
+            }
+            .email-controls button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -653,8 +1544,8 @@
     <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
-            <div class="flex justify-between items-center" style="margin-bottom: 20px;">
-                <h3 class="mono text-green">SYSTEM CONFIGURATION</h3>
+            <div class="flex justify-between items-center" style="margin-bottom: 24px;">
+                <h3 class="mono text-green">SYSTEM CONFIGURATION v4.1</h3>
                 <button class="icon-btn" onclick="app.toggleSettings()"><i data-lucide="x"></i></button>
             </div>
             
@@ -670,25 +1561,46 @@
                 <input type="password" id="geminiKey" class="form-input" placeholder="Enter Google Gemini API Key...">
             </div>
 
-            <div class="modal-section-title" style="margin-top: 20px;">SYSTEM PREFS</div>
+            <div class="modal-section-title" style="margin-top: 24px;">VOICE INTELLIGENCE</div>
 
-            <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
-                <span class="mono" style="font-size:0.9rem;">CYBERPUNK MODE</span>
-                <label class="switch">
-                    <input type="checkbox" id="cyberModeToggle" onchange="app.toggleCyberpunk(this.checked)">
-                    <span class="slider" style="background:var(--border-color); width:36px; height:20px; display:inline-block; border-radius:10px; position:relative;">
-                        <span style="position:absolute; top:2px; left:2px; width:16px; height:16px; background:#fff; border-radius:50%; transition:0.2s; transform:translateX(0);"></span>
-                    </span>
+            <div class="toggle-container">
+                <span class="toggle-label">VOICE ALERTS (Breaking News)</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="voiceAlertsToggle" checked>
+                    <span class="toggle-slider"></span>
                 </label>
             </div>
 
-             <div class="modal-section-title" style="margin-top: 20px;">DEBUG & MAINTENANCE</div>
+            <div class="toggle-container">
+                <span class="toggle-label">CYBERPUNK MODE</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="cyberModeToggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="modal-section-title" style="margin-top: 24px;">DAILY NEWSLETTER</div>
+
+            <div class="form-group">
+                <label class="form-label">EMAIL RECIPIENT (6PM Daily Digest)</label>
+                <input type="email" id="newsletterEmail" class="form-input" placeholder="analyst@nexus-intel.com">
+            </div>
+
+            <div class="toggle-container">
+                <span class="toggle-label">AUTO-GENERATE DAILY DIGEST</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autoNewsletterToggle" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+             <div class="modal-section-title" style="margin-top: 24px;">DEBUG & MAINTENANCE</div>
              
-             <button onclick="app.clearCache()" style="width: 100%; padding: 8px; background: rgba(255, 42, 109, 0.2); border: 1px solid var(--neon-red); color: var(--neon-red); font-family: var(--font-mono); cursor: pointer; margin-bottom: 10px;">
-                 <i data-lucide="trash-2" width="14"></i> PURGE CACHE & RELOAD
+             <button onclick="app.clearCache()" style="width: 100%; padding: 12px; background: rgba(255, 42, 109, 0.2); border: 1px solid var(--neon-red); color: var(--neon-red); font-family: var(--font-mono); cursor: pointer; margin-bottom: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s;">
+                 <i data-lucide="trash-2" width="16"></i> PURGE CACHE & RELOAD
              </button>
             
-            <button onclick="app.saveSettings()" style="width: 100%; padding: 12px; background: var(--neon-green); border: none; font-weight: bold; color: #000; cursor: pointer; border-radius: 4px; margin-top: 10px;">
+            <button onclick="app.saveSettings()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, var(--neon-green), var(--neon-blue)); border: none; font-weight: 700; color: #000; cursor: pointer; border-radius: 8px; margin-top: 12px; font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 0.05em; transition: all 0.3s;">
                 SAVE CONFIGURATION
             </button>
         </div>
@@ -697,7 +1609,7 @@
     <!-- ORACLE MODAL -->
     <div class="modal-overlay" id="oracleModal">
         <div class="modal">
-            <div class="flex justify-between items-center" style="margin-bottom: 20px;">
+            <div class="flex justify-between items-center" style="margin-bottom: 24px;">
                 <h3 class="mono text-green"><i data-lucide="bot"></i> NEXUS ORACLE</h3>
                 <button class="icon-btn" onclick="app.toggleOracle()"><i data-lucide="x"></i></button>
             </div>
@@ -718,7 +1630,7 @@
     <!-- ASSET REPORT MODAL -->
     <div class="modal-overlay" id="reportModal">
         <div class="modal">
-            <div class="flex justify-between items-center" style="margin-bottom: 20px;">
+            <div class="flex justify-between items-center" style="margin-bottom: 24px;">
                 <h3 class="mono text-purple"><i data-lucide="sparkles"></i> AI EXECUTIVE REPORT</h3>
                 <button class="icon-btn" onclick="document.getElementById('reportModal').classList.remove('open')"><i data-lucide="x"></i></button>
             </div>
@@ -727,6 +1639,63 @@
             </div>
         </div>
     </div>
+
+    <!-- EMAIL NEWSLETTER MODAL -->
+    <div class="modal-overlay" id="newsletterModal">
+        <div class="modal">
+            <div class="flex justify-between items-center" style="margin-bottom: 24px;">
+                <h3 class="mono text-amber"><i data-lucide="mail"></i> DAILY INTELLIGENCE DIGEST</h3>
+                <button class="icon-btn" onclick="document.getElementById('newsletterModal').classList.remove('open')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="email-composer">
+                <div class="form-group">
+                    <label class="form-label">RECIPIENT EMAIL</label>
+                    <input type="email" id="recipientEmail" class="form-input" value="analyst@nexus-intel.com">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">SUBJECT</label>
+                    <input type="text" id="emailSubject" class="form-input" value="NEXUS INTEL Daily Digest - Market Intelligence Briefing">
+                </div>
+                
+                <div class="modal-section-title">PREVIEW</div>
+                <div class="email-preview" id="emailPreview">
+                    Generating daily intelligence digest...
+                </div>
+                
+                <div class="email-controls">
+                    <button onclick="app.copyEmailContent()" class="icon-btn" style="width: auto; padding: 10px 20px;">
+                        <i data-lucide="copy"></i> Copy to Clipboard
+                    </button>
+                    <!-- UPDATED BUTTON TO CALL dispatchEmail -->
+                    <button onclick="app.dispatchEmail()" style="padding: 12px 24px; background: linear-gradient(135deg, var(--neon-green), var(--neon-blue)); border: none; color: #000; font-family: var(--font-mono); font-weight: 700; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                        <i data-lucide="send"></i> Send via Email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- VOICE COMMAND LIST -->
+    <div class="voice-command-list" id="voiceCommandList">
+        <div class="voice-hotkey">? or "help"</div>
+        <h4><i data-lucide="mic"></i> VOICE COMMANDS</h4>
+        <div class="voice-command-item"><strong>"Search [symbol]"</strong> - Lookup stock (e.g., "search AMD")</div>
+        <div class="voice-command-item"><strong>"Show [symbol]"</strong> - Display stock details</div>
+        <div class="voice-command-item"><strong>"Zen mode" / "Focus mode"</strong> - Toggle Zen mode</div>
+        <div class="voice-command-item"><strong>"Row view" / "Grid view"</strong> - Change news layout</div>
+        <div class="voice-command-item"><strong>"Refresh news"</strong> - Update intelligence stream</div>
+        <div class="voice-command-item"><strong>"Open oracle" / "Talk to AI"</strong> - Open AI chat</div>
+        <div class="voice-command-item"><strong>"Generate report"</strong> - Create asset analysis</div>
+        <div class="voice-command-item"><strong>"Play briefing"</strong> - Audio executive briefing</div>
+        <div class="voice-command-item"><strong>"Send digest"</strong> - Email daily newsletter</div>
+        <div class="voice-command-item"><strong>"Show commands" / "Help"</strong> - Display this list</div>
+        <div class="voice-command-item"><strong>"Candlestick" / "Line chart" / "Area chart"</strong> - Change chart type</div>
+        <div class="voice-command-item"><strong>"Filter [category]"</strong> - Filter news (tech, crypto, AI, etc.)</div>
+        <div class="voice-command-item"><strong>"Briefing" / "Synthesize"</strong> - Toggle daily briefing</div>
+        <div class="voice-command-item"><strong>"Settings"</strong> - Open configuration</div>
+        <div class="voice-command-item"><strong>"Stop listening"</strong> - Disable voice control</div>
+    </div>
     
     <!-- TOASTS -->
     <div id="toast-container"></div>
@@ -734,11 +1703,22 @@
     <!-- Background FX -->
     <div class="scanline"></div>
 
+    <!-- Voice Controls -->
+    <div class="voice-controls">
+        <div class="voice-command-display" id="voiceCommandDisplay">
+            <div class="voice-command-text" id="voiceCommandText">Ready for voice commands...</div>
+            <div class="voice-command-hint">Say "help" for available commands</div>
+        </div>
+        <button class="voice-btn" id="voiceControlBtn" onclick="voice.toggleListening()">
+            <i data-lucide="mic"></i>
+        </button>
+    </div>
+
     <!-- Header -->
     <header class="header">
         <div class="logo">
             <div class="logo-icon"><i data-lucide="aperture"></i></div>
-            <div>NEXUS <span class="text-green">INTEL</span></div>
+            <div>NEXUS <span class="text-green">INTEL v4.1</span></div>
         </div>
         
         <div class="search-bar">
@@ -747,11 +1727,30 @@
         </div>
         
         <div class="header-controls">
-            <div class="mono text-green" style="font-size: 0.8rem;" id="clock">00:00:00</div>
+            <!-- Audio Visualizer -->
+            <div class="audio-visualizer" id="audioVisualizer" style="display: none;">
+                <div class="visualizer-bar" style="--i: 0; height: 5px;"></div>
+                <div class="visualizer-bar" style="--i: 1; height: 8px;"></div>
+                <div class="visualizer-bar" style="--i: 2; height: 12px;"></div>
+                <div class="visualizer-bar" style="--i: 3; height: 15px;"></div>
+                <div class="visualizer-bar" style="--i: 4; height: 12px;"></div>
+                <div class="visualizer-bar" style="--i: 5; height: 8px;"></div>
+                <div class="visualizer-bar" style="--i: 6; height: 5px;"></div>
+            </div>
+            
+            <div class="mono text-green" style="font-size: 0.85rem;" id="clock">00:00:00</div>
+            
+            <!-- Redesigned Play Briefing Button -->
+            <button class="executive-briefing-btn" onclick="voiceEngine.playExecutiveBriefing()" title="Play Executive Briefing">
+                <i data-lucide="play-circle" width="14"></i> BRIEFING
+            </button>
+            
             <button class="icon-btn" onclick="app.toggleOracle()" title="AI Oracle (Chat)"><i data-lucide="bot"></i></button>
             <button class="icon-btn" id="zenModeBtn" onclick="app.toggleZenMode()" title="Zen Mode">
                 <i data-lucide="maximize"></i>
             </button>
+            <button class="icon-btn" onclick="app.sendEmailDigest()" title="Email Daily Digest"><i data-lucide="mail"></i></button>
+            <button class="icon-btn" onclick="voice.toggleCommandList()" title="Voice Commands (?)"><i data-lucide="mic"></i></button>
             <button class="icon-btn" onclick="app.toggleSettings()"><i data-lucide="settings"></i></button>
         </div>
     </header>
@@ -773,7 +1772,7 @@
 
             <div style="margin-top: auto;">
                 <div class="section-title"><i data-lucide="flame"></i> MARKET HEATMAP</div>
-                <div id="heatmap" style="height: 180px; width: 100%; border-radius: 6px; border: 1px solid var(--border-color); overflow: hidden;"></div>
+                <div id="heatmap" style="height: 180px; width: 100%; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; background: rgba(0,0,0,0.3);"></div>
             </div>
         </aside>
 
@@ -783,22 +1782,25 @@
             <!-- Collapsible Top Brief -->
             <div id="topBriefPanel" class="brief-panel">
                 <div class="brief-panel-header">
-                    <div style="display:flex; align-items:center; gap:10px; flex-grow: 1; cursor:pointer;" onclick="app.toggleTopBrief()">
-                       <i data-lucide="zap" style="color:var(--neon-amber);"></i>
-                       <span>DAILY INTELLIGENCE BRIEFING</span>
+                    <div style="display:flex; align-items:center; gap:12px; flex-grow: 1; cursor:pointer;" onclick="app.toggleTopBrief()">
+                        <i data-lucide="zap" style="color:var(--neon-amber);"></i>
+                        <span>DAILY INTELLIGENCE BRIEFING</span>
                     </div>
                     <button class="synth-btn" onclick="app.synthesizeBriefing()">
-                        <i data-lucide="sparkles" width="12"></i> SYNTHESIZE INTEL
+                        <i data-lucide="sparkles" width="14"></i> SYNTHESIZE INTEL
                     </button>
                     <i data-lucide="chevron-up" id="briefPanelChevron" style="cursor:pointer;" onclick="app.toggleTopBrief()"></i>
                 </div>
                 <div class="brief-panel-content" id="briefPanelContent">
-                    <div style="color: var(--text-muted); font-style:italic;">Initializing Briefing Protocol...</div>
+                    <div style="color: var(--text-muted); font-style:italic; font-family: var(--font-mono);">Initializing Briefing Protocol...</div>
                 </div>
             </div>
 
             <div class="feed-header-row">
-                <h2 class="mono" style="font-size: 1.2rem; font-weight: 700;"><i data-lucide="radio" style="display:inline; width:18px;"></i> INTELLIGENCE STREAM</h2>
+                <h2 class="mono" style="font-size: 1.3rem; font-weight: 800; letter-spacing: -0.03em;">
+                    <i data-lucide="radio" style="display:inline; width:20px; margin-right:10px;"></i> 
+                    INTELLIGENCE STREAM
+                </h2>
                 <div style="display:flex; align-items:center;">
                     <div class="view-toggle">
                         <button class="icon-btn active" id="viewRowBtn" onclick="app.toggleView('row')" title="Row View"><i data-lucide="list"></i></button>
@@ -817,7 +1819,7 @@
                 <button class="feed-tab" onclick="app.setFeedFilter('crypto')">CRYPTO</button>
                 
                 <button class="refresh-btn" onclick="app.refreshNews()" title="Force Refresh Intel">
-                    <i data-lucide="refresh-cw" width="16"></i>
+                    <i data-lucide="refresh-cw" width="18"></i>
                 </button>
             </div>
 
@@ -833,21 +1835,21 @@
                 <div id="assetProfile" class="profile-card" style="display:none;">
                     <img id="pLogo" class="profile-logo" src="" alt="logo">
                     <div>
-                        <div id="pName" style="font-weight:700; font-size:0.9rem;"></div>
-                        <div id="pIndustry" style="font-size:0.7rem; color:var(--text-muted);"></div>
+                        <div id="pName" style="font-weight:800; font-size:0.95rem;"></div>
+                        <div id="pIndustry" style="font-size:0.75rem; color:var(--text-muted); font-family: var(--font-mono);"></div>
                     </div>
                 </div>
                 
                 <!-- Asset AI Button -->
-                <button onclick="app.generateAssetReport()" style="width:100%; margin-bottom:1rem; padding:8px; background:rgba(188, 19, 254, 0.1); border:1px solid var(--neon-purple); color:var(--neon-purple); border-radius:4px; cursor:pointer; font-family:var(--font-mono); font-weight:bold; display:flex; align-items:center; justify-content:center; gap:8px;">
-                    <i data-lucide="sparkles" width="14"></i> GENERATE AI REPORT
+                <button onclick="app.generateAssetReport()" style="width:100%; margin-bottom:1rem; padding:12px; background:linear-gradient(135deg, rgba(188, 19, 254, 0.2), rgba(0, 240, 255, 0.2)); border:1px solid var(--neon-purple); color:var(--neon-purple); border-radius:10px; cursor:pointer; font-family:var(--font-mono); font-weight:700; display:flex; align-items:center; justify-content:center; gap:10px; font-size:0.85rem; transition: all 0.3s;">
+                    <i data-lucide="sparkles" width="16"></i> GENERATE AI REPORT
                 </button>
 
                 <div class="chart-card">
                     <div class="chart-header">
                         <div>
                             <div class="symbol-title" id="detailSymbol">NVDA</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);" id="detailName">NVIDIA Corp</div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); font-family: var(--font-mono);" id="detailName">NVIDIA Corp</div>
                         </div>
                         <div style="text-align: right;">
                             <div class="current-price" id="detailPrice">...</div>
@@ -856,16 +1858,16 @@
                     </div>
                     <!-- Chart Switcher -->
                     <div class="chart-controls">
-                        <button class="chart-btn active" onclick="app.toggleChartType('candlestick')" title="Candlestick"><i data-lucide="bar-chart-2"></i></button>
-                        <button class="chart-btn" onclick="app.toggleChartType('line')" title="Line Chart"><i data-lucide="activity"></i></button>
-                        <button class="chart-btn" onclick="app.toggleChartType('area')" title="Area Chart"><i data-lucide="mountain"></i></button>
+                        <button class="chart-btn active" onclick="app.toggleChartType('candlestick')" title="Candlestick"><i data-lucide="bar-chart-2"></i> CANDLE</button>
+                        <button class="chart-btn" onclick="app.toggleChartType('line')" title="Line Chart"><i data-lucide="activity"></i> LINE</button>
+                        <button class="chart-btn" onclick="app.toggleChartType('area')" title="Area Chart"><i data-lucide="mountain"></i> AREA</button>
                     </div>
                     <!-- Chart Container -->
                     <div id="mainChart">
                         <!-- Content injected via JS (Chart or Loader) -->
                         <div style="text-align:center;">
-                            <i data-lucide="loader-2" class="fa-spin" style="margin-bottom:10px;"></i>
-                            <div>INITIALIZING SENSORS...</div>
+                            <i data-lucide="loader-2" class="fa-spin" style="margin-bottom:12px;"></i>
+                            <div style="font-family: var(--font-mono);">INITIALIZING SENSORS...</div>
                         </div>
                     </div>
                 </div>
@@ -874,29 +1876,29 @@
             <div>
                 <div class="section-title"><i data-lucide="cpu"></i> CORE METRICS</div>
                 <div class="profile-stats">
-                    <div class="stat-box" style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 4px;">
+                    <div class="stat-box" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                         <div class="p-stat-label">MARKET CAP</div>
                         <div class="p-stat-val" id="metricCap">--</div>
                     </div>
-                    <div class="stat-box" style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 4px;">
+                    <div class="stat-box" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                         <div class="p-stat-label">VOLUME</div>
                         <div class="p-stat-val" id="metricVol">--</div>
                     </div>
-                    <div class="stat-box" style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 4px;">
+                    <div class="stat-box" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                         <div class="p-stat-label">HIGH (D)</div>
                         <div class="p-stat-val" id="metricHigh">--</div>
                     </div>
-                    <div class="stat-box" style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 4px;">
+                    <div class="stat-box" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                         <div class="p-stat-label">LOW (D)</div>
                         <div class="p-stat-val" id="metricLow">--</div>
                     </div>
                 </div>
             </div>
             
-            <div class="chart-card" style="margin-top: 1rem; border-color: var(--neon-purple);">
-                 <div class="section-title" style="color: var(--neon-purple); margin-bottom: 0.5rem;"><i data-lucide="brain-circuit"></i> AI MARKET SENTIMENT</div>
-                 <p style="font-size: 0.8rem; color: #ccc; line-height: 1.4;" id="marketSentiment">
-                     Global market sentiment analysis requires aggregated news data. Check specific news items for AI-driven summaries.
+            <div class="chart-card" style="margin-top: 1.5rem; border-color: var(--neon-purple);">
+                 <div class="section-title" style="color: var(--neon-purple); margin-bottom: 0.75rem;"><i data-lucide="brain-circuit"></i> AI MARKET SENTIMENT</div>
+                 <p style="font-size: 0.85rem; color: #ccc; line-height: 1.6; font-family: var(--font-mono);" id="marketSentiment">
+                      Global market sentiment analysis requires aggregated news data. Check specific news items for AI-driven summaries.
                  </p>
             </div>
         </aside>
@@ -904,6 +1906,499 @@
     </div>
 
     <script>
+        // ===== VOICE ENGINE (TTS Integration) =====
+        const voiceEngine = {
+            speechSynthesis: window.speechSynthesis,
+            isSpeaking: false,
+            currentUtterance: null,
+            voiceAlertsEnabled: true,
+            briefingPlaying: false,
+            currentButton: null, // Track active news button
+            voices: [],
+            audioVisualizer: null,
+
+            init() {
+                // Load available voices
+                this.loadVoices();
+                
+                // Set up audio visualizer
+                this.audioVisualizer = document.getElementById('audioVisualizer');
+                
+                // Listen for speech events
+                this.speechSynthesis.onvoiceschanged = () => this.loadVoices();
+                
+                // Update visualizer when speaking
+                setInterval(() => {
+                    if (this.isSpeaking && this.audioVisualizer) {
+                        this.animateVisualizer();
+                    }
+                }, 100);
+            },
+
+            loadVoices() {
+                this.voices = this.speechSynthesis.getVoices();
+            },
+
+            getVoice() {
+                // Prefer English voices with good quality
+                const preferred = this.voices.find(v => 
+                    v.lang.includes('en') && 
+                    (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha'))
+                );
+                return preferred || this.voices.find(v => v.lang.includes('en')) || this.voices[0];
+            },
+
+            speak(text, onEnd = null) {
+                if (!this.speechSynthesis || !text) return;
+                
+                // Stop any current speech
+                this.stop();
+                
+                // Create new utterance
+                this.currentUtterance = new SpeechSynthesisUtterance(text);
+                this.currentUtterance.voice = this.getVoice();
+                this.currentUtterance.rate = 1.1;
+                this.currentUtterance.pitch = 1;
+                this.currentUtterance.volume = 1;
+                
+                // Show visualizer
+                if (this.audioVisualizer) {
+                    this.audioVisualizer.style.display = 'flex';
+                }
+                
+                // Event handlers
+                this.currentUtterance.onstart = () => {
+                    this.isSpeaking = true;
+                };
+                
+                this.currentUtterance.onend = () => {
+                    this.isSpeaking = false;
+                    if (this.audioVisualizer) {
+                        this.audioVisualizer.style.display = 'none';
+                    }
+                    if (onEnd) onEnd();
+                    
+                    // Ensure state is reset if briefing ends naturally
+                    if (this.briefingPlaying) {
+                        this.briefingPlaying = false;
+                        this.resetBriefingButton();
+                    }
+
+                    // Reset news button if active
+                    if (this.currentButton) {
+                        this.resetNewsButton(this.currentButton);
+                        this.currentButton = null;
+                    }
+                };
+                
+                this.currentUtterance.onerror = (event) => {
+                    console.error('Speech synthesis error:', event);
+                    this.isSpeaking = false;
+                    if (this.audioVisualizer) {
+                        this.audioVisualizer.style.display = 'none';
+                    }
+                    this.briefingPlaying = false;
+                    this.resetBriefingButton();
+                    
+                    if (this.currentButton) {
+                        this.resetNewsButton(this.currentButton);
+                        this.currentButton = null;
+                    }
+                };
+                
+                // Start speaking
+                this.speechSynthesis.speak(this.currentUtterance);
+            },
+
+            stop() {
+                if (this.speechSynthesis.speaking) {
+                    this.speechSynthesis.cancel();
+                }
+                this.isSpeaking = false;
+                if (this.audioVisualizer) {
+                    this.audioVisualizer.style.display = 'none';
+                }
+                
+                // Reset Executive Briefing UI
+                if (this.briefingPlaying) {
+                    this.briefingPlaying = false;
+                    this.resetBriefingButton();
+                }
+
+                // Reset News Button UI
+                if (this.currentButton) {
+                    this.resetNewsButton(this.currentButton);
+                    this.currentButton = null;
+                }
+            },
+            
+            resetBriefingButton() {
+                const btn = document.querySelector('.executive-briefing-btn');
+                if (btn) {
+                    btn.classList.remove('playing');
+                    btn.innerHTML = '<i data-lucide="play-circle" width="14"></i> BRIEFING';
+                    lucide.createIcons();
+                }
+            },
+
+            resetNewsButton(btn) {
+                if(btn) {
+                    btn.classList.remove('playing');
+                    btn.innerHTML = '<i data-lucide="volume-2"></i> PLAY';
+                    lucide.createIcons();
+                }
+            },
+
+            toggleVoiceAlerts() {
+                this.voiceAlertsEnabled = !this.voiceAlertsEnabled;
+                notify(`Voice alerts ${this.voiceAlertsEnabled ? 'enabled' : 'disabled'}`, this.voiceAlertsEnabled ? 'success' : 'info');
+            },
+
+            announceBreakingNews(headline) {
+                if (!this.voiceAlertsEnabled) return;
+                
+                const alertText = `Breaking news alert. ${headline}`;
+                this.speak(alertText);
+                notify("Breaking news alert!", "info");
+            },
+
+            playNewsSummary(headline, summary, btn) {
+                // If this specific button is already playing, stop it (Toggle Logic)
+                if (this.currentButton === btn && this.isSpeaking) {
+                    this.stop();
+                    return;
+                }
+
+                const text = `${headline}. ${summary}`;
+                this.speak(text); // This calls stop(), which resets previous buttons
+
+                // Set new button state
+                this.currentButton = btn;
+                if(btn) {
+                    btn.classList.add('playing');
+                    btn.innerHTML = '<i data-lucide="square" fill="currentColor" width="12"></i> STOP';
+                    lucide.createIcons();
+                }
+            },
+
+            async playExecutiveBriefing() {
+                const btn = document.querySelector('.executive-briefing-btn');
+                
+                // If already playing, STOP it.
+                if (this.briefingPlaying) {
+                    this.stop();
+                    this.briefingPlaying = false;
+                    this.resetBriefingButton();
+                    return;
+                }
+
+                // Start Playing
+                this.briefingPlaying = true;
+                btn.classList.add('playing');
+                btn.innerHTML = '<i data-lucide="square" fill="currentColor" width="14"></i> STOP';
+                lucide.createIcons();
+                
+                // Get top stories
+                const articles = [...state.newsCache.general, ...state.newsCache.tech]
+                    .sort((a,b) => b.datetime - a.datetime)
+                    .slice(0, 3);
+                
+                if (articles.length === 0) {
+                    this.speak("No briefing data available. Please refresh news feeds.", () => {
+                        this.briefingPlaying = false;
+                        this.resetBriefingButton();
+                    });
+                    return;
+                }
+                
+                // Generate briefing narrative
+                let briefing = "Executive Briefing. Top market intelligence for today. ";
+                
+                articles.forEach((article, index) => {
+                    briefing += `Story ${index + 1}. ${article.headline}. `;
+                });
+                
+                briefing += "End of briefing. For detailed analysis, check the Nexus Intel dashboard.";
+                
+                // Speak and handle completion via callback in speak()
+                this.speak(briefing);
+            },
+
+            animateVisualizer() {
+                if (!this.audioVisualizer) return;
+                
+                const bars = this.audioVisualizer.querySelectorAll('.visualizer-bar');
+                bars.forEach(bar => {
+                    const randomHeight = 5 + Math.random() * 15;
+                    bar.style.height = `${randomHeight}px`;
+                    bar.style.opacity = 0.5 + Math.random() * 0.5;
+                });
+            }
+        };
+
+        // ===== VOICE CONTROLLER =====
+        const voice = {
+            recognition: null,
+            isListening: false,
+            isSupported: false,
+            commands: {
+                'search': (symbol) => {
+                    if (symbol) {
+                        document.getElementById('searchInput').value = symbol.toUpperCase();
+                        app.loadSymbol(symbol.toUpperCase());
+                        voice.showCommand(`Searching for ${symbol.toUpperCase()}...`);
+                    }
+                },
+                'show': (symbol) => {
+                    if (symbol) {
+                        app.loadSymbol(symbol.toUpperCase());
+                        voice.showCommand(`Showing ${symbol.toUpperCase()} analysis...`);
+                    }
+                },
+                'zen mode': () => {
+                    app.toggleZenMode();
+                    voice.showCommand('Toggling Zen mode...');
+                },
+                'focus mode': () => {
+                    app.toggleZenMode();
+                    voice.showCommand('Toggling focus mode...');
+                },
+                'row view': () => {
+                    app.toggleView('row');
+                    voice.showCommand('Switching to row view...');
+                },
+                'grid view': () => {
+                    app.toggleView('grid');
+                    voice.showCommand('Switching to grid view...');
+                },
+                'refresh news': () => {
+                    app.refreshNews();
+                    voice.showCommand('Refreshing intelligence stream...');
+                },
+                'open oracle': () => {
+                    app.toggleOracle();
+                    voice.showCommand('Opening Nexus Oracle...');
+                },
+                'talk to ai': () => {
+                    app.toggleOracle();
+                    voice.showCommand('Opening AI chat...');
+                },
+                'generate report': () => {
+                    app.generateAssetReport();
+                    voice.showCommand('Generating asset report...');
+                },
+                'play briefing': () => {
+                    voiceEngine.playExecutiveBriefing();
+                    voice.showCommand('Playing executive briefing...');
+                },
+                'send digest': () => {
+                    app.sendEmailDigest();
+                    voice.showCommand('Sending daily digest...');
+                },
+                'help': () => {
+                    voice.toggleCommandList();
+                    voice.showCommand('Showing voice commands...');
+                },
+                'show commands': () => {
+                    voice.toggleCommandList();
+                    voice.showCommand('Showing command list...');
+                },
+                'candlestick': () => {
+                    app.toggleChartType('candlestick');
+                    voice.showCommand('Switching to candlestick chart...');
+                },
+                'line chart': () => {
+                    app.toggleChartType('line');
+                    voice.showCommand('Switching to line chart...');
+                },
+                'area chart': () => {
+                    app.toggleChartType('area');
+                    voice.showCommand('Switching to area chart...');
+                },
+                'filter': (category) => {
+                    if (category && ['all', 'tech', 'crypto', 'ai', 'startup', 'energy', 'policy'].includes(category.toLowerCase())) {
+                        app.setFeedFilter(category.toLowerCase());
+                        voice.showCommand(`Filtering ${category} news...`);
+                    }
+                },
+                'briefing': () => {
+                    app.toggleTopBrief();
+                    voice.showCommand('Toggling daily briefing...');
+                },
+                'synthesize': () => {
+                    app.synthesizeBriefing();
+                    voice.showCommand('Synthesizing intelligence...');
+                },
+                'settings': () => {
+                    app.toggleSettings();
+                    voice.showCommand('Opening settings...');
+                },
+                'stop listening': () => {
+                    voice.stopListening();
+                    voice.showCommand('Voice control disabled');
+                }
+            },
+
+            init() {
+                // Check for SpeechRecognition support
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (SpeechRecognition) {
+                    this.recognition = new SpeechRecognition();
+                    this.recognition.continuous = true;
+                    this.recognition.interimResults = false;
+                    this.recognition.lang = 'en-US';
+                    this.isSupported = true;
+
+                    this.recognition.onresult = (event) => {
+                        const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
+                        this.processCommand(transcript);
+                    };
+
+                    this.recognition.onerror = (event) => {
+                        console.error('Speech recognition error:', event.error);
+                        if (event.error === 'no-speech' || event.error === 'audio-capture') {
+                            this.stopListening();
+                            voice.showCommand('No speech detected. Click mic to try again.');
+                        }
+                    };
+
+                    this.recognition.onend = () => {
+                        if (this.isListening) {
+                            // Restart recognition if it ended unexpectedly
+                            setTimeout(() => {
+                                if (this.isListening) {
+                                    this.startListening();
+                                }
+                            }, 100);
+                        }
+                    };
+
+                    // Add keyboard shortcut (press '?' or hold Ctrl+Space)
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === '?' || (e.ctrlKey && e.code === 'Space')) {
+                            e.preventDefault();
+                            this.toggleCommandList();
+                        }
+                        if (e.key === '`' || (e.altKey && e.key === 'v')) {
+                            e.preventDefault();
+                            this.toggleListening();
+                        }
+                    });
+
+                    notify("Voice Intelligence System ready. Press '`' or say 'help' for commands.", "info");
+                } else {
+                    notify("Voice control not supported in this browser", "error");
+                    document.getElementById('voiceControlBtn').style.display = 'none';
+                }
+            },
+
+            processCommand(transcript) {
+                voice.showCommand(`Heard: "${transcript}"`);
+                
+                // Check for symbol search patterns
+                const searchMatch = transcript.match(/(?:search|show|lookup|analyze)\s+([a-z]{1,5})/i);
+                if (searchMatch) {
+                    const symbol = searchMatch[1].toUpperCase();
+                    this.commands['search'](symbol);
+                    return;
+                }
+
+                // Check for filter commands
+                const filterMatch = transcript.match(/(?:filter|show)\s+(all|tech|crypto|ai|startup|energy|policy)/i);
+                if (filterMatch) {
+                    const category = filterMatch[1].toLowerCase();
+                    this.commands['filter'](category);
+                    return;
+                }
+
+                // Check exact commands
+                for (const [command, action] of Object.entries(this.commands)) {
+                    if (transcript.includes(command)) {
+                        // Extract parameter for commands that might have them
+                        if (command === 'search' || command === 'show' || command === 'filter') {
+                            const param = transcript.replace(command, '').trim();
+                            if (param) {
+                                action(param);
+                            } else {
+                                action();
+                            }
+                        } else {
+                            action();
+                        }
+                        return;
+                    }
+                }
+
+                // If no command matched, try to process as a symbol
+                const symbolMatch = transcript.match(/^[a-z]{1,5}$/i);
+                if (symbolMatch) {
+                    this.commands['show'](symbolMatch[0]);
+                    return;
+                }
+
+                voice.showCommand(`Unknown command. Say "help" for options.`);
+            },
+
+            showCommand(text) {
+                const display = document.getElementById('voiceCommandDisplay');
+                const textEl = document.getElementById('voiceCommandText');
+                textEl.textContent = text;
+                display.classList.add('show');
+                
+                setTimeout(() => {
+                    display.classList.remove('show');
+                }, 3000);
+            },
+
+            toggleListening() {
+                if (!this.isSupported) {
+                    notify("Voice control not supported", "error");
+                    return;
+                }
+
+                if (this.isListening) {
+                    this.stopListening();
+                } else {
+                    this.startListening();
+                }
+            },
+
+            startListening() {
+                if (!this.isSupported) return;
+                
+                try {
+                    this.recognition.start();
+                    this.isListening = true;
+                    document.getElementById('voiceControlBtn').classList.add('listening');
+                    document.getElementById('voiceControlBtn').innerHTML = '<i data-lucide="mic-off"></i>';
+                    lucide.createIcons();
+                    voice.showCommand("Listening... Say your command");
+                    notify("Voice control active", "success");
+                } catch (e) {
+                    console.error('Failed to start recognition:', e);
+                }
+            },
+
+            stopListening() {
+                if (!this.isSupported) return;
+                
+                try {
+                    this.recognition.stop();
+                } catch (e) {}
+                
+                this.isListening = false;
+                document.getElementById('voiceControlBtn').classList.remove('listening');
+                document.getElementById('voiceControlBtn').innerHTML = '<i data-lucide="mic"></i>';
+                lucide.createIcons();
+                voice.showCommand("Voice control ready");
+            },
+
+            toggleCommandList() {
+                const list = document.getElementById('voiceCommandList');
+                list.classList.toggle('show');
+            }
+        };
+
         // ===== APP CONFIGURATION & STATE =====
         const state = {
             apiKeys: {
@@ -923,13 +2418,17 @@
                 tech: []
             },
             activeFilter: 'all',
-            viewMode: 'row', // row or grid
+            viewMode: 'row',
             zenMode: false,
             briefCollapsed: false,
             chart: null,
             chartType: 'candlestick',
             currentCandles: null, 
-            heatmap: null
+            heatmap: null,
+            newsletterEmail: localStorage.getItem('nexus_newsletter_email') || 'analyst@nexus-intel.com',
+            autoNewsletter: localStorage.getItem('nexus_auto_newsletter') === 'true',
+            voiceAlerts: localStorage.getItem('nexus_voice_alerts') !== 'false',
+            cyberpunkMode: localStorage.getItem('nexus_cyberpunk') === 'true'
         };
 
         // ===== TOAST SYSTEM =====
@@ -941,14 +2440,14 @@
             let color = type === 'success' ? 'var(--neon-green)' : type === 'error' ? 'var(--neon-red)' : 'var(--neon-blue)';
             
             toast.style.borderColor = color;
-            toast.innerHTML = `<i data-lucide="${icon}" style="color:${color}"></i> ${msg}`;
+            toast.innerHTML = `<i data-lucide="${icon}" style="color:${color}"></i> <span>${msg}</span>`;
             container.appendChild(toast);
             lucide.createIcons();
             
             setTimeout(() => {
                 toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            }, 4000);
         };
 
         // ===== API CONTROLLER =====
@@ -979,50 +2478,69 @@
                 } catch (e) { return null; }
             },
 
-            // --- NEWS ENGINE V3 (RSS HYBRID) ---
+            // --- NEWS ENGINE V4 (Enhanced Categories) ---
             async getAllNews() {
-                // Clear existing caches to prevent duplicates on refresh
+                // Clear existing caches
                 for(let key in state.newsCache) state.newsCache[key] = [];
 
-                // Parallel Fetching for Speed
-                const promises = [
-                    // 1. API Based
+                // Parallel Fetching
+                await Promise.all([
                     this.getFinnhubNews(),
                     this.getCryptoNews(),
-                    
-                    // 2. TECH (The Verge + TechCrunch)
                     this.getRSSNews('https://www.theverge.com/rss/index.xml', 'tech'),
                     this.getRSSNews('https://techcrunch.com/feed/', 'tech'),
-
-                    // 3. AI (TechCrunch + Verge AI)
                     this.getRSSNews('https://techcrunch.com/category/artificial-intelligence/feed/', 'ai'),
-                    this.getRSSNews('https://www.theverge.com/rss/ai-artificial-intelligence/index.xml', 'ai'),
-
-                    // 4. Startups
-                    this.getRSSNews('https://techcrunch.com/category/startups/feed/', 'startup'),
-
-                    // 5. Energy
+                    this.getRSSNews('https://venturebeat.com/category/startups/feed/', 'startup'),
                     this.getRSSNews('https://oilprice.com/rss/main', 'energy'),
-
-                    // 6. Policy
-                    this.getRSSNews('https://www.politico.com/rss/politicopicks.xml', 'policy')
+                    this.getRSSNews('https://cointelegraph.com/rss', 'crypto')
+                ]);
+                
+                // FALLBACK: If cache is empty (likely API rate limits), generate Simulation Data
+                let totalNews = 0;
+                for(let key in state.newsCache) totalNews += state.newsCache[key].length;
+                
+                if (totalNews === 0) {
+                    this.generateSimulationData();
+                    notify("Live feeds offline. Switching to Simulation Mode.", "warning");
+                } else {
+                    // Check for breaking news for voice alerts
+                    this.checkBreakingNews();
+                }
+            },
+            
+            generateSimulationData() {
+                // Populate with static/mock data so the app doesn't look broken
+                const mockNews = [
+                    { headline: "Global Markets Brace for Impact as Tech Sector Adjusts", summary: "Analysts predict a shift in capital allocation as major tech firms announce new strategic directions...", source: "NEXUS CORE", category: "TECH", datetime: Date.now()/1000 - 300 },
+                    { headline: "AI Regulation Talks Heat Up in EU Parliament", summary: "New framework proposals suggest stricter compliance for generative AI models...", source: "POLICY NET", category: "POLICY", datetime: Date.now()/1000 - 1500 },
+                    { headline: "Crypto Volatility Spikes: BTC Tests Key Resistance", summary: "Bitcoin and Ethereum see sudden movement following regulatory news from Asia...", source: "BLOCKCHAIN WIRE", category: "CRYPTO", datetime: Date.now()/1000 - 3600 },
+                    { headline: "Sustainable Energy Startups See Record Funding", summary: "Venture capital flows into fusion and hydrogen sectors hit an all-time high this quarter...", source: "GREEN VENTURES", category: "ENERGY", datetime: Date.now()/1000 - 5000 },
+                    { headline: "Neural Link Integration: The Next Frontier?", summary: "Bio-tech firms race to develop the first consumer-grade neural interface...", source: "FUTURE WATCH", category: "AI", datetime: Date.now()/1000 - 7200 },
+                    { headline: "Cybersecurity Alert: New Quantum Threats Detected", summary: "Experts warn of emerging decryption methods targeting legacy financial systems...", source: "NETSEC", category: "TECH", datetime: Date.now()/1000 - 8000 }
                 ];
-
-                await Promise.all(promises);
+                
+                state.newsCache.general = mockNews;
+                state.newsCache.tech = mockNews.filter(n => n.category === 'TECH');
+                state.newsCache.crypto = mockNews.filter(n => n.category === 'CRYPTO');
+                state.newsCache.ai = mockNews.filter(n => n.category === 'AI');
+                state.newsCache.energy = mockNews.filter(n => n.category === 'ENERGY');
+                state.newsCache.policy = mockNews.filter(n => n.category === 'POLICY');
+                state.newsCache.startup = mockNews.filter(n => n.category === 'TECH'); // Reuse tech for startup mock
             },
 
             async getFinnhubNews() {
                 try {
                     const res = await fetch(`${this.baseUrl}/news?category=general&token=${state.apiKeys.finnhub}`);
-                    state.newsCache.general = await res.json();
+                    const data = await res.json();
+                    state.newsCache.general = data.slice(0, 50); // Limit to 50 articles
                 } catch (e) { console.error('Finnhub fail'); }
             },
 
             async getCryptoNews() {
                 try {
-                    const res = await fetch('https://min-api.cryptocompare.com/data/v2/news/?lang=EN');
+                    const res = await fetch('https://min-api.cryptocompare.com/data/v2/news/?lang=EN&limit=30');
                     const data = await res.json();
-                    state.newsCache.crypto = data.Data;
+                    state.newsCache.crypto = data.Data.slice(0, 30);
                 } catch (e) { console.error('Crypto fail'); }
             },
 
@@ -1031,9 +2549,9 @@
                     const res = await fetch(`${this.rssProxy}${encodeURIComponent(url)}`);
                     const data = await res.json();
                     if(data.status === 'ok') {
-                        const newItems = data.items.map(item => ({
+                        const newItems = data.items.slice(0, 10).map(item => ({
                             headline: item.title,
-                            summary: item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...', // Strip HTML
+                            summary: item.description ? item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'No summary available',
                             url: item.link,
                             source: data.feed.title || 'RSS',
                             datetime: new Date(item.pubDate).getTime() / 1000,
@@ -1044,6 +2562,32 @@
                         state.newsCache[category] = [...state.newsCache[category], ...newItems].sort((a,b) => b.datetime - a.datetime);
                     }
                 } catch (e) { console.error(`RSS fail for ${category}`, e); }
+            },
+
+            checkBreakingNews() {
+                // Check for breaking news in the last 5 minutes
+                const now = Date.now() / 1000;
+                const fiveMinutesAgo = now - 300;
+                
+                let breakingNews = null;
+                
+                for (const category in state.newsCache) {
+                    const recent = state.newsCache[category].filter(item => 
+                        item.datetime > fiveMinutesAgo && 
+                        (item.headline.toLowerCase().includes('breaking') || 
+                         item.headline.toLowerCase().includes('alert') ||
+                         item.headline.toLowerCase().includes('urgent'))
+                    );
+                    
+                    if (recent.length > 0) {
+                        breakingNews = recent[0];
+                        break;
+                    }
+                }
+                
+                if (breakingNews && voiceEngine.voiceAlertsEnabled) {
+                    voiceEngine.announceBreakingNews(breakingNews.headline);
+                }
             },
 
             // --- GEMINI AI INTEGRATION ---
@@ -1075,6 +2619,7 @@
                 const box = document.getElementById(`box-${elementId}`);
                 
                 btn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> THINKING`;
+                btn.disabled = true;
                 
                 const prompt = `Summarize this financial news for an investor in 2 sentences. Focus on market impact. Text: ${text}`;
                 const result = await this.callGemini(prompt);
@@ -1083,10 +2628,76 @@
                     box.innerText = result;
                     box.classList.add('active');
                     btn.innerHTML = `<i data-lucide="check"></i> DONE`;
+                    btn.disabled = false;
                     lucide.createIcons();
+                    
+                    // Auto-play summary if voice alerts enabled
+                    if (voiceEngine.voiceAlertsEnabled) {
+                        setTimeout(() => {
+                            voiceEngine.playNewsSummary(text.substring(0, 100), result);
+                        }, 500);
+                    }
                 } else {
                     btn.innerHTML = `ERROR`;
+                    btn.disabled = false;
                 }
+            },
+
+            // --- EMAIL NEWSLETTER GENERATION ---
+            
+            async generateDailyDigest() {
+                // Get top 5 stories from each category
+                const topStories = {};
+                for (const category in state.newsCache) {
+                    if (state.newsCache[category].length > 0) {
+                        topStories[category] = state.newsCache[category].slice(0, 3);
+                    }
+                }
+                
+                // Generate digest using AI
+                let digestText = `NEXUS INTEL DAILY DIGEST\n${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}\n\n`;
+                digestText += `="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="\n\n`;
+                
+                // Market Overview
+                digestText += `MARKET OVERVIEW\n`;
+                digestText += `---------------\n`;
+                
+                // Generate AI summary of market sentiment
+                const sentimentPrompt = `Based on today's financial news headlines, provide a 3-sentence market sentiment overview. Focus on key themes and trends.`;
+                const sentiment = await this.callGemini(sentimentPrompt);
+                digestText += sentiment ? `${sentiment}\n\n` : 'Market data analysis in progress...\n\n';
+                
+                // Top Stories by Category
+                for (const [category, stories] of Object.entries(topStories)) {
+                    if (stories.length > 0) {
+                        digestText += `${category.toUpperCase()} INTELLIGENCE\n`;
+                        digestText += `${'-'.repeat(category.length + 12)}\n`;
+                        
+                        stories.forEach((story, index) => {
+                            digestText += `${index + 1}. ${story.headline}\n`;
+                            digestText += `   Source: ${story.source} | ${new Date(story.datetime * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}\n`;
+                            digestText += `   ${story.summary}\n\n`;
+                        });
+                        
+                        digestText += '\n';
+                    }
+                }
+                
+                // AI Analysis Section
+                digestText += `AI ANALYSIS & INSIGHTS\n`;
+                digestText += `----------------------\n`;
+                
+                const analysisPrompt = `As a senior market analyst, provide 3 key insights from today's news that investors should watch. Be concise and actionable.`;
+                const analysis = await this.callGemini(analysisPrompt);
+                digestText += analysis ? `${analysis}\n\n` : 'AI analysis generating...\n\n';
+                
+                // Closing
+                digestText += `="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="\n`;
+                digestText += `Generated by Nexus Intel v4.1\n`;
+                digestText += `© ${new Date().getFullYear()} Nexus Intelligence Systems\n`;
+                digestText += `For real-time updates, visit the Nexus Intel dashboard.\n`;
+                
+                return digestText;
             }
         };
 
@@ -1096,11 +2707,30 @@
                 lucide.createIcons();
                 this.initClock();
                 
-                if(localStorage.getItem('nexus_cyberpunk') === 'true') {
+                // Initialize voice systems
+                voiceEngine.init();
+                voice.init();
+                
+                // Load settings from localStorage
+                this.loadSettings();
+                
+                // Apply cyberpunk mode if enabled
+                if(state.cyberpunkMode) {
                     document.body.classList.add('cyberpunk-mode');
                     document.getElementById('cyberModeToggle').checked = true;
                 }
+                
+                // Apply voice alerts setting
+                voiceEngine.voiceAlertsEnabled = state.voiceAlerts;
+                document.getElementById('voiceAlertsToggle').checked = state.voiceAlerts;
+                
+                // Apply auto newsletter setting
+                document.getElementById('autoNewsletterToggle').checked = state.autoNewsletter;
+                
+                // Set email fields
                 document.getElementById('geminiKey').value = state.apiKeys.gemini;
+                document.getElementById('newsletterEmail').value = state.newsletterEmail;
+                document.getElementById('recipientEmail').value = state.newsletterEmail;
 
                 // Initial Load
                 this.loadSymbol(state.currentSymbol).then(() => {
@@ -1108,14 +2738,53 @@
                     this.updateTicker();
                 });
 
-                setInterval(() => this.updateTicker(), 60000); 
+                // Update ticker every minute
+                setInterval(() => this.updateTicker(), 60000);
+                
+                // Schedule daily newsletter at 6PM
+                this.scheduleDailyNewsletter();
+            },
+
+            loadSettings() {
+                // Load all settings from localStorage
+                state.apiKeys.gemini = localStorage.getItem('nexus_gemini_key') || '';
+                state.newsletterEmail = localStorage.getItem('nexus_newsletter_email') || 'analyst@nexus-intel.com';
+                state.autoNewsletter = localStorage.getItem('nexus_auto_newsletter') === 'true';
+                state.voiceAlerts = localStorage.getItem('nexus_voice_alerts') !== 'false';
+                state.cyberpunkMode = localStorage.getItem('nexus_cyberpunk') === 'true';
             },
 
             initClock() {
                 setInterval(() => {
                     const now = new Date();
                     document.getElementById('clock').innerText = now.toISOString().split('T')[1].split('.')[0] + " UTC";
+                    
+                    // Check if it's 6PM for auto-newsletter
+                    if (state.autoNewsletter && now.getHours() === 18 && now.getMinutes() === 0) {
+                        this.sendEmailDigest(true);
+                    }
                 }, 1000);
+            },
+
+            scheduleDailyNewsletter() {
+                // Calculate time until 6PM
+                const now = new Date();
+                const target = new Date();
+                target.setHours(18, 0, 0, 0);
+                
+                if (now > target) {
+                    target.setDate(target.getDate() + 1);
+                }
+                
+                const timeUntil = target - now;
+                
+                setTimeout(() => {
+                    if (state.autoNewsletter) {
+                        this.sendEmailDigest(true);
+                    }
+                    // Reschedule for next day
+                    this.scheduleDailyNewsletter();
+                }, timeUntil);
             },
 
             // ===== AI FEATURES =====
@@ -1146,6 +2815,8 @@
                 
                 if(response) {
                     history.innerHTML += `<div class="chat-message ai"><div class="chat-bubble">${response}</div></div>`;
+                    // Speak the response
+                    voiceEngine.speak(response);
                 } else {
                     history.innerHTML += `<div class="chat-message ai"><div class="chat-bubble text-red">CONNECTION LOST.</div></div>`;
                 }
@@ -1156,7 +2827,7 @@
                 const modal = document.getElementById('reportModal');
                 const content = document.getElementById('reportContent');
                 modal.classList.add('open');
-                content.innerText = `Analyzing ${state.currentSymbol} data streams...`;
+                content.innerText = `Analyzing ${state.currentSymbol} data streams...\n\n`;
                 
                 const q = state.quotes[state.currentSymbol];
                 if (!q) { content.innerText = "No data available."; return; }
@@ -1166,12 +2837,16 @@
                 Provide: 1. Trend Analysis 2. Key Level Assessment 3. Short-term Outlook (Bullish/Bearish). Use bullet points.`;
                 
                 const report = await api.callGemini(prompt);
-                if (report) content.innerText = report;
+                if (report) {
+                    content.innerText = report;
+                    // Speak the report
+                    voiceEngine.speak(`Asset report for ${state.currentSymbol}. ${report.substring(0, 200)}`);
+                }
             },
 
             async synthesizeBriefing() {
                 const container = document.getElementById('briefPanelContent');
-                container.innerHTML = `<div style="padding:10px; color:var(--neon-amber);"><i class="fa fa-spinner fa-spin"></i> Synthesizing Intelligence Streams...</div>`;
+                container.innerHTML = `<div style="padding:10px; color:var(--neon-amber); font-family: var(--font-mono);"><i class="fa fa-spinner fa-spin"></i> Synthesizing Intelligence Streams...</div>`;
                 
                 // Collect headlines
                 let headlines = [];
@@ -1187,12 +2862,89 @@
                 const report = await api.callGemini(prompt);
                 if (report) {
                     // Convert bullets to HTML
-                    const html = report.split('\n').map(line => line.trim()).filter(l => l.length > 0).map(l => `<div style="margin-bottom:8px; border-left:2px solid var(--neon-amber); padding-left:10px;">${l.replace(/^-|\*/g, '')}</div>`).join('');
-                    container.innerHTML = `<div style="padding:10px; font-size:0.9rem;">${html}</div>`;
+                    const html = report.split('\n').map(line => line.trim()).filter(l => l.length > 0).map(l => 
+                        `<div style="margin-bottom:10px; border-left:3px solid var(--neon-amber); padding-left:12px; font-family: var(--font-mono); font-size:0.9rem;">${l.replace(/^-|\*/g, '')}</div>`
+                    ).join('');
+                    container.innerHTML = `<div style="padding:12px;">${html}</div>`;
                 } else {
                     // Fallback to list if AI fails
                     this.renderFeed(); 
                 }
+            },
+
+            // ===== EMAIL NEWSLETTER =====
+            
+            async sendEmailDigest(auto = false) {
+                const modal = document.getElementById('newsletterModal');
+                const preview = document.getElementById('emailPreview');
+                const recipientEmail = document.getElementById('recipientEmail');
+                
+                // Validate email
+                const email = recipientEmail.value;
+                if (!email || !this.validateEmail(email)) {
+                    notify("Please enter a valid email address", "error");
+                    recipientEmail.focus();
+                    return;
+                }
+                
+                modal.classList.add('open');
+                preview.innerText = "Generating daily intelligence digest...";
+                
+                const digest = await api.generateDailyDigest();
+                preview.innerText = digest;
+                
+                if (auto) {
+                    notify("Daily digest generated (6PM auto-schedule)", "info");
+                } else {
+                    notify("Daily digest generated. Click 'Send via Email' to dispatch.", "success");
+                }
+            },
+
+            // NEW FUNCTION: Actually opens mail client
+            dispatchEmail() {
+                const email = document.getElementById('recipientEmail').value;
+                const subject = document.getElementById('emailSubject').value;
+                const body = document.getElementById('emailPreview').innerText;
+                
+                // Create mailto link
+                const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                
+                // Check length (mailto links often fail over 2000 chars)
+                if (mailtoLink.length < 2000) {
+                    window.location.href = mailtoLink;
+                    notify("Opening default email client...", "success");
+                } else {
+                    // Fallback: Download as .eml file
+                    const emlContent = `To: ${email}
+Subject: ${subject}
+X-Unsent: 1
+Content-Type: text/plain; charset="UTF-8"
+
+${body}`;
+                    const blob = new Blob([emlContent], { type: 'message/rfc822' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `NEXUS_DIGEST_${new Date().toISOString().slice(0,10)}.eml`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    notify("Digest long. Downloaded as Email Draft (.eml)", "success");
+                }
+            },
+
+            validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            },
+
+            copyEmailContent() {
+                const preview = document.getElementById('emailPreview');
+                navigator.clipboard.writeText(preview.innerText)
+                    .then(() => notify("Digest copied to clipboard", "success"))
+                    .catch(() => notify("Failed to copy", "error"));
             },
 
             // ===== VIEW MODES =====
@@ -1250,24 +3002,31 @@
 
             renderTopBrief(articles) {
                 const container = document.getElementById('briefPanelContent');
-                // Don't overwrite if we have a generated synthesis visible (hacky check: if content has tldr-item class)
                 if (container.querySelector('.tldr-item') || container.innerHTML.includes('Initializing')) {
-                     if (!articles || articles.length === 0) return;
+                      if (!articles || articles.length === 0) return;
 
                     // Pick top 3 impactful articles
                     const topPicks = articles
-                        .filter(a => a.category !== 'Crypto') // Bias towards main news
+                        .filter(a => a.category !== 'Crypto')
                         .slice(0, 3);
 
                     container.innerHTML = topPicks.map((art, i) => `
-                        <div class="tldr-item" onclick="window.open('${art.url}', '_blank')" style="cursor:pointer">
+                        <div class="tldr-item" onclick="window.open('${art.url}', '_blank')">
                             <div class="tldr-rank">0${i+1}</div>
                             <div class="tldr-text">
                                 <h4>${art.headline}</h4>
-                                <div class="tldr-meta">${art.source} • ${new Date(art.datetime*1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+                                <div class="tldr-meta">
+                                    <span>${art.source}</span>
+                                    <span>•</span>
+                                    <span>${new Date(art.datetime*1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                                    <button class="voice-play-btn" style="margin-left: auto;" onclick="voiceEngine.playNewsSummary('${art.headline.replace(/'/g, "")}', '${art.summary.substring(0, 100).replace(/'/g, "")}', this); event.stopPropagation();">
+                                        <i data-lucide="volume-2"></i> PLAY
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     `).join('');
+                    lucide.createIcons();
                 }
             },
 
@@ -1283,34 +3042,60 @@
             saveSettings() {
                 const fKey = document.getElementById('finnhubKey').value;
                 const gKey = document.getElementById('geminiKey').value;
+                const email = document.getElementById('newsletterEmail').value;
+                const voiceAlerts = document.getElementById('voiceAlertsToggle').checked;
+                const autoNewsletter = document.getElementById('autoNewsletterToggle').checked;
+                const cyberpunk = document.getElementById('cyberModeToggle').checked;
+                
+                // Validate email if provided
+                if (email && !this.validateEmail(email)) {
+                    notify("Please enter a valid email address", "error");
+                    return;
+                }
                 
                 state.apiKeys.finnhub = fKey;
                 state.apiKeys.gemini = gKey;
+                state.newsletterEmail = email;
+                voiceEngine.voiceAlertsEnabled = voiceAlerts;
+                state.voiceAlerts = voiceAlerts;
+                state.autoNewsletter = autoNewsletter;
+                state.cyberpunkMode = cyberpunk;
+                
+                // Save to localStorage
                 localStorage.setItem('nexus_gemini_key', gKey);
+                localStorage.setItem('nexus_newsletter_email', email);
+                localStorage.setItem('nexus_voice_alerts', voiceAlerts);
+                localStorage.setItem('nexus_auto_newsletter', autoNewsletter);
+                localStorage.setItem('nexus_cyberpunk', cyberpunk);
+                
+                // Apply cyberpunk mode
+                if (cyberpunk) {
+                    document.body.classList.add('cyberpunk-mode');
+                } else {
+                    document.body.classList.remove('cyberpunk-mode');
+                }
                 
                 this.toggleSettings();
-                notify("Settings Saved", "success");
+                notify("Settings Saved Successfully", "success");
                 this.refreshNews(); 
             },
 
-            toggleCyberpunk(enabled) {
-                if(enabled) document.body.classList.add('cyberpunk-mode');
-                else document.body.classList.remove('cyberpunk-mode');
-                localStorage.setItem('nexus_cyberpunk', enabled);
+            toggleCyberpunk() {
+                // Handled by saveSettings now
             },
 
             async handleSearch(e) {
                 if (e.key === 'Enter') {
                     const symbol = e.target.value.toUpperCase();
                     this.loadSymbol(symbol).then(async () => {
-                         const quote = await api.getQuote(symbol);
-                         if (quote && quote.c) {
-                             state.symbols.unshift(symbol);
-                             state.symbols = [...new Set(state.symbols)];
-                             await this.updateTicker();
-                             e.target.value = '';
-                             notify(`Tracking ${symbol}`, "success");
-                         }
+                          const quote = await api.getQuote(symbol);
+                          if (quote && quote.c) {
+                              state.symbols.unshift(symbol);
+                              state.symbols = [...new Set(state.symbols)];
+                              await this.updateTicker();
+                              e.target.value = '';
+                              notify(`Tracking ${symbol}`, "success");
+                          }
                     });
                 }
             },
@@ -1319,7 +3104,7 @@
                 const btn = document.querySelector('.refresh-btn i');
                 if(btn) btn.classList.add('fa-spin'); 
                 
-                notify("Scanning Intel Feeds...", "info");
+                notify("Scanning Intelligence Feeds...", "info");
                 
                 await api.getAllNews();
                 
@@ -1359,12 +3144,22 @@
 
                     const wItem = document.createElement('div');
                     wItem.className = 'watchlist-item';
-                    wItem.style.cssText = `display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer; ${sym === state.currentSymbol ? 'background:rgba(255,255,255,0.05); border-left: 2px solid var(--neon-green);' : ''}`;
+                    wItem.style.cssText = `display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer; transition: all 0.3s; ${sym === state.currentSymbol ? 'background:rgba(255,255,255,0.05); border-left: 3px solid var(--neon-green);' : ''}`;
                     wItem.innerHTML = `
-                        <div><div style="font-weight:700">${sym}</div></div>
-                        <div style="text-align:right"><div class="mono">${quote.c.toFixed(2)}</div><div class="${changeClass}" style="font-size:0.75rem">${quote.dp.toFixed(2)}%</div></div>
+                        <div><div style="font-weight:800; font-family: var(--font-mono);">${sym}</div></div>
+                        <div style="text-align:right"><div class="mono" style="font-weight:600;">${quote.c.toFixed(2)}</div><div class="${changeClass}" style="font-size:0.8rem; font-family: var(--font-mono);">${quote.dp.toFixed(2)}%</div></div>
                     `;
                     wItem.onclick = () => this.loadSymbol(sym);
+                    wItem.onmouseenter = () => {
+                        if (sym !== state.currentSymbol) {
+                            wItem.style.background = 'rgba(255,255,255,0.03)';
+                        }
+                    };
+                    wItem.onmouseleave = () => {
+                        if (sym !== state.currentSymbol) {
+                            wItem.style.background = 'transparent';
+                        }
+                    };
                     list.appendChild(wItem);
                 }
                 
@@ -1384,8 +3179,21 @@
                     chart: { type: 'treemap', height: 180, toolbar: {show:false}, background: 'transparent' },
                     colors: ['#00ff9d', '#ff2a6d'],
                     plotOptions: { treemap: { distributed: true, enableShades: false, useFillColorAsStroke: true } },
-                    dataLabels: { enabled: true, style: { fontSize: '10px', fontFamily: 'JetBrains Mono' } },
-                    stroke: { show: true, width: 1, colors: ['#0e0e12'] }
+                    dataLabels: { 
+                        enabled: true, 
+                        style: { 
+                            fontSize: '11px', 
+                            fontFamily: 'JetBrains Mono',
+                            colors: ['#000']
+                        } 
+                    },
+                    stroke: { show: true, width: 2, colors: ['#0e0e12'] },
+                    tooltip: {
+                        theme: 'dark',
+                        style: {
+                            fontFamily: 'JetBrains Mono'
+                        }
+                    }
                 };
                 
                 state.heatmap = new ApexCharts(document.querySelector("#heatmap"), options);
@@ -1409,7 +3217,12 @@
                     articles = [...state.newsCache.general, ...state.newsCache.tech].sort((a,b) => b.datetime - a.datetime);
                 } else if (state.activeFilter === 'crypto') {
                     articles = (state.newsCache.crypto || []).map(a => ({
-                        headline: a.title, summary: a.body.substring(0, 150)+'...', url: a.url, source: a.source, datetime: a.published_on, category: 'Crypto'
+                        headline: a.title, 
+                        summary: a.body ? a.body.substring(0, 150)+'...' : 'No summary available', 
+                        url: a.url, 
+                        source: a.source, 
+                        datetime: a.published_on, 
+                        category: 'Crypto'
                     }));
                 } else {
                     articles = state.newsCache[state.activeFilter] || [];
@@ -1421,30 +3234,35 @@
                 }
 
                 if (!articles || articles.length === 0) {
-                    container.innerHTML = `<div class="text-muted" style="padding:20px; text-align:center;">NO INTEL FOUND FOR CHANNEL: ${state.activeFilter.toUpperCase()}</div>`;
+                    container.innerHTML = `<div class="text-muted" style="padding:20px; text-align:center; font-family: var(--font-mono);">NO INTEL FOUND FOR CHANNEL: ${state.activeFilter.toUpperCase()}</div>`;
                     return;
                 }
 
                 articles.slice(0, 25).forEach((art, idx) => {
                     const text = (art.headline + ' ' + art.summary).toLowerCase();
                     let sentiment = 'neutral';
-                    if (text.includes('surge') || text.includes('record') || text.includes('soar') || text.includes('grow')) sentiment = 'bullish';
-                    else if (text.includes('drop') || text.includes('plunge') || text.includes('warn') || text.includes('crash')) sentiment = 'bearish';
+                    if (text.includes('surge') || text.includes('record') || text.includes('soar') || text.includes('grow') || text.includes('bull')) sentiment = 'bullish';
+                    else if (text.includes('drop') || text.includes('plunge') || text.includes('warn') || text.includes('crash') || text.includes('bear')) sentiment = 'bearish';
 
                     const div = document.createElement('div');
                     div.className = `news-card ${sentiment}`;
                     div.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#666; margin-bottom:5px;">
-                            <span>${art.source.toUpperCase()}</span>
-                            <span>${new Date(art.datetime*1000).toLocaleTimeString()}</span>
+                        <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; font-family: var(--font-mono);">
+                            <span>${art.source ? art.source.toUpperCase() : 'SOURCE'}</span>
+                            <span>${new Date(art.datetime*1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
                         </div>
                         <div class="news-headline" onclick="window.open('${art.url}', '_blank')">${art.headline}</div>
                         <div class="news-summary">${art.summary}</div>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span class="tag" style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:3px; font-size:0.7rem;">${state.activeFilter.toUpperCase()}</span>
-                            <button class="analyze-btn" id="btn-${idx}" onclick="api.summarizeWithGemini('${art.headline.replace(/'/g, "")}', '${idx}')">
-                                <i data-lucide="sparkles" width="12"></i> ANALYZE
-                            </button>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; flex-wrap: wrap; gap: 10px;">
+                            <span class="tag" style="background:rgba(255,255,255,0.1); padding:6px 12px; border-radius:6px; font-size:0.75rem; font-family: var(--font-mono); letter-spacing:0.05em;">${state.activeFilter.toUpperCase()}</span>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button class="voice-play-btn" onclick="voiceEngine.playNewsSummary('${art.headline.replace(/'/g, "")}', '${art.summary.substring(0, 100).replace(/'/g, "")}', this)">
+                                    <i data-lucide="volume-2"></i> PLAY
+                                </button>
+                                <button class="analyze-btn" id="btn-${idx}" onclick="api.summarizeWithGemini('${art.headline.replace(/'/g, "")} ${art.summary.substring(0, 100).replace(/'/g, "")}', '${idx}')">
+                                    <i data-lucide="sparkles" width="12"></i> ANALYZE
+                                </button>
+                            </div>
                         </div>
                         <div class="ai-summary-box" id="box-${idx}"></div>
                     `;
@@ -1476,8 +3294,8 @@
                 const chartContainer = document.getElementById('mainChart');
                 chartContainer.innerHTML = `
                     <div style="text-align:center;">
-                        <i data-lucide="loader-2" class="fa-spin" style="margin-bottom:10px;"></i>
-                        <div>ANALYZING ASSET...</div>
+                        <i data-lucide="loader-2" class="fa-spin" style="margin-bottom:12px;"></i>
+                        <div style="font-family: var(--font-mono);">ANALYZING ASSET...</div>
                     </div>
                 `;
                 lucide.createIcons();
@@ -1507,8 +3325,8 @@
                     
                     document.getElementById('pName').innerText = profile.name;
                     document.getElementById('pIndustry').innerText = profile.finnhubIndustry;
-                    document.getElementById('metricCap').innerText = (profile.marketCapitalization / 1000).toFixed(2) + 'B';
-                    document.getElementById('metricVol').innerText = (profile.shareOutstanding).toFixed(1) + 'M';
+                    document.getElementById('metricCap').innerText = (profile.marketCapitalization / 1000000000).toFixed(2) + 'B';
+                    document.getElementById('metricVol').innerText = (profile.shareOutstanding / 1000000).toFixed(1) + 'M';
                     card.style.display = 'flex';
                 } else {
                     document.getElementById('assetProfile').style.display = 'none';
@@ -1520,10 +3338,10 @@
                     this.renderChart(candles);
                 } else {
                     chartContainer.innerHTML = `
-                        <div style="text-align:center; color: var(--neon-red);">
-                            <i data-lucide="alert-octagon" style="margin-bottom:10px;"></i>
+                        <div style="text-align:center; color: var(--neon-red); font-family: var(--font-mono);">
+                            <i data-lucide="alert-octagon" style="margin-bottom:12px;"></i>
                             <div>DATA UNAVAILABLE</div>
-                            <div style="font-size:0.7rem; color:var(--text-muted);">API LIMIT OR INVALID SYMBOL</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:8px;">API LIMIT OR INVALID SYMBOL</div>
                         </div>
                     `;
                     lucide.createIcons();
@@ -1538,13 +3356,38 @@
 
                 let seriesData = [];
                 let chartOptions = {
-                    chart: { type: state.chartType, height: 250, background: 'transparent', toolbar: { show: false }, animations: { enabled: false } },
+                    chart: { 
+                        type: state.chartType, 
+                        height: 250, 
+                        background: 'transparent', 
+                        toolbar: { show: false }, 
+                        animations: { enabled: true, speed: 300 } 
+                    },
                     theme: { mode: 'dark' },
-                    xaxis: { type: 'datetime', axisBorder: {show:false}, axisTicks: {show:false}, labels: { style: { colors: '#888899' } } },
-                    yaxis: { labels: { style: { colors: '#888899' } } },
-                    grid: { borderColor: '#2a2a35', strokeDashArray: 4 },
-                    stroke: { width: 2, curve: 'smooth' },
-                    tooltip: { theme: 'dark' }
+                    xaxis: { 
+                        type: 'datetime', 
+                        axisBorder: {show:false}, 
+                        axisTicks: {show:false}, 
+                        labels: { 
+                            style: { colors: '#888899', fontFamily: 'JetBrains Mono' } 
+                        } 
+                    },
+                    yaxis: { 
+                        labels: { 
+                            style: { colors: '#888899', fontFamily: 'JetBrains Mono' } 
+                        } 
+                    },
+                    grid: { 
+                        borderColor: '#2a2a35', 
+                        strokeDashArray: 4 
+                    },
+                    stroke: { width: 3, curve: 'smooth' },
+                    tooltip: { 
+                        theme: 'dark',
+                        style: {
+                            fontFamily: 'JetBrains Mono'
+                        }
+                    }
                 };
 
                 if (state.chartType === 'candlestick') {
@@ -1552,7 +3395,17 @@
                         x: new Date(t * 1000),
                         y: [candles.o[i], candles.h[i], candles.l[i], candles.c[i]]
                     }));
-                    chartOptions.plotOptions = { candlestick: { colors: { upward: '#00ff9d', downward: '#ff2a6d' } } };
+                    chartOptions.plotOptions = { 
+                        candlestick: { 
+                            colors: { 
+                                upward: '#00ff9d', 
+                                downward: '#ff2a6d' 
+                            },
+                            wick: {
+                                useFillColor: true
+                            }
+                        } 
+                    };
                 } else {
                     seriesData = candles.t.map((t, i) => ({
                         x: new Date(t * 1000),
@@ -1562,7 +3415,16 @@
                     if (state.chartType === 'area') {
                         chartOptions.fill = {
                              type: 'gradient',
-                             gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.1, stops: [0, 90, 100] }
+                             gradient: { 
+                                 shadeIntensity: 1, 
+                                 opacityFrom: 0.7, 
+                                 opacityTo: 0.1, 
+                                 stops: [0, 90, 100],
+                                 colorStops: [
+                                     { offset: 0, color: '#00ff9d', opacity: 0.4 },
+                                     { offset: 100, color: '#00ff9d', opacity: 0 }
+                                 ]
+                             }
                         };
                     }
                 }
@@ -1574,7 +3436,7 @@
                     state.chart.render();
                 } catch(e) {
                     console.error("Chart Render Fail:", e);
-                    chartEl.innerHTML = "CHART RENDER ERROR";
+                    chartEl.innerHTML = "<div style='font-family: var(--font-mono); color: var(--neon-red);'>CHART RENDER ERROR</div>";
                 }
             }
         };
