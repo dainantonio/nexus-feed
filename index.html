@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS INTEL | v4.1 AI</title>
+    <title>NEXUS INTEL | v4.3 AI</title>
     
     <!-- External Dependencies -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
@@ -452,7 +452,9 @@
             align-items: flex-end;
             margin-bottom: 1rem;
             padding-bottom: 1rem;
+            padding-right: 36px; /* Added padding to prevent overlap with maximize button */
             border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: relative;
         }
 
         .chart-controls {
@@ -483,6 +485,29 @@
             color: var(--neon-green);
             border-color: var(--neon-green);
             box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+        }
+        
+        /* EXPAND CHART BUTTON */
+        .chart-expand-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chart-expand-btn:hover {
+            color: #fff;
+            border-color: var(--neon-green);
+            background: rgba(255,255,255,0.05);
         }
 
         #mainChart {
@@ -1545,7 +1570,7 @@
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
             <div class="flex justify-between items-center" style="margin-bottom: 24px;">
-                <h3 class="mono text-green">SYSTEM CONFIGURATION v4.1</h3>
+                <h3 class="mono text-green">SYSTEM CONFIGURATION v4.2</h3>
                 <button class="icon-btn" onclick="app.toggleSettings()"><i data-lucide="x"></i></button>
             </div>
             
@@ -1640,6 +1665,20 @@
         </div>
     </div>
 
+    <!-- EXPANDED CHART MODAL -->
+    <div class="modal-overlay" id="expandedChartModal">
+        <div class="modal" style="width: 90vw; max-width: 1200px; height: 80vh; display: flex; flex-direction: column;">
+            <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
+                <div>
+                    <h3 class="mono text-green" id="expandedChartTitle">ASSET ANALYSIS</h3>
+                    <div class="text-muted mono" style="font-size: 0.8rem;" id="expandedChartSubtitle">--</div>
+                </div>
+                <button class="icon-btn" onclick="app.toggleExpandedChart()"><i data-lucide="x"></i></button>
+            </div>
+            <div id="expandedChartContainer" style="flex-grow: 1; min-height: 0;"></div>
+        </div>
+    </div>
+
     <!-- EMAIL NEWSLETTER MODAL -->
     <div class="modal-overlay" id="newsletterModal">
         <div class="modal">
@@ -1680,7 +1719,7 @@
     <div class="voice-command-list" id="voiceCommandList">
         <div class="voice-hotkey">? or "help"</div>
         <h4><i data-lucide="mic"></i> VOICE COMMANDS</h4>
-        <div class="voice-command-item"><strong>"Search [symbol]"</strong> - Lookup stock (e.g., "search AMD")</div>
+        <div class="voice-command-item"><strong>"Search [symbol]"</strong> - Lookup stock/crypto (e.g., "search BTC")</div>
         <div class="voice-command-item"><strong>"Show [symbol]"</strong> - Display stock details</div>
         <div class="voice-command-item"><strong>"Zen mode" / "Focus mode"</strong> - Toggle Zen mode</div>
         <div class="voice-command-item"><strong>"Row view" / "Grid view"</strong> - Change news layout</div>
@@ -1718,12 +1757,12 @@
     <header class="header">
         <div class="logo">
             <div class="logo-icon"><i data-lucide="aperture"></i></div>
-            <div>NEXUS <span class="text-green">INTEL v4.1</span></div>
+            <div>NEXUS <span class="text-green">INTEL v4.2</span></div>
         </div>
         
         <div class="search-bar">
             <i data-lucide="search" size="16" class="text-muted"></i>
-            <input type="text" id="searchInput" placeholder="SEARCH TICKER (e.g. AMD)" onkeypress="app.handleSearch(event)">
+            <input type="text" id="searchInput" placeholder="SEARCH (e.g. NVDA, BTC, ETH)" onkeypress="app.handleSearch(event)">
         </div>
         
         <div class="header-controls">
@@ -1811,12 +1850,12 @@
             
             <div class="feed-tabs">
                 <button class="feed-tab active" onclick="app.setFeedFilter('all')">ALL</button>
+                <button class="feed-tab" onclick="app.setFeedFilter('crypto')">CRYPTO</button>
                 <button class="feed-tab" onclick="app.setFeedFilter('tech')">TECH</button>
                 <button class="feed-tab" onclick="app.setFeedFilter('startup')">STARTUPS</button>
                 <button class="feed-tab" onclick="app.setFeedFilter('ai')">AI & DATA</button>
                 <button class="feed-tab" onclick="app.setFeedFilter('energy')">ENERGY</button>
                 <button class="feed-tab" onclick="app.setFeedFilter('policy')">POLICY</button>
-                <button class="feed-tab" onclick="app.setFeedFilter('crypto')">CRYPTO</button>
                 
                 <button class="refresh-btn" onclick="app.refreshNews()" title="Force Refresh Intel">
                     <i data-lucide="refresh-cw" width="18"></i>
@@ -1846,6 +1885,9 @@
                 </button>
 
                 <div class="chart-card">
+                    <button class="chart-expand-btn" onclick="app.toggleExpandedChart()" title="Maximize Chart">
+                        <i data-lucide="maximize-2" width="14"></i>
+                    </button>
                     <div class="chart-header">
                         <div>
                             <div class="symbol-title" id="detailSymbol">NVDA</div>
@@ -1908,6 +1950,7 @@
     <script>
         // ===== VOICE ENGINE (TTS Integration) =====
         const voiceEngine = {
+            // ... existing code ...
             speechSynthesis: window.speechSynthesis,
             isSpeaking: false,
             currentUtterance: null,
@@ -2405,7 +2448,8 @@
                 finnhub: 'd5e7311r01qjckl29au0d5e7311r01qjckl29aug',
                 gemini: localStorage.getItem('nexus_gemini_key') || ''
             },
-            symbols: ['NVDA', 'AAPL', 'MSFT', 'TSLA', 'AMZN', 'GOOGL', 'AMD', 'PLTR', 'SMCI', 'META', 'COIN'],
+            // Added crypto symbols to default watchlist
+            symbols: ['NVDA', 'BTC', 'ETH', 'SOL', 'AAPL', 'MSFT', 'TSLA', 'AMZN', 'GOOGL', 'PLTR', 'COIN'],
             currentSymbol: 'NVDA',
             quotes: {},
             newsCache: {
@@ -2454,24 +2498,58 @@
         const api = {
             baseUrl: 'https://finnhub.io/api/v1',
             rssProxy: 'https://api.rss2json.com/v1/api.json?rss_url=',
+            cryptoBaseUrl: 'https://min-api.cryptocompare.com/data',
 
             async getQuote(symbol) {
+                // Try Stock (Finnhub)
                 try {
                     const res = await fetch(`${this.baseUrl}/quote?symbol=${symbol}&token=${state.apiKeys.finnhub}`);
                     const data = await res.json();
-                    if(data.c) return data;
+                    // Basic validation that Finnhub returned real data (c != 0 usually)
+                    if(data.c && data.c > 0) return data;
                 } catch (e) { }
                 
+                // Try Crypto (CryptoCompare) if Finnhub failed
+                try {
+                    const res = await fetch(`${this.cryptoBaseUrl}/pricemultifull?fsyms=${symbol}&tsyms=USD`);
+                    const data = await res.json();
+                    if(data.RAW && data.RAW[symbol]) {
+                        const c = data.RAW[symbol].USD;
+                        return {
+                            c: c.PRICE,
+                            d: c.CHANGE24HOUR,
+                            dp: c.CHANGEPCT24HOUR,
+                            h: c.HIGH24HOUR,
+                            l: c.LOW24HOUR,
+                            o: c.OPEN24HOUR,
+                            pc: c.PRICE - c.CHANGE24HOUR
+                        };
+                    }
+                } catch (e) { }
+
                 // Fallback for simulation
                 return { c: 100 + Math.random()*50, d: 2.5, dp: 1.5, h: 160, l: 140, o: 145, pc: 148 };
             },
 
             async getProfile(symbol) {
+                // Try Stock
                 try {
                     const res = await fetch(`${this.baseUrl}/stock/profile2?symbol=${symbol}&token=${state.apiKeys.finnhub}`);
                     const data = await res.json();
                     if(data && data.name) return data;
                 } catch (e) { }
+
+                // Try Crypto (using CoinGecko image convention or generic)
+                const isCrypto = ['BTC','ETH','SOL','XRP','ADA','DOGE','DOT','MATIC'].includes(symbol);
+                if (isCrypto || symbol.length <= 4) {
+                     return {
+                        name: `${symbol} (Crypto Asset)`,
+                        finnhubIndustry: 'Cryptocurrency',
+                        marketCapitalization: 0, 
+                        shareOutstanding: 0,
+                        logo: `https://assets.coincap.io/assets/icons/${symbol.toLowerCase()}@2x.png`
+                     };
+                }
 
                 // Fallback for simulation
                 return { 
@@ -2486,20 +2564,35 @@
             async getCandles(symbol) {
                 const to = Math.floor(Date.now() / 1000);
                 const from = to - (30 * 24 * 60 * 60); 
-                let data = null;
-
+                
+                // 1. Try Stock (Finnhub)
                 try {
                     const res = await fetch(`${this.baseUrl}/stock/candle?symbol=${symbol}&resolution=D&from=${from}&to=${to}&token=${state.apiKeys.finnhub}`);
-                    data = await res.json();
-                } catch (e) { console.error('Candle fetch failed', e); }
+                    const data = await res.json();
+                    if(data.s === 'ok') return data;
+                } catch (e) { console.error('Stock candle fetch failed', e); }
 
-                // Fallback if data is missing or status is not 'ok'
-                if (!data || data.s !== 'ok') {
-                    notify(`Live chart data unavailable for ${symbol}. Switching to Simulation.`, 'warning');
-                    return this.generateSimulatedCandles(to, 30); // Generate 30 days of data
-                }
+                // 2. Try Crypto (CryptoCompare)
+                try {
+                    const res = await fetch(`${this.cryptoBaseUrl}/v2/histoday?fsym=${symbol}&tsym=USD&limit=30`);
+                    const json = await res.json();
+                    if (json.Response === 'Success' && json.Data.Data) {
+                        // Map CryptoCompare format to Finnhub candle format
+                        const c = [], h = [], l = [], o = [], t = [];
+                        json.Data.Data.forEach(d => {
+                            c.push(d.close);
+                            h.push(d.high);
+                            l.push(d.low);
+                            o.push(d.open);
+                            t.push(d.time);
+                        });
+                        return { s: 'ok', c, h, l, o, t };
+                    }
+                } catch(e) { console.error('Crypto candle fetch failed', e); }
 
-                return data;
+                // 3. Fallback Simulation
+                notify(`Live data unavailable for ${symbol}. Switching to Simulation.`, 'warning');
+                return this.generateSimulatedCandles(to, 30);
             },
 
             generateSimulatedCandles(endTime, days) {
@@ -2743,7 +2836,7 @@
                 
                 // Closing
                 digestText += `="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="="\n`;
-                digestText += `Generated by Nexus Intel v4.1\n`;
+                digestText += `Generated by Nexus Intel v4.2\n`;
                 digestText += `© ${new Date().getFullYear()} Nexus Intelligence Systems\n`;
                 digestText += `For real-time updates, visit the Nexus Intel dashboard.\n`;
                 
@@ -2793,6 +2886,15 @@
                 
                 // Schedule daily newsletter at 6PM
                 this.scheduleDailyNewsletter();
+
+                // ADDED: Click outside to close modals
+                document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                    overlay.addEventListener('click', (e) => {
+                        if (e.target === overlay) {
+                            overlay.classList.remove('open');
+                        }
+                    });
+                });
             },
 
             loadSettings() {
@@ -3332,6 +3434,77 @@ ${body}`;
                 if (state.currentCandles) {
                     this.renderChart(state.currentCandles);
                 }
+            },
+
+            toggleExpandedChart() {
+                const modal = document.getElementById('expandedChartModal');
+                const title = document.getElementById('expandedChartTitle');
+                const subtitle = document.getElementById('expandedChartSubtitle');
+                
+                modal.classList.toggle('open');
+                
+                if (modal.classList.contains('open')) {
+                    // Update content
+                    const currentSymbol = document.getElementById('detailSymbol').innerText;
+                    const currentPrice = document.getElementById('detailPrice').innerText;
+                    const currentChange = document.getElementById('detailChange').innerText;
+                    
+                    title.innerText = `${currentSymbol} ANALYSIS`;
+                    subtitle.innerText = `PRICE: ${currentPrice} | CHANGE: ${currentChange}`;
+                    
+                    // Render large chart
+                    this.renderExpandedChart(state.currentCandles);
+                }
+            },
+
+            renderExpandedChart(candles) {
+                if (!candles || candles.s !== 'ok') return;
+                
+                const container = document.getElementById('expandedChartContainer');
+                container.innerHTML = ''; // Clear previous
+                
+                // Reuse logic but make it bigger
+                let seriesData = [];
+                let chartOptions = {
+                    chart: { 
+                        type: state.chartType, 
+                        height: '100%', 
+                        background: 'transparent', 
+                        toolbar: { show: true, tools: { download: false, selection: true, zoom: true, pan: true } }, 
+                        animations: { enabled: false } 
+                    },
+                    theme: { mode: 'dark' },
+                    xaxis: { 
+                        type: 'datetime', 
+                        labels: { style: { colors: '#888899', fontFamily: 'JetBrains Mono' } } 
+                    },
+                    yaxis: { 
+                        labels: { style: { colors: '#888899', fontFamily: 'JetBrains Mono' } } 
+                    },
+                    grid: { borderColor: '#2a2a35', strokeDashArray: 4 },
+                    stroke: { width: 2, curve: 'smooth' },
+                    tooltip: { theme: 'dark', style: { fontFamily: 'JetBrains Mono' } }
+                };
+
+                // Prepare data (same logic as small chart)
+                if (state.chartType === 'candlestick') {
+                    seriesData = candles.t.map((t, i) => ({
+                        x: new Date(t * 1000),
+                        y: [candles.o[i], candles.h[i], candles.l[i], candles.c[i]]
+                    }));
+                    chartOptions.plotOptions = { candlestick: { colors: { upward: '#00ff9d', downward: '#ff2a6d' }, wick: { useFillColor: true } } };
+                } else {
+                    seriesData = candles.t.map((t, i) => ({ x: new Date(t * 1000), y: candles.c[i] }));
+                    chartOptions.colors = ['#00ff9d'];
+                    if (state.chartType === 'area') {
+                        chartOptions.fill = { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.1, stops: [0, 90, 100], colorStops: [{ offset: 0, color: '#00ff9d', opacity: 0.4 }, { offset: 100, color: '#00ff9d', opacity: 0 }] } };
+                    }
+                }
+
+                chartOptions.series = [{ name: 'Price', data: seriesData }];
+                
+                const chart = new ApexCharts(container, chartOptions);
+                chart.render();
             },
 
             async loadSymbol(symbol) {
