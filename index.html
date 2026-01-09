@@ -1570,7 +1570,7 @@
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
             <div class="flex justify-between items-center" style="margin-bottom: 24px;">
-                <h3 class="mono text-green">SYSTEM CONFIGURATION v4.2</h3>
+                <h3 class="mono text-green">SYSTEM CONFIGURATION v4.3</h3>
                 <button class="icon-btn" onclick="app.toggleSettings()"><i data-lucide="x"></i></button>
             </div>
             
@@ -1757,7 +1757,7 @@
     <header class="header">
         <div class="logo">
             <div class="logo-icon"><i data-lucide="aperture"></i></div>
-            <div>NEXUS <span class="text-green">INTEL v4.2</span></div>
+            <div>NEXUS <span class="text-green">INTEL v4.3</span></div>
         </div>
         
         <div class="search-bar">
@@ -2635,7 +2635,11 @@
                     this.getRSSNews('https://techcrunch.com/category/artificial-intelligence/feed/', 'ai'),
                     this.getRSSNews('https://venturebeat.com/category/startups/feed/', 'startup'),
                     this.getRSSNews('https://oilprice.com/rss/main', 'energy'),
-                    this.getRSSNews('https://cointelegraph.com/rss', 'crypto')
+                    this.getRSSNews('https://cointelegraph.com/rss', 'crypto'),
+                    // NEW SOURCES
+                    this.getRSSNews('https://techcrunch.com/category/startups/feed/', 'startup'),
+                    this.getRSSNews('https://www.producthunt.com/feed', 'startup'),
+                    this.getRSSNews('https://news.ycombinator.com/rss', 'startup')
                 ]);
                 
                 // FALLBACK: If cache is empty (likely API rate limits), generate Simulation Data
@@ -2659,7 +2663,10 @@
                     { headline: "Crypto Volatility Spikes: BTC Tests Key Resistance", summary: "Bitcoin and Ethereum see sudden movement following regulatory news from Asia...", source: "BLOCKCHAIN WIRE", category: "CRYPTO", datetime: Date.now()/1000 - 3600 },
                     { headline: "Sustainable Energy Startups See Record Funding", summary: "Venture capital flows into fusion and hydrogen sectors hit an all-time high this quarter...", source: "GREEN VENTURES", category: "ENERGY", datetime: Date.now()/1000 - 5000 },
                     { headline: "Neural Link Integration: The Next Frontier?", summary: "Bio-tech firms race to develop the first consumer-grade neural interface...", source: "FUTURE WATCH", category: "AI", datetime: Date.now()/1000 - 7200 },
-                    { headline: "Cybersecurity Alert: New Quantum Threats Detected", summary: "Experts warn of emerging decryption methods targeting legacy financial systems...", source: "NETSEC", category: "TECH", datetime: Date.now()/1000 - 8000 }
+                    { headline: "Cybersecurity Alert: New Quantum Threats Detected", summary: "Experts warn of emerging decryption methods targeting legacy financial systems...", source: "NETSEC", category: "TECH", datetime: Date.now()/1000 - 8000 },
+                    // Explicit startup mocks
+                    { headline: "Stealth AI Startup Raises $50M for Generative Video", summary: "A new player in the valley has emerged with backing from major VC firms...", source: "VENTURE BEAT", category: "STARTUP", datetime: Date.now()/1000 - 1000 },
+                    { headline: "Y Combinator Demo Day: Top 10 B2B SaaS Picks", summary: "Investors are flocking to these new productivity tools...", source: "Y COMBINATOR", category: "STARTUP", datetime: Date.now()/1000 - 4000 }
                 ];
                 
                 state.newsCache.general = mockNews;
@@ -2668,7 +2675,8 @@
                 state.newsCache.ai = mockNews.filter(n => n.category === 'AI');
                 state.newsCache.energy = mockNews.filter(n => n.category === 'ENERGY');
                 state.newsCache.policy = mockNews.filter(n => n.category === 'POLICY');
-                state.newsCache.startup = mockNews.filter(n => n.category === 'TECH'); // Reuse tech for startup mock
+                // Ensure specific STARTUP data is available in simulation
+                state.newsCache.startup = mockNews.filter(n => n.category === 'STARTUP'); 
             },
 
             async getFinnhubNews() {
